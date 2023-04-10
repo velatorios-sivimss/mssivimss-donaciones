@@ -66,12 +66,41 @@ public class ConsultaDonadoServiceImpl implements ConsultaDonadosService {
 
 
 		Response<?> response = providerRestTemplate
-				.consumirServicio(consultarDonado.consultarFiltroDonados().getDatos(), urlConsultaGenerica, authentication);
+				.consumirServicio(consultarDonado.consultarFiltroDonados(request).getDatos(), urlConsultaGenerica, authentication);
 		if (response.getCodigo() == 200) {
 			permisoResponse = Arrays.asList(modelMapper.map(response.getDatos(), ConsultaDonadoDetalleResponse[].class));
 			response.setDatos(ConvertirGenerico.convertInstanceOfObject(permisoResponse));
 		}
 		
 		return MensajeResponseUtil.mensajeConsultaResponse(response, NO_SE_ENCONTRO_INFORMACION);
+	}
+	
+
+	@Override
+	public Response<?> consultarDelegacion(DatosRequest request, Authentication authentication)
+			throws IOException {
+	return MensajeResponseUtil.mensajeConsultaResponse(
+			providerRestTemplate.consumirServicio(consultarDonado.obtenerDelegaciones(request).getDatos(),
+					urlConsultaGenerica, authentication),
+			NO_SE_ENCONTRO_INFORMACION);
+	}
+	@Override
+	public Response<?> consultarVelatorio(DatosRequest request, Authentication authentication)
+			throws IOException {
+
+		return MensajeResponseUtil.mensajeConsultaResponse(
+		providerRestTemplate.consumirServicio(consultarDonado.obtenerVelatorio(request).getDatos(),
+				urlConsultaGenerica, authentication),
+		NO_SE_ENCONTRO_INFORMACION);
+	}
+
+	@Override
+	public Response<?> consultarNivel(DatosRequest request, Authentication authentication)
+			throws IOException {
+
+		return MensajeResponseUtil.mensajeConsultaResponse(
+		providerRestTemplate.consumirServicio(consultarDonado.obtenerNivel(request).getDatos(),
+				urlConsultaGenerica, authentication),
+		NO_SE_ENCONTRO_INFORMACION);
 	}
 }
