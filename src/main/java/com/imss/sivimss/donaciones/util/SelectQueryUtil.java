@@ -15,6 +15,7 @@ public class SelectQueryUtil {
     private static final String FROM = "FROM";
     private static final String WHERE = "WHERE";
     private static final String LEFT_JOIN = "LEFT JOIN";
+    private static final String INNER_JOIN = "INNER JOIN";
     private static final String JOIN = "JOIN";
     private static final String ON = "ON";
     private static final String OR = "OR";
@@ -233,8 +234,8 @@ public class SelectQueryUtil {
      * @param on
      * @return
      */
-    public SelectQueryUtil innerJoin(String tabla, String on) {
-        helperJoin = new Join(LEFT_JOIN, tabla, on);
+    public SelectQueryUtil innerJoin(String tabla, String... on) {
+        helperJoin = new Join(INNER_JOIN, tabla, on);
         joins.add(helperJoin);
         isJoinCalled = true;
         lastMethodCalled = JOIN;

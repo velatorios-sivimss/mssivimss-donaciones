@@ -54,11 +54,11 @@ public class ConsultaDonado {
 		this.desDelegacion = consultaDonadoRequest.getDesDelegacion();
 	}
 
-	public DatosRequest consultaDonado(DatosRequest request) {
+	public DatosRequest consultaDonado(DatosRequest request, String formatoFecha) {
 
         SelectQueryUtil queryUtil = new SelectQueryUtil();
         queryUtil.select("si.ID_INVENTARIO AS idInventario", "sv.NOM_VELATORIO AS velatorio","stm.DES_TIPO_MATERIAL AS tipo"
-        		,"sa.DES_MODELO_ARTICULO AS modeloAtaud", "si.NUM_INVENTARIO AS numInventario","ssd.FEC_SOLICITUD AS fecDonacion"
+        		,"sa.DES_MODELO_ARTICULO AS modeloAtaud", "si.NUM_INVENTARIO AS numInventario","date_format(ssd.FEC_SOLICITUD,'"+ formatoFecha + "')  AS fecDonacion"
         		,"ssd.NOMBRE_INSTITUCION AS donadoPor","sp.NOM_PERSONA AS nomDonador")
         .from("svc_inventario si")
         .innerJoin("svt_articulo sa", "sa.ID_ARTICULO = si.ID_ARTICULO")
@@ -75,11 +75,11 @@ public class ConsultaDonado {
 		return request;
 	}
 
-	public DatosRequest consultarFiltroDonados(DatosRequest request)  {
+	public DatosRequest consultarFiltroDonados(DatosRequest request, String formatoFecha)  {
         SelectQueryUtil queryUtil = new SelectQueryUtil();
 		queryUtil.select("si.ID_INVENTARIO AS idInventario"," sv.NOM_VELATORIO AS velatorio","stm.DES_TIPO_MATERIAL AS tipo"
 	    		," sa.DES_MODELO_ARTICULO AS modeloAtaud "," si.NUM_INVENTARIO AS numInventario "
-	    		," ssd.FEC_SOLICITUD fecDonacion "," ssd.NOMBRE_INSTITUCION AS donadoPor"," sp.NOM_PERSONA AS nomDonador")
+	    		," date_format(ssd.FEC_SOLICITUD,'" + formatoFecha + "')  AS fecDonacion"," ssd.NOMBRE_INSTITUCION AS donadoPor"," sp.NOM_PERSONA AS nomDonador")
 				.from("svc_inventario si ")
 				.innerJoin("svt_articulo sa","sa.ID_ARTICULO = si.ID_ARTICULO")
 				.innerJoin("svc_velatorio sv","sv.ID_VELATORIO = si.ID_VELATORIO")

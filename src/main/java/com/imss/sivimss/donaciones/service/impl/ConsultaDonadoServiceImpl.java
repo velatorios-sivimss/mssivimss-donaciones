@@ -32,6 +32,9 @@ public class ConsultaDonadoServiceImpl implements ConsultaDonadosService {
 	private String urlConsultaGenerica;
 
 
+	@Value("${formato_fecha}")
+	private String formatoFecha;
+
 	@Autowired
 	private ProviderServiceRestTemplate providerRestTemplate;
 
@@ -48,7 +51,7 @@ public class ConsultaDonadoServiceImpl implements ConsultaDonadosService {
 			throws IOException {
 
 		return MensajeResponseUtil.mensajeConsultaResponse(
-				providerRestTemplate.consumirServicio(consultarDonado.consultaDonado(request).getDatos(),
+				providerRestTemplate.consumirServicio(consultarDonado.consultaDonado(request, formatoFecha).getDatos(),
 						urlConsultaGenericoPaginado, authentication),
 				NO_SE_ENCONTRO_INFORMACION);
 	}
@@ -64,15 +67,10 @@ public class ConsultaDonadoServiceImpl implements ConsultaDonadosService {
 		consultarDonado = new ConsultaDonado(consultaDonadoRequest);
 		List<ConsultaDonadoDetalleResponse> permisoResponse;
 
-
-		Response<?> response = providerRestTemplate
-				.consumirServicio(consultarDonado.consultarFiltroDonados(request).getDatos(), urlConsultaGenerica, authentication);
-		if (response.getCodigo() == 200) {
-			permisoResponse = Arrays.asList(modelMapper.map(response.getDatos(), ConsultaDonadoDetalleResponse[].class));
-			response.setDatos(ConvertirGenerico.convertInstanceOfObject(permisoResponse));
-		}
-		
-		return MensajeResponseUtil.mensajeConsultaResponse(response, NO_SE_ENCONTRO_INFORMACION);
+		return MensajeResponseUtil.mensajeConsultaResponse(
+				providerRestTemplate.consumirServicio(consultarDonado.consultarFiltroDonados(request, formatoFecha).getDatos(),
+						urlConsultaGenericoPaginado, authentication),
+				NO_SE_ENCONTRO_INFORMACION);
 	}
 	
 

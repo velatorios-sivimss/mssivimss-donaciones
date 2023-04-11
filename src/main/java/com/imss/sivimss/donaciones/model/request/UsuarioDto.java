@@ -29,5 +29,9 @@ public class UsuarioDto {
 	private String cveMatricula;
 	
 	private String cveUsuario;
+
+	private Integer id;
+	private Integer rol;
+	private String correo;
 	
 }
