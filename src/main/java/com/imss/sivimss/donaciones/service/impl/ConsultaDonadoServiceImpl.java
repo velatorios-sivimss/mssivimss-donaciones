@@ -1,6 +1,7 @@
 package com.imss.sivimss.donaciones.service.impl;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.google.gson.Gson;
 import com.imss.sivimss.donaciones.beans.ConsultaDonado;
 import com.imss.sivimss.donaciones.model.request.ConsultaDonadoRequest;
+import com.imss.sivimss.donaciones.model.request.ReporteDto;
 import com.imss.sivimss.donaciones.service.ConsultaDonadosService;
 import com.imss.sivimss.donaciones.util.AppConstantes;
 import com.imss.sivimss.donaciones.util.DatosRequest;
@@ -29,6 +31,13 @@ public class ConsultaDonadoServiceImpl implements ConsultaDonadosService {
 
 	@Value("${formato_fecha}")
 	private String formatoFecha;
+	
+
+	@Value("${endpoints.pdf-reporteDonados}")
+	private String nombrePdfReportes;
+
+	@Value("${endpoints.ms-reportes}")
+	private String urlReportes;
 
 	@Autowired
 	private ProviderServiceRestTemplate providerRestTemplate;
@@ -38,6 +47,7 @@ public class ConsultaDonadoServiceImpl implements ConsultaDonadosService {
 
 	private static final String NO_SE_ENCONTRO_INFORMACION = "45"; // No se encontró información relacionada a tu
 																	// búsqueda.
+	private static final String ERROR_AL_DESCARGAR_DOCUMENTO= "64"; // Error en la descarga del documento.Intenta nuevamente.
 
 	@Override
 	public Response<?> consultarDonados(DatosRequest request, Authentication authentication)
@@ -100,5 +110,18 @@ public class ConsultaDonadoServiceImpl implements ConsultaDonadosService {
 		providerRestTemplate.consumirServicio(consultarDonado.obtenerNivel(request).getDatos(),
 				urlConsultaGenerica, authentication),
 		NO_SE_ENCONTRO_INFORMACION);
+	}
+
+	@Override
+	public Response<?> generarDocumento(DatosRequest request, Authentication authentication)throws IOException {
+		Gson gson = new Gson();
+		String datosJson = String.valueOf(request.getDatos().get(AppConstantes.DATOS));
+		ConsultaDonadoRequest consultaDonadoRequest = gson.fromJson(datosJson, ConsultaDonadoRequest.class);
+		consultarDonado = new ConsultaDonado(consultaDonadoRequest);
+		ReporteDto reporteDto= gson.fromJson(datosJson, ReporteDto.class);
+		Map<String, Object> envioDatos = consultarDonado.generarReportePDF(reporteDto,nombrePdfReportes);
+		return MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicioReportes(envioDatos, urlReportes, authentication)
+				, ERROR_AL_DESCARGAR_DOCUMENTO);
+		
 	}
 }

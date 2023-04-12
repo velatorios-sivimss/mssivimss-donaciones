@@ -1,11 +1,14 @@
 package com.imss.sivimss.donaciones.beans;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.bind.DatatypeConverter;
 
 import com.imss.sivimss.donaciones.util.SelectQueryUtil;
 import com.imss.sivimss.donaciones.model.request.ConsultaDonadoRequest;
+import com.imss.sivimss.donaciones.model.request.ReporteDto;
 import com.imss.sivimss.donaciones.util.AppConstantes;
 import com.imss.sivimss.donaciones.util.DatosRequest;
 import lombok.AllArgsConstructor;
@@ -52,28 +55,6 @@ public class ConsultaDonado {
 		this.desDelegacion = consultaDonadoRequest.getDesDelegacion();
 	}
 
-	public DatosRequest consultaDonado(DatosRequest request, String formatoFecha) {
-
-		SelectQueryUtil queryUtil = new SelectQueryUtil();
-		queryUtil
-				.select("si.ID_INVENTARIO AS idInventario", "sv.NOM_VELATORIO AS velatorio",
-						"stm.DES_TIPO_MATERIAL AS tipo", "sa.DES_MODELO_ARTICULO AS modeloAtaud",
-						"si.NUM_INVENTARIO AS numInventario",
-						"date_format(ssd.FEC_SOLICITUD,'" + formatoFecha + "')  AS fecDonacion",
-						"ssd.NOMBRE_INSTITUCION AS donadoPor", "sp.NOM_PERSONA AS nomDonador")
-				.from("svc_inventario si").innerJoin("svt_articulo sa", "sa.ID_ARTICULO = si.ID_ARTICULO")
-				.innerJoin("svc_velatorio sv", "sv.ID_VELATORIO = si.ID_VELATORIO")
-				.innerJoin("svc_tipo_material stm", "stm.ID_TIPO_MATERIAL = sa.ID_TIPO_MATERIAL")
-				.innerJoin("svc_salida_donacion_ataudes ssda", "ssda.ID_ARTICULO = sa.ID_ARTICULO")
-				.innerJoin("svc_salida_donacion ssd", "ssd.ID_SALIDA_DONACION  = ssda.ID_SALIDA_DONACION")
-				.innerJoin("svc_contratante sc", "sc.ID_CONTRATANTE = ssd.ID_CONTRATANTE")
-				.innerJoin("svc_persona sp", "sp.ID_PERSONA = sc.ID_PERSONA ");
-		final String query = queryUtil.build();
-		String encoded = DatatypeConverter.printBase64Binary(query.getBytes());
-		request.getDatos().put(AppConstantes.QUERY, encoded);
-
-		return request;
-	}
 
 	public DatosRequest consultarFiltroDonadosSalida(DatosRequest request, String formatoFecha) {
 		SelectQueryUtil queryUtil = new SelectQueryUtil();
@@ -211,4 +192,28 @@ public class ConsultaDonado {
 
 		return request;
 	}
+	
+
+	public Map<String, Object> generarReportePDF(ReporteDto reporteDto,String nombrePdfReportes){
+		Map<String, Object> envioDatos = new HashMap<>();
+		String condicion = " ";
+		String condicion1 = " ";
+		if(this.idVelatorio != null && this.idDelegacion != null) {
+			condicion = condicion +  " AND si.ID_VELATORIO = " + this.idVelatorio + "  AND sv.ID_DELEGACION = " + this.idDelegacion ;
+			condicion1 = condicion1 +  " AND sv.ID_VELATORIO = " + this.idVelatorio + "  AND sv.ID_DELEGACION = " + this.idDelegacion;
+		}
+		if (this.fechaInicio != null && this.fechaFin != null) {
+			condicion = condicion + " AND date_format(ssd.FEC_SOLICITUD,'%Y-%m-%d') >= '" + this.fechaInicio + "'"
+					+ " AND date_format(ssd.FEC_SOLICITUD,'%Y-%m-%d') <= '" + this.fechaFin + "'";
+			condicion1 = condicion1 + " AND date_format(sd.FEC_ALTA ,'%Y-%m-%d') >= '" + this.fechaInicio + "'"
+					+ " AND date_format(sd.FEC_ALTA ,'%Y-%m-%d') <= '" + this.fechaFin + "'";
+		}
+		envioDatos.put("condicion",   condicion );
+		envioDatos.put("condicion1",  condicion1 );
+		envioDatos.put("tipoReporte", reporteDto.getTipoReporte());
+		envioDatos.put("rutaNombreReporte", nombrePdfReportes);
+		
+		return envioDatos;
+	}
+	
 }

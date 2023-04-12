@@ -15,4 +15,5 @@ public interface ConsultaDonadosService {
 	Response<?> consultarDelegacion(DatosRequest request, Authentication authentication) throws IOException;
 	Response<?> consultarVelatorio(DatosRequest request, Authentication authentication) throws IOException;
 	Response<?> consultarNivel(DatosRequest request, Authentication authentication) throws IOException;
+	Response<?> generarDocumento(DatosRequest request, Authentication authentication) throws IOException;
 }
