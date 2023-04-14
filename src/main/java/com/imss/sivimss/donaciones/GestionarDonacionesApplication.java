@@ -12,10 +12,10 @@ import org.springframework.web.client.RestTemplate;
 import com.imss.sivimss.donaciones.util.NoRedirectSimpleClientHttpRequestFactory;
 
 @SpringBootApplication
-public class CatRolesApplication {
+public class GestionarDonacionesApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(CatRolesApplication.class, args);
+		SpringApplication.run(GestionarDonacionesApplication.class, args);
 	}
 
 	@Bean
