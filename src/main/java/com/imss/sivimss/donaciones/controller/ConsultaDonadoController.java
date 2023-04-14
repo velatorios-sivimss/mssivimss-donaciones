@@ -75,6 +75,8 @@ public class ConsultaDonadoController {
 		return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
       
 	}
+	
+	
 	@PostMapping("consultar/nivel")
 	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
@@ -85,6 +87,28 @@ public class ConsultaDonadoController {
 		return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
       
 	}
+	
+
+	@PostMapping("consultar/generarDocumento")
+	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@TimeLimiter(name = "msflujo")
+	public CompletableFuture<Object>  generarDocumento(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
+	
+		Response<?> response =  consultaDonadosService.generarDocumento(request,authentication);
+		return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
+      
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	/**
 	 * fallbacks generico
 	 * 
