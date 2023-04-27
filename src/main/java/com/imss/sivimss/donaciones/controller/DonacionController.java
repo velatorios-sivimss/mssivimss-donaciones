@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.imss.sivimss.donaciones.service.DonacionService;
+import com.imss.sivimss.donaciones.service.AceptacionDonacionService;
+import com.imss.sivimss.donaciones.service.SalidaDonacionService;
 import com.imss.sivimss.donaciones.util.DatosRequest;
 import com.imss.sivimss.donaciones.util.ProviderServiceRestTemplate;
 import com.imss.sivimss.donaciones.util.Response;
@@ -29,38 +30,20 @@ import lombok.AllArgsConstructor;
 public class DonacionController {
 	
 	@Autowired
-	private DonacionService donacionService;
+	private SalidaDonacionService salidaDonacionService;
+	
+	@Autowired
+	private AceptacionDonacionService aceptacionDonacionService;
 	
 	@Autowired
 	private ProviderServiceRestTemplate providerRestTemplate;
-
-	
-	@PostMapping("/consulta")
-	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
-	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
-	@TimeLimiter(name = "msflujo")
-	public CompletableFuture<?> consultaLista(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
-		Response<?> response =   donacionService.consultarRoles(request,authentication);
-		
-		return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
-	}
-	
-	@PostMapping("/buscar-filtros")
-	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
-	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
-	@TimeLimiter(name = "msflujo")
-	public CompletableFuture<?> buscar(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
-		Response<?> response =   donacionService.buscarFiltrosRol(request,authentication);
-		
-		return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
-	}
 
 	@PostMapping("/detalle-nombre-contratante")
 	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@TimeLimiter(name = "msflujo")
-	public CompletableFuture<?> nombreContratante(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
-		Response<?> response =  donacionService.detalleNombreContratante(request,authentication);
+	public CompletableFuture<Object> nombreContratante(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
+		Response<?> response =  aceptacionDonacionService.detalleNombreContratante(request,authentication);
 		return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
 	
@@ -68,8 +51,8 @@ public class DonacionController {
 	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@TimeLimiter(name = "msflujo")
-	public CompletableFuture<?> nombreFinado(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
-		Response<?> response =  donacionService.detalleNombreFinado(request,authentication);
+	public CompletableFuture<Object> nombreFinado(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
+		Response<?> response =  aceptacionDonacionService.detalleNombreFinado(request,authentication);
 		return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
 	
@@ -77,35 +60,80 @@ public class DonacionController {
 	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@TimeLimiter(name = "msflujo")
-	public CompletableFuture<?> ataudDonado(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
-		Response<?> response =  donacionService.detalleAtaudDonado(request,authentication);
+	public CompletableFuture<Object> ataudDonado(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
+		Response<?> response =  aceptacionDonacionService.detalleAtaudDonado(request,authentication);
 		return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
 	
-	@PostMapping("/agregar")
+	@PostMapping("/detalle-contratante-rfc")
 	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@TimeLimiter(name = "msflujo")
-	public CompletableFuture<?> agregar(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
-		Response<?> response =  donacionService.agregarRol(request,authentication);
+	public CompletableFuture<Object> detalleContratanteRfc(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
+		Response<?> response =  salidaDonacionService.detalleContratanteRfc(request,authentication);
 		return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
 	
-	@PostMapping("/actualizar")
+	@PostMapping("/detalle-contratante-curp")
 	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@TimeLimiter(name = "msflujo")
-	public CompletableFuture<?> actualizar(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
-		Response<?> response =  donacionService.actualizarRol(request,authentication);
+	public CompletableFuture<Object> detalleContratanteCurp(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
+		Response<?> response =  salidaDonacionService.detalleContratanteCurp(request,authentication);
 		return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
 	
-	@PostMapping("/cambiar-estatus")
+	@PostMapping("/detalle-salida-ataud-donado")
 	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@TimeLimiter(name = "msflujo")
-	public CompletableFuture<?>  cambiarEstatusRol(@RequestBody DatosRequest request,Authentication authentication) throws IOException {		
-		Response<?> response = donacionService.cambiarEstatusRol(request,authentication);
+	public CompletableFuture<Object> detalleSalidaAtaudDonado(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
+		Response<?> response =  salidaDonacionService.detalleSalidaAtaudDonado(request,authentication);
+		return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
+	}
+	
+	@PostMapping("/count-salida-ataud-donado")
+	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@TimeLimiter(name = "msflujo")
+	public CompletableFuture<Object> countSalidaAtaudDonado(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
+		Response<?> response =  salidaDonacionService.countSalidaAtaudDonado(request,authentication);
+		return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
+	}
+	
+	@PostMapping("/agregar/donacion")
+	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@TimeLimiter(name = "msflujo")
+	public CompletableFuture<Object> agregar(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
+		Response<?> response =   aceptacionDonacionService.insertAtaudDonado(request,authentication);
+		return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
+	}
+	
+	@PostMapping("/agregar/salida/donacion")
+	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@TimeLimiter(name = "msflujo")
+	public CompletableFuture<Object> agregarSalidaDonacion(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
+		Response<?> response =   salidaDonacionService.insertSalidaAtaudDonado(request,authentication);
+		return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
+	}
+	
+	@PostMapping("/generar-documento-aceptacion-control")
+	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@TimeLimiter(name = "msflujo")
+	public CompletableFuture<Object>  generarDocumentoAceptacionControl(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
+		Response<?> response =  aceptacionDonacionService.generarDocumentoAceptacionControl(request, authentication);
+		return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
+	}
+	
+	@PostMapping("/generar-documento-control-salida-donacion")
+	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@TimeLimiter(name = "msflujo")
+	public CompletableFuture<Object>  generarDocumentoControlSalidaDonacion(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
+		Response<?> response =  salidaDonacionService.generarDocumentoControlSalidaDonacion(request, authentication);
 		return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
 	
@@ -114,21 +142,21 @@ public class DonacionController {
 	 * 
 	 * @return respuestas
 	 */
-	private CompletableFuture<?> fallbackGenerico(@RequestBody DatosRequest request, Authentication authentication,
+	CompletableFuture<Object> fallbackGenerico(@RequestBody DatosRequest request, Authentication authentication,
 			CallNotPermittedException e) {
 		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
 
-	private CompletableFuture<?> fallbackGenerico(@RequestBody DatosRequest request, Authentication authentication,
+	CompletableFuture<Object> fallbackGenerico(@RequestBody DatosRequest request, Authentication authentication,
 			RuntimeException e) {
 		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
 
-	private CompletableFuture<?> fallbackGenerico(@RequestBody DatosRequest request, Authentication authentication,
+	CompletableFuture<Object> fallbackGenerico(@RequestBody DatosRequest request, Authentication authentication,
 			NumberFormatException e) {
 		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
 		return CompletableFuture
