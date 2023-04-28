@@ -88,11 +88,8 @@ public class SalidaDonacion {
 		q.agregarParametroValues("NOM_PERSONA", "'" + donacionRequest.getNomPersona() + "'");
 		q.agregarParametroValues("NOM_PRIMER_APELLIDO", "'" + donacionRequest.getNomPersonaPaterno() + "'");
 		q.agregarParametroValues("NOM_SEGUNDO_APELLIDO", "'" + donacionRequest.getNomPersonaMaterno() + "'");
-		if (null != donacionRequest.getDesOtroSexo() ) {
-			q.agregarParametroValues("DES_OTRO_SEXO", "'" + donacionRequest.getDesOtroSexo() + "'");
-		} else {
-			q.agregarParametroValues("NUM_SEXO", String.valueOf(donacionRequest.getNumSexo()));
-		}
+		q.agregarParametroValues("NUM_SEXO", String.valueOf(donacionRequest.getNumSexo()));
+		q.agregarParametroValues("DES_OTRO_SEXO", "'" + donacionRequest.getDesOtroSexo() + "'");
 		q.agregarParametroValues("FEC_NAC",  "'" + donacionRequest.getFecNacimiento() + "'");
 		q.agregarParametroValues("ID_PAIS", String.valueOf(donacionRequest.getIdPais()));
 		q.agregarParametroValues("ID_ESTADO", String.valueOf(donacionRequest.getIdEstado()));
