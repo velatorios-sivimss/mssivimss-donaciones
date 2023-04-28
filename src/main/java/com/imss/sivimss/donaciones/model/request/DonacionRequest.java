@@ -41,7 +41,7 @@ public class DonacionRequest {
 	private Integer estudioSocieconomico;
 	@JsonProperty
 	private Integer estudioLibre;
-	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+	@JsonFormat(pattern="yyyy-MM-dd")
 	private String fecSolicitad;
 	@JsonProperty
 	private Integer idOrdenServicio;
@@ -71,7 +71,7 @@ public class DonacionRequest {
 	private Integer numSexo;
 	@JsonProperty
 	private String desOtroSexo;
-	@JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+	@JsonFormat(pattern="yyyy-MM-dd")
 	private String  fecNacimiento;
 	@JsonProperty
 	Set<AgregarArticuloRequest> ataudesDonados = new HashSet<>();

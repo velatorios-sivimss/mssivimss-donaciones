@@ -2,6 +2,7 @@ package com.imss.sivimss.donaciones.controller;
 
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Level;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,9 +13,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+
 import com.imss.sivimss.donaciones.service.AceptacionDonacionService;
 import com.imss.sivimss.donaciones.service.SalidaDonacionService;
 import com.imss.sivimss.donaciones.util.DatosRequest;
+import com.imss.sivimss.donaciones.util.LogUtil;
 import com.imss.sivimss.donaciones.util.ProviderServiceRestTemplate;
 import com.imss.sivimss.donaciones.util.Response;
 
@@ -28,7 +31,7 @@ import lombok.AllArgsConstructor;
 @RestController
 @RequestMapping("/donaciones")
 public class DonacionController {
-	
+
 	@Autowired
 	private SalidaDonacionService salidaDonacionService;
 	
@@ -37,6 +40,12 @@ public class DonacionController {
 	
 	@Autowired
 	private ProviderServiceRestTemplate providerRestTemplate;
+	
+	@Autowired
+	private LogUtil logUtil;
+
+	private static final String RESILENCIA = " Resilencia  ";
+	private static final String CONSULTA = "consulta";
 
 	@PostMapping("/detalle-nombre-contratante")
 	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
@@ -141,24 +150,28 @@ public class DonacionController {
 	 * fallbacks generico
 	 * 
 	 * @return respuestas
+	 * @throws IOException 
 	 */
 	CompletableFuture<Object> fallbackGenerico(@RequestBody DatosRequest request, Authentication authentication,
-			CallNotPermittedException e) {
+			CallNotPermittedException e) throws IOException {
 		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
+		logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString(),RESILENCIA, CONSULTA,authentication);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
 
 	CompletableFuture<Object> fallbackGenerico(@RequestBody DatosRequest request, Authentication authentication,
-			RuntimeException e) {
+			RuntimeException e) throws IOException {
 		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
+		logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString(),RESILENCIA, CONSULTA,authentication);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
 
 	CompletableFuture<Object> fallbackGenerico(@RequestBody DatosRequest request, Authentication authentication,
-			NumberFormatException e) {
+			NumberFormatException e) throws IOException {
 		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
+		logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString(),RESILENCIA, CONSULTA,authentication);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
