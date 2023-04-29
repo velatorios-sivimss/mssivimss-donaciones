@@ -34,6 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class SalidaDonacionServiceImpl implements SalidaDonacionService {
 	
+	
 	private static final String ERROR_AL_DESCARGAR_DOCUMENTO= "64"; // Error en la descarga del documento.Intenta nuevamente.
 	private static final String ERROR_AL_EJECUTAR_EL_QUERY = "Error al ejecutar el query ";
 	private static final String FALLO_AL_EJECUTAR_EL_QUERY = "Fallo al ejecutar el query: ";
@@ -44,6 +45,7 @@ public class SalidaDonacionServiceImpl implements SalidaDonacionService {
 	private static final String R_F_C_NO_VALIDO = "33"; // R.F.C. no valido.
 	private static final String SIN_INFORMACION = "45";  // No se encontró información relacionada a tu búsqueda.
 	private static final String CURP_NO_VALIDO = "34"; // CURP no valido.
+	private static final String NOM_PERSONA = "nomPersona";
 	private static final String CONSULTA = "consulta";
 	private static final String ALTA = "alta";
 
@@ -89,11 +91,20 @@ public class SalidaDonacionServiceImpl implements SalidaDonacionService {
 				}
 				
 				Response<Object> response = providerRestTemplate.consumirServicioObject(new SalidaDonacion().detalleContratanteRfc(request,donacionRequest).getDatos(), urlConsulta, authentication);
-				
-				if (!response.getDatos().toString().contains("nomPersona")) {
+
+				if(response.getCodigo() == 200 && response.getDatos().toString().contains(NOM_PERSONA)) {
+					response.setMensaje("interno");
+					return response;
+				} else if (response.getCodigo() == 200 && !response.getDatos().toString().contains(NOM_PERSONA)) {
 					response = providerRestTemplate.consumirServicioObject(urlRfc.concat(donacionRequest.getRfc()), 0);
-				}
-				return MensajeResponseUtil.mensajeConsultaResponseObject(response,R_F_C_NO_VALIDO);
+					if(response.getCodigo() == 200 && response.getDatos().toString().toLowerCase().contains("ACTIVO".toLowerCase())) {
+						response.setMensaje("externo");
+						return response;
+					} else {
+						return MensajeResponseUtil.mensajeConsultaResponseObject(response,R_F_C_NO_VALIDO);
+					}
+				} 
+				return MensajeResponseUtil.mensajeConsultaResponseObject(response,"5");
 	    } catch (Exception e) {
 	        String consulta = new SalidaDonacion().detalleSalidaAtaudDonado(request).getDatos().get(AppConstantes.QUERY).toString();
 	        String decoded = new String(DatatypeConverter.parseBase64Binary(consulta));
@@ -101,6 +112,7 @@ public class SalidaDonacionServiceImpl implements SalidaDonacionService {
 	        logUtil.crearArchivoLog(Level.SEVERE.toString(), this.getClass().getSimpleName(), this.getClass().getPackage().toString(), FALLO_AL_EJECUTAR_EL_QUERY + decoded, CONSULTA, authentication);
 	        throw new IOException(ERROR_INFORMACION, e.getCause());
 	    }
+		
 	}
 	
 	@Override
@@ -115,11 +127,19 @@ public class SalidaDonacionServiceImpl implements SalidaDonacionService {
 				
 				Response<Object> response = providerRestTemplate.consumirServicioObject(new SalidaDonacion().detalleContratanteCurp(request,donacionRequest).getDatos(),urlConsulta, authentication);
 				
-				if (!response.getDatos().toString().contains("nomPersona")) {
+				if(response.getCodigo() == 200 && response.getDatos().toString().contains(NOM_PERSONA)) {
+					response.setMensaje("interno");
+					return response;
+				} else if (response.getCodigo() == 200 && !response.getDatos().toString().contains(NOM_PERSONA)) {
 					response = providerRestTemplate.consumirServicioObject(urlCurp.concat(donacionRequest.getCurp()), 1);
-				}
-		
-				return MensajeResponseUtil.mensajeConsultaResponseObject(response,CURP_NO_VALIDO);
+					if(response.getCodigo() == 200 && !response.getDatos().toString().toLowerCase().contains("LA CURP NO SE ENCUENTRA EN LA BASE DE DATOS".toLowerCase())) {
+						response.setMensaje("externo");
+						return response;
+					} else {
+						return MensajeResponseUtil.mensajeConsultaResponseObject(response,CURP_NO_VALIDO);
+					}
+				} 
+				return MensajeResponseUtil.mensajeConsultaResponseObject(response,"5");
 	    } catch (Exception e) {
 	        String consulta = new SalidaDonacion().detalleSalidaAtaudDonado(request).getDatos().get(AppConstantes.QUERY).toString();
 	        String decoded = new String(DatatypeConverter.parseBase64Binary(consulta));
