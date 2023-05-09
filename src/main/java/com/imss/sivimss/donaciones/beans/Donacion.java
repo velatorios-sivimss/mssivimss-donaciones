@@ -131,7 +131,7 @@ public class Donacion {
 		Map<String, Object> envioDatos = new HashMap<>();
 		
 		envioDatos.put("version", plantillaAceptacionControlRequest.getVersion());
-		envioDatos.put("ooad", plantillaAceptacionControlRequest.getOoadId());
+		envioDatos.put("ooadNom", plantillaAceptacionControlRequest.getOoadNom());
 		envioDatos.put("velatorio", plantillaAceptacionControlRequest.getVelatorioId());
 		envioDatos.put("numContrato", plantillaAceptacionControlRequest.getNumContrato());
 		envioDatos.put("nomFinado", plantillaAceptacionControlRequest.getNomFinado());
