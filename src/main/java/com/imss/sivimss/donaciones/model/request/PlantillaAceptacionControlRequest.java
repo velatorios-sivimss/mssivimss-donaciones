@@ -16,6 +16,12 @@ public class PlantillaAceptacionControlRequest {
 	@JsonProperty
 	private String numContrato;
 	@JsonProperty
+	private String modeloAtaud;
+	@JsonProperty
+	private String tipoAtaud;
+	@JsonProperty
+	private String numInventarios;
+	@JsonProperty
 	private String nomFinado;
 	@JsonProperty
 	private String nomResponsableAlmacen;

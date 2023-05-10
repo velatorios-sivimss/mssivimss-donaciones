@@ -134,6 +134,9 @@ public class Donacion {
 		envioDatos.put("ooadNom", plantillaAceptacionControlRequest.getOoadNom());
 		envioDatos.put("velatorio", plantillaAceptacionControlRequest.getVelatorioId());
 		envioDatos.put("numContrato", plantillaAceptacionControlRequest.getNumContrato());
+		envioDatos.put("tipoAtaud", plantillaAceptacionControlRequest.getTipoAtaud());
+		envioDatos.put("modeloAtaud", plantillaAceptacionControlRequest.getModeloAtaud());
+		envioDatos.put("numInventarios", plantillaAceptacionControlRequest.getNumInventarios());
 		envioDatos.put("nomFinado", plantillaAceptacionControlRequest.getNomFinado());
 		envioDatos.put(RESPONSABLE_ALMACEN, plantillaAceptacionControlRequest.getNomResponsableAlmacen());
 		envioDatos.put("contratante", plantillaAceptacionControlRequest.getNomContratante());
