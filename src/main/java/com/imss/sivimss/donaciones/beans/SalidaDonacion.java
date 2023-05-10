@@ -54,7 +54,8 @@ public class SalidaDonacion {
 	
 	public DatosRequest detalleSalidaAtaudDonado(DatosRequest request) {
 		StringBuilder query = new StringBuilder(
-				"  SELECT DISTINCT S.FOLIO_ARTICULO AS folioArticulo,  A.ID_ARTICULO AS idArticulo, TM.DES_TIPO_MATERIAL AS desTipoMaterial, A.DES_MODELO_ARTICULO AS desModeloArticulo "
+				"  SELECT DISTINCT S.FOLIO_ARTICULO AS folioArticulo,  A.ID_ARTICULO AS idArticulo, TM.DES_TIPO_MATERIAL AS desTipoMaterial,  "
+				        .concat(" CONCAT_WS('-',S.FOLIO_ARTICULO,A.DES_MODELO_ARTICULO ) AS  desModeloArticulo ")
 						.concat(" FROM SVT_INVENTARIO_ARTICULO S  INNER JOIN SVT_ARTICULO A ON S.ID_ARTICULO = A.ID_ARTICULO AND S.ID_TIPO_ASIGNACION_ART = 3 AND A.IND_ACTIVO = 1  ")
 						.concat(" INNER JOIN SVC_CATEGORIA_ARTICULO CA ON A.ID_CATEGORIA_ARTICULO = CA.ID_CATEGORIA_ARTICULO  ")
 						.concat("  AND A.ID_CATEGORIA_ARTICULO = 1 INNER JOIN SVC_TIPO_ARTICULO TA ON A.ID_TIPO_ARTICULO = TA.ID_TIPO_ARTICULO ")
