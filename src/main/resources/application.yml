@@ -40,7 +40,7 @@ endpoints:
    dominio-crear-multiples-Niveles: http://localhost:8094/mssivimss-mod-catalogos/v1/generico/insertar/multiplesNiveles
    dominio-actualizar-multiples: http://localhost:8094/mssivimss-mod-catalogos/v1/generico/actualizar/multiples
    dominio-insercion-salida-donacion: http://localhost:8094/mssivimss-mod-catalogos/v1/generico/insercion/salida/donacion   
-   ms-reportes: http://localhost:8088/mssivimss-reportes-jpr/generales/generar-reporte
+   ms-reportes: http://localhost:8088//mssivimss-reportes-jasp/v1/generales/generar-reporte
    ms-rfc: http://serviciosdigitalesinterno-stage.imss.gob.mx/serviciosDigitales-rest/v1/externos/sat/rfc/
    ms-curp: http://serviciosdigitalesinterno-stage.imss.gob.mx/serviciosDigitales-rest/v1/externos/renapo/curp/
    pdf-reporteDonados: reportes/generales/ReporteConsultaDonados.jrxml
