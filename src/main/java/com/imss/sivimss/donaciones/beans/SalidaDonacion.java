@@ -34,8 +34,8 @@ public class SalidaDonacion {
 			.concat(" P.NOM_PERSONA AS nomPersona, P.NOM_PRIMER_APELLIDO AS nomPersonaPaterno, ")
 			.concat(" P.NOM_SEGUNDO_APELLIDO AS nomPersonaMaterno, P.NUM_SEXO AS numSexo, P.DES_OTRO_SEXO AS desOtroSexo, P.FEC_NAC AS fecNac, P.ID_PAIS AS idPais,  ")
 			.concat(" P.ID_ESTADO AS idEstado, P.DES_TELEFONO AS desTelefono, P.DES_CORREO AS desCorreo, P.TIPO_PERSONA AS tipoPersona, C.ID_CONTRATANTE AS idContratante, ")
-			.concat(" C.CVE_MATRICULA AS claveMatricula, D.DES_CALLE AS desCalle, D.NUM_EXTERIOR AS numExterior, D.NUM_INTERIOR AS numInterior, D.ID_CP AS idCodigoPostal, ")
-			.concat(" D.DES_COLONIA AS desColonia FROM SIVIBDDS.SVC_PERSONA P INNER JOIN SIVIBDDS.SVC_CONTRATANTE C ON P.ID_PERSONA = C.ID_PERSONA ")
+			.concat(" C.CVE_MATRICULA AS claveMatricula, D.DES_CALLE AS desCalle, D.NUM_EXTERIOR AS numExterior, D.NUM_INTERIOR AS numInterior, D.DES_CP AS DesCodigoPostal, ")
+			.concat(" D.DES_COLONIA AS desColonia, D.DES_MUNICIPIO AS desMunicipio,  D.DES_ESTADO AS desEstado FROM SIVIBDDS.SVC_PERSONA P INNER JOIN SIVIBDDS.SVC_CONTRATANTE C ON P.ID_PERSONA = C.ID_PERSONA ")
 	        .concat(" INNER JOIN SVT_DOMICILIO D on C.ID_DOMICILIO = D.ID_DOMICILIO ");
 	
 	public DatosRequest detalleContratanteRfc(DatosRequest request, DonacionRequest donacionRequest) {
