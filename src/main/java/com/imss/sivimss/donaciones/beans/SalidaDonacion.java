@@ -122,8 +122,10 @@ public class SalidaDonacion {
 		q.agregarParametroValues("DES_CALLE", "'" + donacionRequest.getDesCalle() + "'");
 		q.agregarParametroValues("NUM_EXTERIOR", "'" + donacionRequest.getNumExterior() + "'");
 		q.agregarParametroValues("NUM_INTERIOR", "'" + donacionRequest.getNumInterior() + "'");
-		q.agregarParametroValues("ID_CP", String.valueOf(donacionRequest.getIdCodigoPostal()));
+		q.agregarParametroValues("DES_CP", String.valueOf(donacionRequest.getDesCodigoPostal()));
 		q.agregarParametroValues("DES_COLONIA", "'" + donacionRequest.getDesColonia() + "'");
+		q.agregarParametroValues("DES_MUNICIPIO", "'" + donacionRequest.getDesMunicipio()+ "'");
+		q.agregarParametroValues("DES_ESTADO", "'" + donacionRequest.getDesEstado() + "'");
 		q.agregarParametroValues(ID_USUARIO_ALTA, String.valueOf(usuarioDto.getIdUsuario()));
 		q.agregarParametroValues(FEC_ALTA, CURRENT_TIMESTAMP);
         

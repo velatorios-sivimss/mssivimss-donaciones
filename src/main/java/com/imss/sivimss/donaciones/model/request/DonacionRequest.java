@@ -52,7 +52,7 @@ public class DonacionRequest {
 	@JsonProperty
 	private String claveMatricula;
 	@JsonProperty
-	private Integer idCodigoPostal;
+	private Integer desCodigoPostal;
 	@JsonProperty
 	private String desCalle;
 	@JsonProperty
@@ -61,6 +61,10 @@ public class DonacionRequest {
 	private String numInterior;
 	@JsonProperty
 	private String desColonia;
+	@JsonProperty
+	private String desMunicipio;
+	@JsonProperty
+	private String desEstado;
 	@JsonProperty
 	private String desTelefono;
 	@JsonProperty
