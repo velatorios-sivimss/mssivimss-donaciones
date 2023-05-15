@@ -32,6 +32,8 @@ logos:
 endpoints:
    consulta-ooads: http://localhost:8090/dominio/
    paginado-unidad: http://localhost:8090/dominio/ooad/paginacion
+   mod-catalogos: http://localhost:8280/mssivimss-mod-catalogos/v1/generico
+  # mod-catalogos: http://sivimss-ds.apps.ocp.imss.gob.mx/mssivimss-mod-catalogos/v1/generico
    dominio-consulta: http://localhost:8094/mssivimss-mod-catalogos/generico/consulta
    dominio-consulta-paginado: http://localhost:8094/mssivimss-mod-catalogos/generico/paginado
    dominio-crear: http://localhost:8094/mssivimss-mod-catalogos/generico/crear
@@ -78,3 +80,5 @@ resilience4j.timelimiter:
         
 formato_fecha: '%d/%m/%Y'
 
+
+ruta-log: 'C:/Users/opimentel/Documents/logs/Donaciones/'
