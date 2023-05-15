@@ -10,13 +10,13 @@ import lombok.Data;
 @Data
 public class InsertMultiNivelRequest {
 
-	 @JsonProperty
-	 private List<String> unoAuno = new ArrayList<>();
-	 
-	 @JsonProperty
-	 private List<String> unoAn = new ArrayList<>();
-	 
-	 @JsonProperty
-	 private String id;
-	
+	@JsonProperty
+	private List<String> unoAuno = new ArrayList<>();
+
+	@JsonProperty
+	private List<String> unoAn = new ArrayList<>();
+
+	@JsonProperty
+	private String id;
+
 }

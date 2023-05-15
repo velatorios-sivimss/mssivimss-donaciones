@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Data
 public class ActualizarMultiRequest {
-	
+
 	@JsonProperty
-	 private List<String> updates = new ArrayList<>();
+	private List<String> updates = new ArrayList<>();
 }

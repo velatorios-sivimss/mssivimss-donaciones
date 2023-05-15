@@ -6,11 +6,11 @@ import lombok.Data;
 
 @Data
 public class AgregarFinadoRequest {
-    @JsonProperty
+	@JsonProperty
 	private String nomFinado;
-    @JsonProperty
+	@JsonProperty
 	private String nomFinadoPaterno;
-    @JsonProperty
+	@JsonProperty
 	private String nomFinadoMaterno;
 
 }

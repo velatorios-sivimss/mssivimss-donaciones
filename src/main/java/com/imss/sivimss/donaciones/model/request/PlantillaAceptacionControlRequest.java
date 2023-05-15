@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 public class PlantillaAceptacionControlRequest {
-	
+
 	@JsonProperty
 	private Double version;
 	@JsonProperty

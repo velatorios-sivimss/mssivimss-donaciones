@@ -15,7 +15,7 @@ import lombok.Setter;
 @Getter
 @JsonIgnoreType(value = true)
 public class FinadoRequest {
-	
+
 	private Integer idSalidaDonacion;
 	private String nomFinado;
 	private String nomFinadoPaterno;

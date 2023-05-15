@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 public class PlantillaControlSalidaDonacionRequest {
-	
+
 	@JsonProperty
 	private Double version;
 	@JsonProperty

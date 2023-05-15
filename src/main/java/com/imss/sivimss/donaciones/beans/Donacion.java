@@ -12,24 +12,11 @@ import com.imss.sivimss.donaciones.model.request.DonacionRequest;
 import com.imss.sivimss.donaciones.model.request.PlantillaAceptacionControlRequest;
 import com.imss.sivimss.donaciones.model.request.UsuarioDto;
 import com.imss.sivimss.donaciones.util.AppConstantes;
+import com.imss.sivimss.donaciones.util.ConsultaConstantes;
 import com.imss.sivimss.donaciones.util.DatosRequest;
 import com.imss.sivimss.donaciones.util.QueryHelper;
 
 public class Donacion {
-	
-	private static final String RESPONSABLE_ALMACEN = "responsableAlmacen";
-	
-	private static final String ID_USUARIO_MODIFICA = "ID_USUARIO_MODIFICA";
-	private static final String CURRENT_TIMESTAMP = "CURRENT_TIMESTAMP()";
-	private static final String FEC_ACTUALIZACION = "FEC_ACTUALIZACION";
-	private static final String AND_CVE_ESTATUS = "' AND OS.ID_ESTATUS_ORDEN_SERVICIO = ";
-	private static final String ID_USUARIO_ALTA = "ID_USUARIO_ALTA";
-	private static final String ID_ARTICULO = "ID_ARTICULO";
-	private static final String TIPO_REPORTE = "tipoReporte";
-	private static final String SEPARADOR = "separador";
-	private static final String REPLACE = "replace";
-	private static final String ID_TABLA = "idTabla";
-	private static final String FEC_ALTA = "FEC_ALTA";
 
 	public DatosRequest detalleNombreContratante(DatosRequest request, DonacionRequest donacionRequest) {
 		StringBuilder query = new StringBuilder(
@@ -37,7 +24,7 @@ public class Donacion {
 						.concat(" FROM SVC_ORDEN_SERVICIO OS INNER JOIN SVC_CONTRATANTE C ON OS.ID_CONTRATANTE = C.ID_CONTRATANTE ")
 						.concat(" INNER JOIN SVC_PERSONA P ON P.ID_PERSONA = C.ID_PERSONA ")
 						.concat("WHERE OS.CVE_FOLIO = '").concat(donacionRequest.getClaveFolio())
-						.concat(AND_CVE_ESTATUS) + donacionRequest.getEstatusOrdenServicio());
+						.concat(ConsultaConstantes.AND_CVE_ESTATUS) + donacionRequest.getEstatusOrdenServicio());
 		String encoded = DatatypeConverter.printBase64Binary(query.toString().getBytes());
 		request.getDatos().put(AppConstantes.QUERY, encoded);
 		return request;
@@ -49,7 +36,7 @@ public class Donacion {
 						.concat(" FROM SVC_ORDEN_SERVICIO OS INNER JOIN SVC_FINADO F ON OS.ID_ORDEN_SERVICIO = F.ID_ORDEN_SERVICIO ")
 						.concat(" INNER JOIN SVC_PERSONA P ON F.ID_PERSONA = P.ID_PERSONA ")
 						.concat("WHERE OS.CVE_FOLIO = '").concat(donacionRequest.getClaveFolio())
-						.concat(AND_CVE_ESTATUS) + donacionRequest.getEstatusOrdenServicio());
+						.concat(ConsultaConstantes.AND_CVE_ESTATUS) + donacionRequest.getEstatusOrdenServicio());
 		String encoded = DatatypeConverter.printBase64Binary(query.toString().getBytes());
 		request.getDatos().put(AppConstantes.QUERY, encoded);
 		return request;
@@ -67,7 +54,7 @@ public class Donacion {
 						.concat(" AND A.ID_CATEGORIA_ARTICULO = 1 AND A.ID_TIPO_ARTICULO = 1 ")
 						.concat(" INNER JOIN SVC_TIPO_MATERIAL TM ON A.ID_TIPO_MATERIAL = TM.ID_TIPO_MATERIAL  ")
 						.concat(" WHERE OS.CVE_FOLIO = '").concat(donacionRequest.getClaveFolio())
-						.concat(AND_CVE_ESTATUS) + donacionRequest.getEstatusOrdenServicio());
+						.concat(ConsultaConstantes.AND_CVE_ESTATUS) + donacionRequest.getEstatusOrdenServicio());
 		String encoded = DatatypeConverter.printBase64Binary(query.toString().getBytes());
 		request.getDatos().put(AppConstantes.QUERY, encoded);
 		return request;
@@ -82,14 +69,14 @@ public class Donacion {
 		q.agregarParametroValues("NUM_TOTAL_ATAUDES", String.valueOf(donacionRequest.getNumTotalAtaudes()));
 		q.agregarParametroValues("DES_RESPONSABLE_ALMACEN", "'" + donacionRequest.getResponsableAlmacen() + "'");
 		q.agregarParametroValues("DES_MATRICULA_ALMACEN", "'" + donacionRequest.getMatricularesponsable() + "'");
-		q.agregarParametroValues(ID_USUARIO_ALTA, String.valueOf(usuarioDto.getIdUsuario()));
-		q.agregarParametroValues(FEC_ALTA, CURRENT_TIMESTAMP);
+		q.agregarParametroValues(ConsultaConstantes.ID_USUARIO_ALTA, String.valueOf(usuarioDto.getIdUsuario()));
+		q.agregarParametroValues(ConsultaConstantes.FEC_ALTA, ConsultaConstantes.CURRENT_TIMESTAMP);
 
 		String query = q.obtenerQueryInsertar() + insertAtaudDonado(donacionRequest, usuarioDto);
 		String encoded = DatatypeConverter.printBase64Binary(query.getBytes());
 		parametro.put(AppConstantes.QUERY, encoded);
-		parametro.put(SEPARADOR, "$$");
-		parametro.put(REPLACE, ID_TABLA);
+		parametro.put(ConsultaConstantes.SEPARADOR, "$$");
+		parametro.put(ConsultaConstantes.REPLACE, ConsultaConstantes.ID_TABLA);
 
 		request.setDatos(parametro);
 
@@ -100,10 +87,10 @@ public class Donacion {
 		StringBuilder query = new StringBuilder();
 		donacionRequest.getAtaudesDonados().forEach(agregarArticuloRequest -> {
 			final QueryHelper q = new QueryHelper("INSERT INTO SVC_ATAUDES_DONADOS");
-			q.agregarParametroValues("ID_DONACION", ID_TABLA);
-			q.agregarParametroValues(ID_ARTICULO, String.valueOf(agregarArticuloRequest.getIdArticulo()));
-			q.agregarParametroValues(ID_USUARIO_ALTA, String.valueOf(usuarioDto.getIdUsuario()));
-			q.agregarParametroValues(FEC_ALTA, CURRENT_TIMESTAMP);
+			q.agregarParametroValues("ID_DONACION",ConsultaConstantes. ID_TABLA);
+			q.agregarParametroValues(ConsultaConstantes.ID_ARTICULO, String.valueOf(agregarArticuloRequest.getIdArticulo()));
+			q.agregarParametroValues(ConsultaConstantes.ID_USUARIO_ALTA, String.valueOf(usuarioDto.getIdUsuario()));
+			q.agregarParametroValues(ConsultaConstantes.FEC_ALTA, ConsultaConstantes.CURRENT_TIMESTAMP);
 			query.append("$$").append(q.obtenerQueryInsertar());
 		});
 		
@@ -116,8 +103,8 @@ public class Donacion {
         donacionRequest.getAtaudesDonados().forEach(agregarArticuloRequest -> {
         	final QueryHelper q = new QueryHelper("UPDATE SVT_INVENTARIO_ARTICULO " );
         	q.agregarParametroValues("ID_TIPO_ASIGNACION_ART",  String.valueOf(3));
-        	q.agregarParametroValues(ID_USUARIO_MODIFICA, String.valueOf(usuarioDto.getIdUsuario()));
-    		q.agregarParametroValues(FEC_ACTUALIZACION, CURRENT_TIMESTAMP);
+        	q.agregarParametroValues(ConsultaConstantes.ID_USUARIO_MODIFICA, String.valueOf(usuarioDto.getIdUsuario()));
+    		q.agregarParametroValues(ConsultaConstantes.FEC_ACTUALIZACION, ConsultaConstantes.CURRENT_TIMESTAMP);
         	q.addWhere(" ID_ARTICULO = " + agregarArticuloRequest.getIdArticulo() + " AND FOLIO_ARTICULO = '" + agregarArticuloRequest.getFolioArticulo().concat("'"));
         	updates.add(DatatypeConverter.printBase64Binary(q.obtenerQueryActualizar().getBytes()));
         });
@@ -138,14 +125,14 @@ public class Donacion {
 		envioDatos.put("modeloAtaud", plantillaAceptacionControlRequest.getModeloAtaud());
 		envioDatos.put("numInventarios", plantillaAceptacionControlRequest.getNumInventarios());
 		envioDatos.put("nomFinado", plantillaAceptacionControlRequest.getNomFinado());
-		envioDatos.put(RESPONSABLE_ALMACEN, plantillaAceptacionControlRequest.getNomResponsableAlmacen());
+		envioDatos.put(ConsultaConstantes.RESPONSABLE_ALMACEN, plantillaAceptacionControlRequest.getNomResponsableAlmacen());
 		envioDatos.put("contratante", plantillaAceptacionControlRequest.getNomContratante());
 		envioDatos.put("administrador", plantillaAceptacionControlRequest.getNomAdministrador());
 		envioDatos.put("lugar", plantillaAceptacionControlRequest.getLugar());
 		envioDatos.put("dia", plantillaAceptacionControlRequest.getDia());
 		envioDatos.put("mes", plantillaAceptacionControlRequest.getMes());
 		envioDatos.put("anio", plantillaAceptacionControlRequest.getAnio());
-		envioDatos.put(TIPO_REPORTE, plantillaAceptacionControlRequest.getTipoReporte());
+		envioDatos.put(ConsultaConstantes.TIPO_REPORTE, plantillaAceptacionControlRequest.getTipoReporte());
 		envioDatos.put("rutaNombreReporte", nombrePdfAceptacionControl);
 
 		return envioDatos;

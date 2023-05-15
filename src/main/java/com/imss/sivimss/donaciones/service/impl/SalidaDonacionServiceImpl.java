@@ -160,7 +160,7 @@ public class SalidaDonacionServiceImpl implements SalidaDonacionService {
 	}
 	
 	@Override
-	public Response<?> countSalidaAtaudDonado(DatosRequest request, Authentication authentication) throws IOException  {
+	public Response<?> cantidadSalidaAtaudDonado(DatosRequest request, Authentication authentication) throws IOException  {
 		AgregarArticuloRequest agregarArticuloRequest = new Gson().fromJson(String.valueOf(request.getDatos().get(AppConstantes.DATOS)), AgregarArticuloRequest.class);
 		try {
 					logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString()," count salida ataud donado ", CONSULTA,authentication);

@@ -32,6 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class AceptacionDonacionServiceImpl implements AceptacionDonacionService {
 	
+	
 	private static final String ERROR_AL_DESCARGAR_DOCUMENTO= "64"; // Error en la descarga del documento.Intenta nuevamente.
 	private static final String ERROR_AL_EJECUTAR_EL_QUERY = "Error al ejecutar el query ";
 	private static final String FALLO_AL_EJECUTAR_EL_QUERY = "Fallo al ejecutar el query: ";
@@ -40,6 +41,7 @@ public class AceptacionDonacionServiceImpl implements AceptacionDonacionService 
 	private static final String ATAUD_REGISTRADO = "114"; // El ataúd ya fue registrado como donado exitosamente.
 	private static final String SIN_INFORMACION = "45";  // No se encontró información relacionada a tu búsqueda.
 	private static final String ERROR_INFORMACION = "52";  // Error al consultar la información.
+	private static final String CONSULTA_GENERICA = "/consulta";
 	private static final String CONSULTA = "consulta";
 	private static final String ALTA = "alta";
 	
@@ -69,7 +71,7 @@ public class AceptacionDonacionServiceImpl implements AceptacionDonacionService 
 					throw new BadRequestException(HttpStatus.BAD_REQUEST, INFORMACION_INCOMPLETA);
 				}
 		
-				return MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(new Donacion().detalleNombreContratante(request, donacionRequest).getDatos(), urlModCatalogos.concat("/consulta"), authentication),
+				return MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(new Donacion().detalleNombreContratante(request, donacionRequest).getDatos(), urlModCatalogos.concat(CONSULTA_GENERICA), authentication),
 						NUMERO_FOLIO_NO_EXISTE);
 		
         } catch (Exception e) {
@@ -91,7 +93,7 @@ public class AceptacionDonacionServiceImpl implements AceptacionDonacionService 
 					throw new BadRequestException(HttpStatus.BAD_REQUEST, INFORMACION_INCOMPLETA);
 				}
 		
-				return MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(new Donacion().detalleNombreFinado(request, donacionRequest).getDatos(),urlModCatalogos.concat("/consulta"), authentication),
+				return MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(new Donacion().detalleNombreFinado(request, donacionRequest).getDatos(),urlModCatalogos.concat(CONSULTA_GENERICA), authentication),
 						NUMERO_FOLIO_NO_EXISTE);
 		
         } catch (Exception e) {
@@ -113,7 +115,7 @@ public class AceptacionDonacionServiceImpl implements AceptacionDonacionService 
 					throw new BadRequestException(HttpStatus.BAD_REQUEST, INFORMACION_INCOMPLETA);
 				}
 		
-				return MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(new Donacion().detalleAtaudDonado(request,donacionRequest).getDatos(),urlModCatalogos.concat("/consulta"), authentication),
+				return MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(new Donacion().detalleAtaudDonado(request,donacionRequest).getDatos(),urlModCatalogos.concat(CONSULTA_GENERICA), authentication),
 						SIN_INFORMACION);
 		
         } catch (Exception e) {
