@@ -48,15 +48,9 @@ public class SalidaDonacionServiceImpl implements SalidaDonacionService {
 	private static final String NOM_PERSONA = "nomPersona";
 	private static final String CONSULTA = "consulta";
 	private static final String ALTA = "alta";
-
-	@Value("${endpoints.dominio-consulta}")
-	private String urlConsulta;
 	
-	@Value("${endpoints.dominio-insercion-salida-donacion}")
-	private String urlInsercionSalidaDonacion;
-	
-	@Value("${endpoints.dominio-actualizar-multiples}")
-	private String urlActualizarMultiple;
+	@Value("${endpoints.mod-catalogos}")
+	private String urlModCatalogos;
 
 	@Value("${formato_fecha}")
 	private String formatoFecha;
@@ -90,7 +84,7 @@ public class SalidaDonacionServiceImpl implements SalidaDonacionService {
 					throw new BadRequestException(HttpStatus.BAD_REQUEST, INFORMACION_INCOMPLETA);
 				}
 				
-				Response<Object> response = providerRestTemplate.consumirServicioObject(new SalidaDonacion().detalleContratanteRfc(request,donacionRequest).getDatos(), urlConsulta, authentication);
+				Response<Object> response = providerRestTemplate.consumirServicioObject(new SalidaDonacion().detalleContratanteRfc(request,donacionRequest).getDatos(), urlModCatalogos.concat("/consulta"), authentication);
 
 				if(response.getCodigo() == 200 && response.getDatos().toString().contains(NOM_PERSONA)) {
 					response.setMensaje("interno");
@@ -125,7 +119,7 @@ public class SalidaDonacionServiceImpl implements SalidaDonacionService {
 					throw new BadRequestException(HttpStatus.BAD_REQUEST, INFORMACION_INCOMPLETA);
 				}
 				
-				Response<Object> response = providerRestTemplate.consumirServicioObject(new SalidaDonacion().detalleContratanteCurp(request,donacionRequest).getDatos(),urlConsulta, authentication);
+				Response<Object> response = providerRestTemplate.consumirServicioObject(new SalidaDonacion().detalleContratanteCurp(request,donacionRequest).getDatos(),urlModCatalogos.concat("/consulta"), authentication);
 				
 				if(response.getCodigo() == 200 && response.getDatos().toString().contains(NOM_PERSONA)) {
 					response.setMensaje("interno");
@@ -154,7 +148,7 @@ public class SalidaDonacionServiceImpl implements SalidaDonacionService {
 		try {
 				logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString()," detalle salida ataud donado ", CONSULTA,authentication);
 				return MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(new SalidaDonacion().detalleSalidaAtaudDonado(request).getDatos(),
-							urlConsulta, authentication),
+						urlModCatalogos.concat("/consulta"), authentication),
 					SIN_INFORMACION);
 	    } catch (Exception e) {
 	        String consulta = new SalidaDonacion().detalleSalidaAtaudDonado(request).getDatos().get(AppConstantes.QUERY).toString();
@@ -176,7 +170,7 @@ public class SalidaDonacionServiceImpl implements SalidaDonacionService {
 					}
 					
 					Response<?> respuestaGenerado = providerRestTemplate.consumirServicio(new SalidaDonacion().countSalidaAtaudDonado(request, agregarArticuloRequest).getDatos(),
-							urlConsulta, authentication);
+							urlModCatalogos.concat("/consulta"), authentication);
 					if(respuestaGenerado.getCodigo() == 200 &&  (respuestaGenerado.getDatos().toString().contains("0"))) {
 						return MensajeResponseUtil.mensajeConsultaResponse(respuestaGenerado, YA_NO_HAY_STOCK);
 					}
@@ -197,9 +191,9 @@ public class SalidaDonacionServiceImpl implements SalidaDonacionService {
 		try {
 					logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString()," insert salida ataud donado ", ALTA,authentication);
 					
-					Response<?> response = providerRestTemplate.consumirServicio(new SalidaDonacion().insertPersona(donacionRequest, usuarioDto),urlInsercionSalidaDonacion,authentication);
+					Response<?> response = providerRestTemplate.consumirServicio(new SalidaDonacion().insertPersona(donacionRequest, usuarioDto),urlModCatalogos.concat("/insercion/salida/donacion"),authentication);
 					if(200 == response.getCodigo()) {
-						response = providerRestTemplate.consumirServicio(new SalidaDonacion().actualizarStockArticulo(donacionRequest, usuarioDto),urlActualizarMultiple,authentication);
+						response = providerRestTemplate.consumirServicio(new SalidaDonacion().actualizarStockArticulo(donacionRequest, usuarioDto),urlModCatalogos.concat("/actualizar/multiples"),authentication);
 					}
 					
 					return MensajeResponseUtil.mensajeResponse(response, REGISTRADO_CORRECTAMENTE);

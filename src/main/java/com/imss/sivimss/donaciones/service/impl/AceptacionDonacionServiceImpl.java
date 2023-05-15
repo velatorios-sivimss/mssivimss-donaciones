@@ -46,14 +46,8 @@ public class AceptacionDonacionServiceImpl implements AceptacionDonacionService 
 	@Autowired
 	private ProviderServiceRestTemplate providerRestTemplate;
 	
-	@Value("${endpoints.dominio-crear-multiple}")
-	private String urlCrearMultiple;
-	
-	@Value("${endpoints.dominio-consulta}")
-	private String urlConsulta;
-	
-	@Value("${endpoints.dominio-actualizar-multiples}")
-	private String urlActualizarMultiple;
+	@Value("${endpoints.mod-catalogos}")
+	private String urlModCatalogos;
 	
 	@Value("${plantilla.aceptacion-control-ataudes-donacion}")
 	private String nombrePdfAceptacionControl;
@@ -75,7 +69,7 @@ public class AceptacionDonacionServiceImpl implements AceptacionDonacionService 
 					throw new BadRequestException(HttpStatus.BAD_REQUEST, INFORMACION_INCOMPLETA);
 				}
 		
-				return MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(new Donacion().detalleNombreContratante(request, donacionRequest).getDatos(), urlConsulta, authentication),
+				return MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(new Donacion().detalleNombreContratante(request, donacionRequest).getDatos(), urlModCatalogos.concat("/consulta"), authentication),
 						NUMERO_FOLIO_NO_EXISTE);
 		
         } catch (Exception e) {
@@ -97,7 +91,7 @@ public class AceptacionDonacionServiceImpl implements AceptacionDonacionService 
 					throw new BadRequestException(HttpStatus.BAD_REQUEST, INFORMACION_INCOMPLETA);
 				}
 		
-				return MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(new Donacion().detalleNombreFinado(request, donacionRequest).getDatos(),urlConsulta, authentication),
+				return MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(new Donacion().detalleNombreFinado(request, donacionRequest).getDatos(),urlModCatalogos.concat("/consulta"), authentication),
 						NUMERO_FOLIO_NO_EXISTE);
 		
         } catch (Exception e) {
@@ -119,7 +113,7 @@ public class AceptacionDonacionServiceImpl implements AceptacionDonacionService 
 					throw new BadRequestException(HttpStatus.BAD_REQUEST, INFORMACION_INCOMPLETA);
 				}
 		
-				return MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(new Donacion().detalleAtaudDonado(request,donacionRequest).getDatos(),urlConsulta, authentication),
+				return MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(new Donacion().detalleAtaudDonado(request,donacionRequest).getDatos(),urlModCatalogos.concat("/consulta"), authentication),
 						SIN_INFORMACION);
 		
         } catch (Exception e) {
@@ -141,9 +135,9 @@ public class AceptacionDonacionServiceImpl implements AceptacionDonacionService 
 		UsuarioDto usuarioDto = new Gson().fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
 		try {
 				logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString()," insert ataud donado ", ALTA,authentication);
-				Response<?> response = providerRestTemplate.consumirServicio(new Donacion().insertarDonacion(donacionRequest, usuarioDto).getDatos(),urlCrearMultiple,authentication);
+				Response<?> response = providerRestTemplate.consumirServicio(new Donacion().insertarDonacion(donacionRequest, usuarioDto).getDatos(),urlModCatalogos.concat("/crearMultiple"),authentication);
 				if(200 == response.getCodigo()) {
-					response = providerRestTemplate.consumirServicio(new Donacion().actualizarStockArticulo(donacionRequest, usuarioDto),urlActualizarMultiple,authentication);
+					response = providerRestTemplate.consumirServicio(new Donacion().actualizarStockArticulo(donacionRequest, usuarioDto),urlModCatalogos.concat("/actualizar/multiples"),authentication);
 				}
 				return MensajeResponseUtil.mensajeResponse(response , ATAUD_REGISTRADO);
         } catch (Exception e) {
