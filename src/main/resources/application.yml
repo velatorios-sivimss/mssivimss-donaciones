@@ -1,7 +1,7 @@
 server:
   port: 8080
   servlet:
-    contextPath: /mssivimss-gestionar-donaciones
+    contextPath: /mssivimss-gestionar-donaciones/v1
 spring:
   mvc:
     pathmatch:
@@ -32,12 +32,15 @@ logos:
 endpoints:
    consulta-ooads: http://localhost:8090/dominio/
    paginado-unidad: http://localhost:8090/dominio/ooad/paginacion
-   dominio-consulta: http://localhost:8094/mssivimss-mod-catalogos/generico/consulta
-   dominio-consulta-paginado: http://localhost:8094/mssivimss-mod-catalogos/generico/paginado
-   dominio-crear: http://localhost:8094/mssivimss-mod-catalogos/generico/crear
-   dominio-actualizar: http://localhost:8094/mssivimss-mod-catalogos/generico/actualizar
-   ms-reportes: http://localhost:8088/mssivimss-reportes-jpr/importe-facturacion-combustible/mensual/generar-reporte
+   mod-catalogos: http://localhost:8280/mssivimss-mod-catalogos/v1/generico 
+   ms-reportes: http://localhost:8088//mssivimss-reportes-jasp/v1/generales/generar-reporte
+   ms-rfc: http://serviciosdigitalesinterno-stage.imss.gob.mx/serviciosDigitales-rest/v1/externos/sat/rfc/
+   ms-curp: http://serviciosdigitalesinterno-stage.imss.gob.mx/serviciosDigitales-rest/v1/externos/renapo/curp/
    pdf-reporteDonados: reportes/generales/ReporteConsultaDonados.jrxml
+   
+plantilla:
+  aceptacion-control-ataudes-donacion: reportes/plantilla/AceptacionControlAtaudesDonacion.jrxml
+  control-salida-ataudes-donacion: reportes/plantilla/ControlSalidaDonacion.jrxml   
    
 jwt:
   secretkey-flujo: funcionamuybien
@@ -76,5 +79,5 @@ resilience4j.timelimiter:
         timeout-duration: 3s
         
         
-formato_fecha: '%d/%m/%Y'
-
+formato_fecha: '%d/%m/%Y' 
+ruta-log: 'C:\logs\' 
