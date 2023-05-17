@@ -36,8 +36,8 @@ endpoints:
 plantilla:
   aceptacion-control-ataudes-donacion: reportes/plantilla/AceptacionControlAtaudesDonacion.jrxml
   control-salida-ataudes-donacion: reportes/plantilla/ControlSalidaDonacion.jrxml   
-  pdf-reporteDonados: reportes/generales/ReporteConsultaDonados.jrxml
-  
+  consulta-donacion: reportes/generales/ReporteConsultaDonados.jrxml
+
 jwt:
   secretkey-flujo: funcionamuybien
   secretkey-dominios: funcionamuybiendominio
