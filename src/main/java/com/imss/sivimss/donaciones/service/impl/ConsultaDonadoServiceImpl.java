@@ -43,7 +43,7 @@ public class ConsultaDonadoServiceImpl implements ConsultaDonadosService {
 	private String formatoFecha;
 	
 
-	@Value("${endpoints.pdf-reporteDonados}")
+	@Value("${plantilla.pdf-reporteDonados}")
 	private String nombrePdfReportes;
 
 	@Value("${endpoints.ms-reportes}")
