@@ -13,6 +13,8 @@ public interface AceptacionDonacionService {
 	
 	Response<?> detalleNombreFinado(DatosRequest request, Authentication authentication) throws IOException;
 	
+	Response<?> detalleAceptacionDonacion(DatosRequest request, Authentication authentication) throws IOException;
+	
 	Response<?> detalleAtaudDonado(DatosRequest request, Authentication authentication) throws IOException;
 	
 	Response<?> insertAtaudDonado(DatosRequest request, Authentication authentication)throws IOException;
