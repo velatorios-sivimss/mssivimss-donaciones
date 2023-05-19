@@ -1,7 +1,6 @@
 package com.imss.sivimss.donaciones.util;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -187,7 +186,7 @@ public class RestTemplateUtil {
 	}
 
 	/**
-	 * Crea los headers para la petici&oacute;n con token todo - falta agregar el
+	 * Crea los headers para la petici&oacute;n con token  - falta agregar el
 	 * tema de seguridad para las peticiones
 	 *
 	 * @return
@@ -198,15 +197,6 @@ public class RestTemplateUtil {
 		header.set("Authorization", "Bearer " + subject);
 
 		header.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-		return header;
-	}
-
-	private static HttpHeaders createHttpHeadersArchivosToken(String subject) {
-
-		HttpHeaders header = new HttpHeaders();
-		header.setContentType(MediaType.MULTIPART_FORM_DATA);
-		header.setAccept(Arrays.asList(MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON));
-		header.set("Authorization", "Bearer " + subject);
 		return header;
 	}
 
