@@ -15,47 +15,68 @@ import com.imss.sivimss.donaciones.util.AppConstantes;
 import com.imss.sivimss.donaciones.util.ConsultaConstantes;
 import com.imss.sivimss.donaciones.util.DatosRequest;
 import com.imss.sivimss.donaciones.util.QueryHelper;
+import com.imss.sivimss.donaciones.util.SelectQueryUtil;
 
 public class Donacion {
 
 	public DatosRequest detalleNombreContratante(DatosRequest request, DonacionRequest donacionRequest) {
-		StringBuilder query = new StringBuilder(
-				" SELECT OS.ID_ORDEN_SERVICIO AS idOrdenService,  CONCAT_WS(' ',P.NOM_PERSONA,P.NOM_PRIMER_APELLIDO,P.NOM_SEGUNDO_APELLIDO ) AS  nombreContratante "
-						.concat(" FROM SVC_ORDEN_SERVICIO OS INNER JOIN SVC_CONTRATANTE C ON OS.ID_CONTRATANTE = C.ID_CONTRATANTE ")
-						.concat(" INNER JOIN SVC_PERSONA P ON P.ID_PERSONA = C.ID_PERSONA ")
-						.concat("WHERE OS.CVE_FOLIO = '").concat(donacionRequest.getClaveFolio())
-						.concat(ConsultaConstantes.AND_CVE_ESTATUS) + donacionRequest.getEstatusOrdenServicio());
-		String encoded = DatatypeConverter.printBase64Binary(query.toString().getBytes());
+		SelectQueryUtil queryUtil = new SelectQueryUtil();
+		queryUtil.select("OS.ID_ORDEN_SERVICIO AS idOrdenService",
+				"CONCAT_WS(' ',P.NOM_PERSONA,P.NOM_PRIMER_APELLIDO,P.NOM_SEGUNDO_APELLIDO ) AS  nombreContratante")
+		.from(ConsultaConstantes.SVC_ORDEN_SERVICIO_OS)
+		.innerJoin("SVC_CONTRATANTE C", "OS.ID_CONTRATANTE = C.ID_CONTRATANTE")
+		.innerJoin("SVC_PERSONA P", "P.ID_PERSONA = C.ID_PERSONA")
+		.where(ConsultaConstantes.OS_CVE_FOLIO_CVE_FOLIO).setParameter(ConsultaConstantes.CVE_FOLIO, donacionRequest.getClaveFolio())
+		.and(ConsultaConstantes.AND_CVE_ESTATUS).setParameter(ConsultaConstantes.ESTATUS_ORDEN_SERVICIO, donacionRequest.getEstatusOrdenServicio());
+		final String query = queryUtil.build();
+		String encoded = DatatypeConverter.printBase64Binary(query.getBytes());
 		request.getDatos().put(AppConstantes.QUERY, encoded);
 		return request;
 	}
 
 	public DatosRequest detalleNombreFinado(DatosRequest request, DonacionRequest donacionRequest) {
-		StringBuilder query = new StringBuilder(
-				" SELECT OS.ID_ORDEN_SERVICIO AS idOrdenService, CONCAT_WS(' ',P.NOM_PERSONA,P.NOM_PRIMER_APELLIDO,P.NOM_SEGUNDO_APELLIDO ) AS  nombreFinado "
-						.concat(" FROM SVC_ORDEN_SERVICIO OS INNER JOIN SVC_FINADO F ON OS.ID_ORDEN_SERVICIO = F.ID_ORDEN_SERVICIO ")
-						.concat(" INNER JOIN SVC_PERSONA P ON F.ID_PERSONA = P.ID_PERSONA ")
-						.concat("WHERE OS.CVE_FOLIO = '").concat(donacionRequest.getClaveFolio())
-						.concat(ConsultaConstantes.AND_CVE_ESTATUS) + donacionRequest.getEstatusOrdenServicio());
-		String encoded = DatatypeConverter.printBase64Binary(query.toString().getBytes());
+		SelectQueryUtil queryUtil = new SelectQueryUtil();
+		queryUtil.select("OS.ID_ORDEN_SERVICIO AS idOrdenService",
+				"CONCAT_WS(' ',P.NOM_PERSONA,P.NOM_PRIMER_APELLIDO,P.NOM_SEGUNDO_APELLIDO ) AS  nombreFinado")
+		.from(ConsultaConstantes.SVC_ORDEN_SERVICIO_OS)
+		.innerJoin("SVC_FINADO F", "OS.ID_ORDEN_SERVICIO = F.ID_ORDEN_SERVICIO")
+		.innerJoin("SVC_PERSONA P", "F.ID_PERSONA = P.ID_PERSONA")
+		.where(ConsultaConstantes.OS_CVE_FOLIO_CVE_FOLIO).setParameter(ConsultaConstantes.CVE_FOLIO, donacionRequest.getClaveFolio())
+		.and(ConsultaConstantes.AND_CVE_ESTATUS).setParameter(ConsultaConstantes.ESTATUS_ORDEN_SERVICIO, donacionRequest.getEstatusOrdenServicio());
+		final String query = queryUtil.build();
+		String encoded = DatatypeConverter.printBase64Binary(query.getBytes());
+		request.getDatos().put(AppConstantes.QUERY, encoded);
+		return request;
+	}
+	
+	public DatosRequest detalleAceptacionDonacion(DatosRequest request, DonacionRequest donacionRequest) {
+		SelectQueryUtil queryUtil = new SelectQueryUtil();
+		queryUtil.select("CONCAT_WS(' ',U.NOM_USUARIO,U.NOM_APELLIDO_PATERNO,U.NOM_APELLIDO_MATERNO) AS nombreAdministrador",
+				"CONCAT_WS(',',V.DES_VELATORIO,D.DES_DELEGACION) AS lugardonacion")
+		.from("SVT_USUARIOS U")
+		.innerJoin("SVC_VELATORIO V", "U.ID_USUARIO = V.ID_USUARIO_ADMIN")
+		.innerJoin("SVC_DELEGACION D", "V.ID_DELEGACION = D.ID_DELEGACION ")
+		.where("V.ID_VELATORIO = :idVel").setParameter("idVel", donacionRequest.getIdVelatorio());
+		final String query = queryUtil.build();
+		String encoded = DatatypeConverter.printBase64Binary(query.getBytes());
 		request.getDatos().put(AppConstantes.QUERY, encoded);
 		return request;
 	}
 
 	public DatosRequest detalleAtaudDonado(DatosRequest request, DonacionRequest donacionRequest) {
-		StringBuilder query = new StringBuilder(
-				" SELECT S.FOLIO_ARTICULO AS folioArticulo, A.ID_ARTICULO AS idArticulo, TM.DES_TIPO_MATERIAL AS desTipoMaterial, "
-						.concat(" CONCAT_WS('-',S.FOLIO_ARTICULO,A.DES_MODELO_ARTICULO ) AS  desModeloArticulo ")
-						.concat(" FROM SVC_ORDEN_SERVICIO OS INNER JOIN SVC_CARACTERISTICAS_PRESUPUESTO CP ON OS.ID_ORDEN_SERVICIO  = CP.ID_ORDEN_SERVICIO ")
-						.concat(" AND CP.IND_ACTIVO = 1 INNER JOIN  SVC_DETALLE_CARACTERISTICAS_PRESUPUESTO DCP ")
-						.concat(" ON CP.ID_CARACTERISTICAS_PRESUPUESTO = DCP.ID_CARACTERISTICAS_PRESUPUESTO AND DCP.IND_ACTIVO = 1  ")
-						.concat(" INNER JOIN SVT_INVENTARIO_ARTICULO S ON DCP.ID_INVE_ARTICULO = S.ID_INVE_ARTICULO  AND S.ID_TIPO_ASIGNACION_ART NOT IN( 3,4) ")
-						.concat(" INNER JOIN SVT_ARTICULO A ON S.ID_ARTICULO = A.ID_ARTICULO AND A.IND_ACTIVO = 1  ")
-						.concat(" AND A.ID_CATEGORIA_ARTICULO = 1 AND A.ID_TIPO_ARTICULO = 1 ")
-						.concat(" INNER JOIN SVC_TIPO_MATERIAL TM ON A.ID_TIPO_MATERIAL = TM.ID_TIPO_MATERIAL  ")
-						.concat(" WHERE OS.CVE_FOLIO = '").concat(donacionRequest.getClaveFolio())
-						.concat(ConsultaConstantes.AND_CVE_ESTATUS) + donacionRequest.getEstatusOrdenServicio());
-		String encoded = DatatypeConverter.printBase64Binary(query.toString().getBytes());
+		SelectQueryUtil queryUtil = new SelectQueryUtil();
+		queryUtil.select("S.FOLIO_ARTICULO AS folioArticulo","A.ID_ARTICULO AS idArticulo", "TM.DES_TIPO_MATERIAL AS desTipoMaterial",
+				"CONCAT_WS('-',S.FOLIO_ARTICULO,A.DES_MODELO_ARTICULO ) AS  desModeloArticulo")
+		.from(ConsultaConstantes.SVC_ORDEN_SERVICIO_OS)
+		.innerJoin("SVC_CARACTERISTICAS_PRESUPUESTO CP", "OS.ID_ORDEN_SERVICIO  = CP.ID_ORDEN_SERVICIO").and("CP.IND_ACTIVO = 1")
+		.innerJoin("SVC_DETALLE_CARACTERISTICAS_PRESUPUESTO DCP", "CP.ID_CARACTERISTICAS_PRESUPUESTO = DCP.ID_CARACTERISTICAS_PRESUPUESTO").and("DCP.IND_ACTIVO = 1")
+		.innerJoin("SVT_INVENTARIO_ARTICULO S", "DCP.ID_INVE_ARTICULO = S.ID_INVE_ARTICULO").and("S.ID_TIPO_ASIGNACION_ART NOT IN( 3,4)")
+		.innerJoin("SVT_ARTICULO A", "S.ID_ARTICULO = A.ID_ARTICULO").and("A.IND_ACTIVO = 1").and("A.ID_CATEGORIA_ARTICULO = 1").and("A.ID_TIPO_ARTICULO = 1")
+		.innerJoin("SVC_TIPO_MATERIAL TM", "A.ID_TIPO_MATERIAL = TM.ID_TIPO_MATERIAL")
+		.where(ConsultaConstantes.OS_CVE_FOLIO_CVE_FOLIO).setParameter(ConsultaConstantes.CVE_FOLIO, donacionRequest.getClaveFolio())
+		.and(ConsultaConstantes.AND_CVE_ESTATUS).setParameter(ConsultaConstantes.ESTATUS_ORDEN_SERVICIO, donacionRequest.getEstatusOrdenServicio());
+		final String query = queryUtil.build();
+		String encoded = DatatypeConverter.printBase64Binary(query.getBytes());
 		request.getDatos().put(AppConstantes.QUERY, encoded);
 		return request;
 	}

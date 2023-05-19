@@ -104,6 +104,28 @@ public class AceptacionDonacionServiceImpl implements AceptacionDonacionService 
             throw new IOException(ERROR_INFORMACION, e.getCause());
         }
 	}
+	
+	@Override
+	public Response<?> detalleAceptacionDonacion(DatosRequest request, Authentication authentication) throws IOException {
+		DonacionRequest donacionRequest = mappeoObject(request);
+		try {
+				logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString()," detalle aceptacion donacion ", CONSULTA,authentication);
+		
+				if (donacionRequest.getIdVelatorio() == null) {
+					throw new BadRequestException(HttpStatus.BAD_REQUEST, INFORMACION_INCOMPLETA);
+				}
+		
+				return MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(new Donacion().detalleAceptacionDonacion(request, donacionRequest).getDatos(),urlModCatalogos.concat(CONSULTA_GENERICA), authentication),
+						NUMERO_FOLIO_NO_EXISTE);
+		
+        } catch (Exception e) {
+            String consulta = new Donacion().detalleNombreFinado(request, donacionRequest).getDatos().get(AppConstantes.QUERY).toString();
+            String decoded = new String(DatatypeConverter.parseBase64Binary(consulta));
+            log.error(ERROR_AL_EJECUTAR_EL_QUERY + decoded);
+            logUtil.crearArchivoLog(Level.SEVERE.toString(), this.getClass().getSimpleName(), this.getClass().getPackage().toString(), FALLO_AL_EJECUTAR_EL_QUERY + decoded, CONSULTA, authentication);
+            throw new IOException(ERROR_INFORMACION, e.getCause());
+        }
+	}
 
 	@Override
 	public Response<?> detalleAtaudDonado(DatosRequest request, Authentication authentication) throws IOException {

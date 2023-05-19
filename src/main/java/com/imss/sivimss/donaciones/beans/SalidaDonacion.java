@@ -17,43 +17,48 @@ import com.imss.sivimss.donaciones.util.AppConstantes;
 import com.imss.sivimss.donaciones.util.ConsultaConstantes;
 import com.imss.sivimss.donaciones.util.DatosRequest;
 import com.imss.sivimss.donaciones.util.QueryHelper;
+import com.imss.sivimss.donaciones.util.SelectQueryUtil;
 
 public class SalidaDonacion {
 	
 	public DatosRequest detalleContratanteRfc(DatosRequest request, DonacionRequest donacionRequest) {
-		String query = ConsultaConstantes.DETALLECONTRATANTE.concat("  WHERE P.CVE_RFC = '").concat(donacionRequest.getRfc()).concat("'");
+		String query = ConsultaConstantes.detalleContratante().where("P.CVE_RFC = :rfc").setParameter("rfc", donacionRequest.getRfc()).build();
 		String encoded = DatatypeConverter.printBase64Binary(query.getBytes());
 		request.getDatos().put(AppConstantes.QUERY, encoded);
 		return request;
 	}
 	
 	public DatosRequest detalleContratanteCurp(DatosRequest request, DonacionRequest donacionRequest) {
-		String query = ConsultaConstantes.DETALLECONTRATANTE.concat("  WHERE P.CVE_CURP = '").concat(donacionRequest.getCurp()).concat("'");
+		String query = ConsultaConstantes.detalleContratante().where("P.CVE_CURP = :curp").setParameter("curp", donacionRequest.getCurp()).build();
 		String encoded = DatatypeConverter.printBase64Binary(query.getBytes());
 		request.getDatos().put(AppConstantes.QUERY, encoded);
 		return request;
 	}
 	
 	public DatosRequest detalleSalidaAtaudDonado(DatosRequest request) {
-		StringBuilder query = new StringBuilder(
-				"  SELECT DISTINCT S.FOLIO_ARTICULO AS folioArticulo,  A.ID_ARTICULO AS idArticulo, TM.DES_TIPO_MATERIAL AS desTipoMaterial,  "
-				        .concat(" CONCAT_WS('-',S.FOLIO_ARTICULO,A.DES_MODELO_ARTICULO ) AS  desModeloArticulo ")
-						.concat(" FROM SVT_INVENTARIO_ARTICULO S  INNER JOIN SVT_ARTICULO A ON S.ID_ARTICULO = A.ID_ARTICULO AND S.ID_TIPO_ASIGNACION_ART = 3 AND A.IND_ACTIVO = 1  ")
-						.concat(" INNER JOIN SVC_CATEGORIA_ARTICULO CA ON A.ID_CATEGORIA_ARTICULO = CA.ID_CATEGORIA_ARTICULO  ")
-						.concat("  AND A.ID_CATEGORIA_ARTICULO = 1 INNER JOIN SVC_TIPO_ARTICULO TA ON A.ID_TIPO_ARTICULO = TA.ID_TIPO_ARTICULO ")
-						.concat(" AND A.ID_TIPO_ARTICULO = 1 INNER JOIN SVC_TIPO_MATERIAL TM ON A.ID_TIPO_MATERIAL = TM.ID_TIPO_MATERIAL  "));
-		String encoded = DatatypeConverter.printBase64Binary(query.toString().getBytes());
+		SelectQueryUtil queryUtil = new SelectQueryUtil();
+		queryUtil.select("S.FOLIO_ARTICULO AS folioArticulo","A.ID_ARTICULO AS idArticulo","TM.DES_TIPO_MATERIAL AS desTipoMaterial",
+				"CONCAT_WS('-',S.FOLIO_ARTICULO,A.DES_MODELO_ARTICULO ) AS  desModeloArticulo")
+		.from("SVT_INVENTARIO_ARTICULO S")
+		.innerJoin("SVT_ARTICULO A", "S.ID_ARTICULO = A.ID_ARTICULO").and("S.ID_TIPO_ASIGNACION_ART = 3").and("A.IND_ACTIVO = 1")
+		.innerJoin("SVC_CATEGORIA_ARTICULO CA", "A.ID_CATEGORIA_ARTICULO = CA.ID_CATEGORIA_ARTICULO").and("A.ID_CATEGORIA_ARTICULO = 1")
+		.innerJoin("SVC_TIPO_ARTICULO TA", "A.ID_TIPO_ARTICULO = TA.ID_TIPO_ARTICULO").and("A.ID_TIPO_ARTICULO = 1")
+		.innerJoin("SVC_TIPO_MATERIAL TM", "A.ID_TIPO_MATERIAL = TM.ID_TIPO_MATERIAL");
+		final String query = queryUtil.build();
+		String encoded = DatatypeConverter.printBase64Binary(query.getBytes());
 		request.getDatos().put(AppConstantes.QUERY, encoded);
 		return request;
 	}
 	
 	public DatosRequest countSalidaAtaudDonado(DatosRequest request, AgregarArticuloRequest agregarArticuloRequest) {
-		StringBuilder query = new StringBuilder(
-				" SELECT COUNT(*) AS numArticulo FROM SVT_ORDEN_ENTRADA OE INNER JOIN  SVT_INVENTARIO_ARTICULO S ON OE.ID_ODE = S.ID_ODE  "
-						.concat("  INNER JOIN SVT_ARTICULO A ON S.ID_ARTICULO = A.ID_ARTICULO AND S.ID_TIPO_ASIGNACION_ART = 3   ")
-						.concat(" AND S.IND_DEVOLUCION IS NULL AND A.IND_ACTIVO = 1 ")
-						.concat(" WHERE A.DES_MODELO_ARTICULO = '").concat(agregarArticuloRequest.getModeloArticulo()).concat("'"));
-		String encoded = DatatypeConverter.printBase64Binary(query.toString().getBytes());
+		SelectQueryUtil queryUtil = new SelectQueryUtil();
+		queryUtil.select("COUNT(*) AS numArticulo")
+		.from("SVT_ORDEN_ENTRADA OE")
+		.innerJoin("SVT_INVENTARIO_ARTICULO S", "OE.ID_ODE = S.ID_ODE")
+		.innerJoin("SVT_ARTICULO A", "S.ID_ARTICULO = A.ID_ARTICULO").and("S.ID_TIPO_ASIGNACION_ART = 3").and("S.IND_DEVOLUCION IS NULL").and("A.IND_ACTIVO = 1")
+		.where("A.DES_MODELO_ARTICULO = :modeloArticlo").setParameter("modeloArticlo", agregarArticuloRequest.getModeloArticulo());
+		final String query = queryUtil.build();
+		String encoded = DatatypeConverter.printBase64Binary(query.getBytes());
 		request.getDatos().put(AppConstantes.QUERY, encoded);
 		return request;
 	}
