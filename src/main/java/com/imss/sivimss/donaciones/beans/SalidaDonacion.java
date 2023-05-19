@@ -22,14 +22,14 @@ import com.imss.sivimss.donaciones.util.SelectQueryUtil;
 public class SalidaDonacion {
 	
 	public DatosRequest detalleContratanteRfc(DatosRequest request, DonacionRequest donacionRequest) {
-		String query = ConsultaConstantes.DETALLECONTRATANTE.concat("  WHERE P.CVE_RFC = '").concat(donacionRequest.getRfc()).concat("'");
+		String query = ConsultaConstantes.detalleContratante().where("P.CVE_RFC = :rfc").setParameter("rfc", donacionRequest.getRfc()).build();
 		String encoded = DatatypeConverter.printBase64Binary(query.getBytes());
 		request.getDatos().put(AppConstantes.QUERY, encoded);
 		return request;
 	}
 	
 	public DatosRequest detalleContratanteCurp(DatosRequest request, DonacionRequest donacionRequest) {
-		String query = ConsultaConstantes.DETALLECONTRATANTE.concat("  WHERE P.CVE_CURP = '").concat(donacionRequest.getCurp()).concat("'");
+		String query = ConsultaConstantes.detalleContratante().where("P.CVE_CURP = :curp").setParameter("curp", donacionRequest.getCurp()).build();
 		String encoded = DatatypeConverter.printBase64Binary(query.getBytes());
 		request.getDatos().put(AppConstantes.QUERY, encoded);
 		return request;
