@@ -130,6 +130,7 @@ public class AceptacionDonacionServiceImpl implements AceptacionDonacionService 
 	@Override
 	public Response<?> detalleAtaudDonado(DatosRequest request, Authentication authentication) throws IOException {
 		DonacionRequest donacionRequest = mappeoObject(request);
+		UsuarioDto usuarioDto = new Gson().fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
 		try {
 				logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString()," detalle nombre finado ", CONSULTA,authentication);
 				
@@ -137,11 +138,11 @@ public class AceptacionDonacionServiceImpl implements AceptacionDonacionService 
 					throw new BadRequestException(HttpStatus.BAD_REQUEST, INFORMACION_INCOMPLETA);
 				}
 		
-				return MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(new Donacion().detalleAtaudDonado(request,donacionRequest).getDatos(),urlModCatalogos.concat(CONSULTA_GENERICA), authentication),
+				return MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(new Donacion().detalleAtaudDonado(request,donacionRequest,usuarioDto).getDatos(),urlModCatalogos.concat(CONSULTA_GENERICA), authentication),
 						SIN_INFORMACION);
 		
         } catch (Exception e) {
-            String consulta = new Donacion().detalleAtaudDonado(request, donacionRequest).getDatos().get(AppConstantes.QUERY).toString();
+            String consulta = new Donacion().detalleAtaudDonado(request, donacionRequest, usuarioDto).getDatos().get(AppConstantes.QUERY).toString();
             String decoded = new String(DatatypeConverter.parseBase64Binary(consulta));
             log.error(ERROR_AL_EJECUTAR_EL_QUERY + decoded);
             logUtil.crearArchivoLog(Level.SEVERE.toString(), this.getClass().getSimpleName(), this.getClass().getPackage().toString(), FALLO_AL_EJECUTAR_EL_QUERY + decoded, CONSULTA, authentication);
