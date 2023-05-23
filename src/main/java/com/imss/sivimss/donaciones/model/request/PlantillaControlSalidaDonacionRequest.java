@@ -36,6 +36,8 @@ public class PlantillaControlSalidaDonacionRequest {
 	@JsonProperty
 	private String nomAdministrador;
 	@JsonProperty
+	private String claveAdministrador;
+	@JsonProperty
 	private String lugar;
 	@JsonProperty
 	private Integer dia;

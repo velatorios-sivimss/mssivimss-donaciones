@@ -150,6 +150,7 @@ public class Donacion {
 		envioDatos.put(ConsultaConstantes.RESPONSABLE_ALMACEN, plantillaAceptacionControlRequest.getNomResponsableAlmacen());
 		envioDatos.put("contratante", plantillaAceptacionControlRequest.getNomContratante());
 		envioDatos.put("administrador", plantillaAceptacionControlRequest.getNomAdministrador());
+		envioDatos.put("matriculaAdministrador", plantillaAceptacionControlRequest.getClaveAdministrador());
 		envioDatos.put("lugar", plantillaAceptacionControlRequest.getLugar());
 		envioDatos.put("dia", plantillaAceptacionControlRequest.getDia());
 		envioDatos.put("mes", plantillaAceptacionControlRequest.getMes());

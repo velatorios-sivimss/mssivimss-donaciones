@@ -213,6 +213,7 @@ public class SalidaDonacion {
 		envioDatos.put(ConsultaConstantes.RESPONSABLE_ALMACEN, plantillaControlSalidaRequest.getNomResponsableAlmacen());
 		envioDatos.put("solicitante", plantillaControlSalidaRequest.getNomSolicitante());
 		envioDatos.put("administrador", plantillaControlSalidaRequest.getNomAdministrador());
+		envioDatos.put("matriculaAdministrador", plantillaControlSalidaRequest.getClaveAdministrador());
 		envioDatos.put("lugar", plantillaControlSalidaRequest.getLugar());
 		envioDatos.put("dia", plantillaControlSalidaRequest.getDia());
 		envioDatos.put("mes", plantillaControlSalidaRequest.getMes());
