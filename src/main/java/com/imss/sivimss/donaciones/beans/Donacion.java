@@ -52,7 +52,7 @@ public class Donacion {
 	public DatosRequest detalleAceptacionDonacion(DatosRequest request, DonacionRequest donacionRequest) {
 		SelectQueryUtil queryUtil = new SelectQueryUtil();
 		queryUtil.select("CONCAT_WS(' ',U.NOM_USUARIO,U.NOM_APELLIDO_PATERNO,U.NOM_APELLIDO_MATERNO) AS nombreAdministrador",
-				"CONCAT_WS(',',V.DES_VELATORIO,D.DES_DELEGACION) AS lugardonacion")
+				"U.CVE_MATRICULA AS matriculaAdministrador","CONCAT_WS(',',V.DES_VELATORIO,D.DES_DELEGACION) AS lugardonacion")
 		.from("SVT_USUARIOS U")
 		.innerJoin("SVC_VELATORIO V", "U.ID_USUARIO = V.ID_USUARIO_ADMIN")
 		.innerJoin("SVC_DELEGACION D", "V.ID_DELEGACION = D.ID_DELEGACION ")
@@ -63,7 +63,7 @@ public class Donacion {
 		return request;
 	}
 
-	public DatosRequest detalleAtaudDonado(DatosRequest request, DonacionRequest donacionRequest) {
+	public DatosRequest detalleAtaudDonado(DatosRequest request, DonacionRequest donacionRequest, UsuarioDto usuarioDto) {
 		SelectQueryUtil queryUtil = new SelectQueryUtil();
 		queryUtil.select("S.FOLIO_ARTICULO AS folioArticulo","A.ID_ARTICULO AS idArticulo", "TM.DES_TIPO_MATERIAL AS desTipoMaterial",
 				"CONCAT_WS('-',S.FOLIO_ARTICULO,A.DES_MODELO_ARTICULO ) AS  desModeloArticulo")
@@ -74,7 +74,8 @@ public class Donacion {
 		.innerJoin("SVT_ARTICULO A", "S.ID_ARTICULO = A.ID_ARTICULO").and("A.IND_ACTIVO = 1").and("A.ID_CATEGORIA_ARTICULO = 1").and("A.ID_TIPO_ARTICULO = 1")
 		.innerJoin("SVC_TIPO_MATERIAL TM", "A.ID_TIPO_MATERIAL = TM.ID_TIPO_MATERIAL")
 		.where(ConsultaConstantes.OS_CVE_FOLIO_CVE_FOLIO).setParameter(ConsultaConstantes.CVE_FOLIO, donacionRequest.getClaveFolio())
-		.and(ConsultaConstantes.AND_CVE_ESTATUS).setParameter(ConsultaConstantes.ESTATUS_ORDEN_SERVICIO, donacionRequest.getEstatusOrdenServicio());
+		.and(ConsultaConstantes.AND_CVE_ESTATUS).setParameter(ConsultaConstantes.ESTATUS_ORDEN_SERVICIO, donacionRequest.getEstatusOrdenServicio())
+		.and("OS.ID_VELATORIO = :idVelatorio").setParameter("idVelatorio", usuarioDto.getIdVelatorio());
 		final String query = queryUtil.build();
 		String encoded = DatatypeConverter.printBase64Binary(query.getBytes());
 		request.getDatos().put(AppConstantes.QUERY, encoded);
@@ -88,7 +89,7 @@ public class Donacion {
 		final QueryHelper q = new QueryHelper("INSERT INTO SVC_DONACION");
 		q.agregarParametroValues("ID_ORDEN_SERVICIO", String.valueOf(donacionRequest.getIdOrdenServicio()));
 		q.agregarParametroValues("NUM_TOTAL_ATAUDES", String.valueOf(donacionRequest.getNumTotalAtaudes()));
-		q.agregarParametroValues("DES_RESPONSABLE_ALMACEN", "'" + donacionRequest.getResponsableAlmacen() + "'");
+		q.agregarParametroValues("DES_RESPONSABLE_ALMACEN", "'" +   SelectQueryUtil.eliminarEspacios(donacionRequest.getResponsableAlmacen()) + "'");
 		q.agregarParametroValues("DES_MATRICULA_ALMACEN", "'" + donacionRequest.getMatricularesponsable() + "'");
 		q.agregarParametroValues(ConsultaConstantes.ID_USUARIO_ALTA, String.valueOf(usuarioDto.getIdUsuario()));
 		q.agregarParametroValues(ConsultaConstantes.FEC_ALTA, ConsultaConstantes.CURRENT_TIMESTAMP);
@@ -149,6 +150,7 @@ public class Donacion {
 		envioDatos.put(ConsultaConstantes.RESPONSABLE_ALMACEN, plantillaAceptacionControlRequest.getNomResponsableAlmacen());
 		envioDatos.put("contratante", plantillaAceptacionControlRequest.getNomContratante());
 		envioDatos.put("administrador", plantillaAceptacionControlRequest.getNomAdministrador());
+		envioDatos.put("matriculaAdministrador", plantillaAceptacionControlRequest.getClaveAdministrador());
 		envioDatos.put("lugar", plantillaAceptacionControlRequest.getLugar());
 		envioDatos.put("dia", plantillaAceptacionControlRequest.getDia());
 		envioDatos.put("mes", plantillaAceptacionControlRequest.getMes());

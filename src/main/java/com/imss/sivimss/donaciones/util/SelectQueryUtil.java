@@ -577,5 +577,9 @@ public class SelectQueryUtil {
                 SPACE +
                 condicion;
     }
+    
+    public static String eliminarEspacios(String texto) {
+        return texto.replaceAll(" +"," ");
+    }
 
 }
