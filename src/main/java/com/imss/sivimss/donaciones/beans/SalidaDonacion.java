@@ -211,6 +211,7 @@ public class SalidaDonacion {
 		envioDatos.put("nomFinados", plantillaControlSalidaRequest.getNomFinados());
 		envioDatos.put("fecSolicitud", plantillaControlSalidaRequest.getFecSolicitud());
 		envioDatos.put(ConsultaConstantes.RESPONSABLE_ALMACEN, plantillaControlSalidaRequest.getNomResponsableAlmacen());
+		envioDatos.put("matriculaResponSable", plantillaControlSalidaRequest.getClaveResponsableAlmacen());
 		envioDatos.put("solicitante", plantillaControlSalidaRequest.getNomSolicitante());
 		envioDatos.put("administrador", plantillaControlSalidaRequest.getNomAdministrador());
 		envioDatos.put("matriculaAdministrador", plantillaControlSalidaRequest.getClaveAdministrador());
