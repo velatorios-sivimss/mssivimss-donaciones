@@ -54,6 +54,60 @@ public class ConsultaDonadoController {
 		return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
 
+	@PostMapping("consultar/delegaciones")
+	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@TimeLimiter(name = "msflujo")
+	public CompletableFuture<Object>  consultaDelegaciones(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
+	
+		Response<?> response =  consultaDonadosService.consultarDelegacion(request,authentication);
+		return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
+      
+	}
+
+	@PostMapping("consultar/velatorio")
+	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@TimeLimiter(name = "msflujo")
+	public CompletableFuture<Object>  consultaVelatorios(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
+	
+		Response<?> response =  consultaDonadosService.consultarVelatorio(request,authentication);
+		return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
+      
+	}
+	
+	
+	@PostMapping("consultar/nivel")
+	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@TimeLimiter(name = "msflujo")
+	public CompletableFuture<Object>  consultaNiveles(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
+	
+		Response<?> response =  consultaDonadosService.consultarNivel(request,authentication);
+		return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
+      
+	}
+	
+
+	@PostMapping("consultar/generarDocumento")
+	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@TimeLimiter(name = "msflujo")
+	public CompletableFuture<Object>  generarDocumento(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
+	
+		Response<?> response =  consultaDonadosService.generarDocumento(request,authentication);
+		return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
+      
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	/**
 	 * fallbacks generico

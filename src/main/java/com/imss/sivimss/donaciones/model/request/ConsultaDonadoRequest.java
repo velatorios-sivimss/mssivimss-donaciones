@@ -32,4 +32,6 @@ public class ConsultaDonadoRequest {
 	private Integer idDelegacion; 
 	private String fechaInicio;
 	private String fechaFin;
+	
+	private Integer desDelegacion;
 }

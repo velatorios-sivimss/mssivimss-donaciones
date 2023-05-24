@@ -8,11 +8,11 @@ import lombok.Setter;
 @Setter
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class RolDto {
+public class ReporteDto {
 
-	private Integer id;
-	private String desRol;
-	private String estatus;
-	private String cveMatriculaAlta;
-	private Integer nivel;
+	private Integer idVelatorio;
+	private Integer idDelegacion;
+	private String fechaInicio;
+	private String fechaFin;
+	private String tipoReporte;
 }
