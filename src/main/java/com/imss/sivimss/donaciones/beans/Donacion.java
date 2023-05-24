@@ -148,6 +148,7 @@ public class Donacion {
 		envioDatos.put("numInventarios", plantillaAceptacionControlRequest.getNumInventarios());
 		envioDatos.put("nomFinado", plantillaAceptacionControlRequest.getNomFinado());
 		envioDatos.put(ConsultaConstantes.RESPONSABLE_ALMACEN, plantillaAceptacionControlRequest.getNomResponsableAlmacen());
+		envioDatos.put("matriculaResponSable", plantillaAceptacionControlRequest.getClaveResponsableAlmacen());
 		envioDatos.put("contratante", plantillaAceptacionControlRequest.getNomContratante());
 		envioDatos.put("administrador", plantillaAceptacionControlRequest.getNomAdministrador());
 		envioDatos.put("matriculaAdministrador", plantillaAceptacionControlRequest.getClaveAdministrador());
