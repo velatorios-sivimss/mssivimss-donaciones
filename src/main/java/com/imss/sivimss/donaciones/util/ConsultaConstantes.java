@@ -25,7 +25,7 @@ public class ConsultaConstantes {
 				"P.NOM_SEGUNDO_APELLIDO AS nomPersonaMaterno","P.NUM_SEXO AS numSexo","P.DES_OTRO_SEXO AS desOtroSexo","P.ID_PAIS AS idPais","P.ID_ESTADO AS idEstado","P.DES_TELEFONO AS desTelefono",
 				"P.DES_CORREO AS desCorreo","P.TIPO_PERSONA AS tipoPersona","C.ID_CONTRATANTE AS idContratante","C.CVE_MATRICULA AS claveMatricula","D.DES_CALLE AS desCalle","D.NUM_EXTERIOR AS numExterior",
 				"D.NUM_INTERIOR AS numInterior","D.DES_CP AS DesCodigoPostal","D.DES_COLONIA AS desColonia","D.DES_MUNICIPIO AS desMunicipio","D.DES_ESTADO AS desEstado")
-		.from("SIVIBDDS.SVC_PERSONA P")
+		.from("SVC_PERSONA P")
 		.innerJoin("SVC_CONTRATANTE C", "P.ID_PERSONA = C.ID_PERSONA")
 		.innerJoin("SVT_DOMICILIO D", "C.ID_DOMICILIO = D.ID_DOMICILIO");
 		return queryUtil;
