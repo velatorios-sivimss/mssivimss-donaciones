@@ -24,48 +24,63 @@ import lombok.Setter;
 @Getter
 public class ConsultaDonado {
 
-	private Integer idInventario;
 	private String velatorio;
-	private String tipo;
 	private String modeloAtaud;
-	private String numInventario;
-	private Date fecDonacion;
 	private String donadoPor;
-	private String nomDonador;
 	private Integer idVelatorio;
-	private Integer idDelegacion;
 	private String fechaInicio;
 	private String fechaFin;
 	private Integer desDelegacion;
+	private Integer idInventario;
 	private String formatoFecha;
-	
-	private static final String CAMPO_SIA_FOLIO_ARTICULO = "sia.FOLIO_ARTICULO AS numInventario";
-	private static final String CAMPO_NOMBRE_VELATORIO = "sv.NOM_VELATORIO AS velatorio";
-	private static final String CAMPO_STM_DES_TIPO_MATERIAL = "stm.DES_TIPO_MATERIAL AS tipoMaterial";
-	private static final String CAMPO_MODELO_ATAUD = "sa.DES_MODELO_ARTICULO AS modeloAtaud";
+	private String tipo;
+	private String numInventario;
+	private Date fecDonacion;
+	private String nomDonador;
+	private Integer idDelegacion;
+
+
 	private static final String CAMPO_ODS_DONADO_POR = "'ODS' AS donadoPor";
 	private static final String CAMPO_FECHA_DONACION_ENTRADA = "date_format(sd.FEC_ALTA ,'" ;
+	private static final String CAMPO_SV_NOM_VELATORIO_AS_VELATORIO = "sv.DES_VELATORIO  AS velatorio";
+	private static final String CAMPO_STM_DES_TIPO_MATERIAL_AS_TIPOMATERIAL = "stm.DES_TIPO_MATERIAL AS tipoMaterial";
+	private static final String CAMPO_SA_DES_MODELO_ARTICULO_AS_MODELOARTICULO = "sa.DES_MODELO_ARTICULO AS modeloAtaud";
+	private static final String CAMPO_SIA_FOLIO_ARTICULO_AS_NUM_INVENTARIO = "sia.FOLIO_ARTICULO AS numInventario";
+	private static final String CAMPO_SSD_FEC_SOLICITU_AS_FECDONACION = "date_format(ssd.FEC_SOLICITUD,'";
+	private static final String CAMPO_SSD_FEC_SOLICITU_AS_FECDONACION_COMPL = "') AS fecDonacion";
+	private static final String CAMPO_SSDF_NOM_FINADO_AS_NOMDONADOPOR = "IFNULL((CONCAT(ssdf.NOM_FINADO,' ', ssdf.NOM_PRIMER_APELLIDO, ' ', ssdf.NOM_SEGUNDO_APELLIDO)),ssd.DES_INSTITUCION) AS nomDonador";
+	
+	
 	
 	private static final String TABLA_SVC_VELATORIO_SV = "SVC_VELATORIO sv";
 	private static final String TABLA_SVC_DELEGACION_SD = "SVC_DELEGACION sd";
 	private static final String TABLA_SVC_TIPO_MATERIAL_STM = "SVC_TIPO_MATERIAL stm";
 	private static final String TABLA_SVC_SALIDA_DONACION_ATAUDES_SSDA = "SVC_SALIDA_DONACION_ATAUDES ssda";
 	private static final String TABLA_SVC_SALIDA_DONACION_SSD = "SVC_SALIDA_DONACION ssd";
-	private static final String TABLA_SVC_CONTRANTANTE_SC = "SVC_CONTRATANTE sc";
-	private static final String TABLA_SVC_PERSONA_SP = "SVC_PERSONA sp";
 	private static final String TABLA_SVT_INVENTARIO_ARTICULO_SIA = "SVT_INVENTARIO_ARTICULO sia";
 	private static final String TABLA_SVT_ARTICULO_SA = "SVT_ARTICULO sa";
-	private static final String TABLA_SVC_DONACION_ORDEN_SERVICIO_SDOS = "SVC_DONACION_ORDEN_SERVICIO sdos";
+	private static final String TABLA_SVC_DONACION_ORDEN_SERVICIO_SDOS = "SVC_DONACION_ORDEN_SERVICIO_TEMP sdos";
 	private static final String TABLA_SVC_ORDEN_SERVICIO_SOS = "SVC_ORDEN_SERVICIO sos";
-	private static final String TABLA_SVC_FINADO_SF = "svc_finado sf";
+	private static final String TABLA_SVC_SALIDA_DONACION_FINADOS_SSDF = "svc_salida_donacion_finados ssdf"; 
+	private static final String TABLA_SVC_DONACION_SD = "SVC_DONACION sd"; 
+	private static final String TABLA_SVC_ATAUDES_DONADOS_SAD = "SVC_ATAUDES_DONADOS sad"; 
+	private static final String TABLA_SVT_ARTICULO_SA2 = "SVT_ARTICULO sa2"; 
+	private static final String TABLA_SVC_PARTIDA_PRESUPUESTAL_SPP = "SVC_PARTIDA_PRESUPUESTAL spp"; 
+	private static final String TABLA_SVT_INVENTARIO_SI = "SVT_INVENTARIO si";
+	private static final String TABLA_SVT_ORDEN_ENTRADA_SOE = "SVT_ORDEN_ENTRADA soe";
+	private static final String TABLA_SVT_CONTRATO_SC2 = "SVT_CONTRATO sc2";
+	private static final String TABLA_SVC_DELEGACION_SD2 = "SVC_DELEGACION sd2";
+	private static final String TABLA_SVT_PROVEEDOR_SP2 = "SVT_PROVEEDOR sp2";
+	
 	
 	private static final String PARAM_SV_DELEGACION_IDDEL = "sv.ID_DELEGACION = :idDel";
 	private static final String PARAM_FECHA_INICIO = "fecIni";
 	private static final String PARAM_FECHA_FIN = "fecFin";
 	private static final String PARAM_IDVELATORIO = "idVel";
 	private static final String PARAM_IDDELEGACION = "idDel";
-	private static final String PARAM_SF_ID_VELATORIO_IDVEL = "sf.ID_VELATORIO = :idVel";
-	private static final String PARAM_SF_ID_ORDEN_SERVICIO_SOS = "sf.ID_ORDEN_SERVICIO = sos.ID_ORDEN_SERVICIO "; 
+	private static final String PARAM_SF_ID_VELATORIO_IDVEL = "sv.ID_VELATORIO = :idVel";
+	
+	private static final String CAMPOS_VAL_STM_VS_SA_TIPO_MATERIAL = "stm.ID_TIPO_MATERIAL = sa.ID_TIPO_MATERIAL";
 	
 	public ConsultaDonado(ConsultaDonadoRequest consultaDonadoRequest) {
 		this.idInventario = consultaDonadoRequest.getIdInventario();
@@ -85,23 +100,25 @@ public class ConsultaDonado {
 
 	public DatosRequest consultarFiltroDonadosSalida(DatosRequest request, String formatoFecha) {
 		SelectQueryUtil queryUtil = new SelectQueryUtil();
-		queryUtil
-				.select(CAMPO_NOMBRE_VELATORIO,CAMPO_STM_DES_TIPO_MATERIAL
-						,CAMPO_MODELO_ATAUD,CAMPO_SIA_FOLIO_ARTICULO
-						,"date_format(ssd.FEC_SOLICITUD,'" + formatoFecha + "') AS fecDonacion"
-						,CAMPO_ODS_DONADO_POR,"CONCAT(sp.NOM_PERSONA,' ', sp.NOM_PRIMER_APELLIDO, ' ', sp.NOM_SEGUNDO_APELLIDO) AS nomDonador")
-				.from(TABLA_SVT_INVENTARIO_ARTICULO_SIA)
-				.innerJoin(TABLA_SVT_ARTICULO_SA,"sa.ID_ARTICULO = sia.ID_ARTICULO")  
-				.innerJoin(TABLA_SVC_TIPO_MATERIAL_STM," stm.ID_TIPO_MATERIAL = sa.ID_TIPO_MATERIAL")
-				.innerJoin(TABLA_SVC_DONACION_ORDEN_SERVICIO_SDOS,"sdos.ID_INVE_ARTICULO = sia.ID_INVE_ARTICULO")  
-				.innerJoin(TABLA_SVC_ORDEN_SERVICIO_SOS,"sos.ID_ORDEN_SERVICIO = sdos.ID_ORDEN_SERVICIO ")
-				.innerJoin(TABLA_SVC_FINADO_SF,PARAM_SF_ID_ORDEN_SERVICIO_SOS)
-				.innerJoin(TABLA_SVC_VELATORIO_SV,"sv.ID_VELATORIO = sf.ID_VELATORIO")
-				.innerJoin(TABLA_SVC_SALIDA_DONACION_ATAUDES_SSDA,"ssda.ID_ARTICULO = sa.ID_ARTICULO")  
-				.innerJoin(TABLA_SVC_SALIDA_DONACION_SSD,"ssd.ID_SALIDA_DONACION  = ssda.ID_SALIDA_DONACION")  
-				.innerJoin(TABLA_SVC_CONTRANTANTE_SC,"sc.ID_CONTRATANTE = ssd.ID_CONTRATANTE ")
-				.innerJoin(TABLA_SVC_PERSONA_SP,"sp.ID_PERSONA = sc.ID_PERSONA")
-				.where(PARAM_SF_ID_VELATORIO_IDVEL)
+		queryUtil.select(CAMPO_SV_NOM_VELATORIO_AS_VELATORIO,CAMPO_STM_DES_TIPO_MATERIAL_AS_TIPOMATERIAL,CAMPO_SA_DES_MODELO_ARTICULO_AS_MODELOARTICULO,CAMPO_SIA_FOLIO_ARTICULO_AS_NUM_INVENTARIO
+				,CAMPO_SSD_FEC_SOLICITU_AS_FECDONACION + formatoFecha + CAMPO_SSD_FEC_SOLICITU_AS_FECDONACION_COMPL,CAMPO_ODS_DONADO_POR
+				,CAMPO_SSDF_NOM_FINADO_AS_NOMDONADOPOR)
+				.from(TABLA_SVC_SALIDA_DONACION_SSD)
+				.join(TABLA_SVC_SALIDA_DONACION_ATAUDES_SSDA,"ssda.ID_SALIDA_DONACION  = ssd.ID_SALIDA_DONACION")
+				.join(TABLA_SVT_ARTICULO_SA,"sa.ID_ARTICULO = ssda.ID_ARTICULO") 
+				.join(TABLA_SVC_TIPO_MATERIAL_STM,CAMPOS_VAL_STM_VS_SA_TIPO_MATERIAL)
+				.join(TABLA_SVT_INVENTARIO_ARTICULO_SIA,"sia.ID_ARTICULO = sa.ID_ARTICULO") 
+				.join(TABLA_SVC_DONACION_ORDEN_SERVICIO_SDOS,"sdos.ID_INVE_ARTICULO  = sia.ID_INVE_ARTICULO") 
+				.join(TABLA_SVC_ORDEN_SERVICIO_SOS,"sos.ID_ORDEN_SERVICIO = sdos.ID_ORDEN_SERVICIO") 
+				.leftJoin(TABLA_SVC_SALIDA_DONACION_FINADOS_SSDF,"ssdf.ID_SALIDA_DONACION = ssd.ID_SALIDA_DONACION") 
+				.join(TABLA_SVC_DONACION_SD,"sd.ID_ORDEN_SERVICIO = sos.ID_ORDEN_SERVICIO") 
+				.join(TABLA_SVC_ATAUDES_DONADOS_SAD,"sad.ID_DONACION = sd.ID_DONACION") 
+				.join(TABLA_SVT_ARTICULO_SA2,"sa2.ID_ARTICULO = sad.ID_ARTICULO") 
+				.join(TABLA_SVC_PARTIDA_PRESUPUESTAL_SPP,"spp.ID_PART_PRESUPUESTAL = sa2.ID_PART_PRESUPUESTAL") 
+				.join(TABLA_SVT_INVENTARIO_SI,"si.ID_PART_PRESUPUESTAL  = spp.ID_PART_PRESUPUESTAL") 
+				.join(TABLA_SVC_VELATORIO_SV,"sv.ID_VELATORIO = si.ID_VELATORIO") 
+
+			.where(PARAM_SF_ID_VELATORIO_IDVEL)
 				.setParameter(PARAM_IDVELATORIO, this.idVelatorio).and(PARAM_SV_DELEGACION_IDDEL)
 				.setParameter(PARAM_IDDELEGACION, this.idDelegacion);
 		if (this.fechaInicio != null && this.fechaFin != null) {
@@ -147,23 +164,18 @@ public class ConsultaDonado {
 
 	public DatosRequest consultarFiltroDonadosEntrada(DatosRequest request, String formatoFecha) {
 		SelectQueryUtil queryUtil = new SelectQueryUtil();
-		queryUtil
-				.select(CAMPO_NOMBRE_VELATORIO,CAMPO_STM_DES_TIPO_MATERIAL
-						,CAMPO_MODELO_ATAUD,"si.NUM_INVENTARIO AS numInventario"
-						,"date_format(sd.FEC_ALTA ,'" + formatoFecha + "')  AS fecDonacion","'Instituto' AS donadoPor"
-						,"CONCAT(sp.NOM_PERSONA,' ', sp.NOM_PRIMER_APELLIDO, ' ', sp.NOM_SEGUNDO_APELLIDO) AS nomDonador ")
-						.from("SVC_DONACION sd ") 
-						.innerJoin(TABLA_SVC_DONACION_ORDEN_SERVICIO_SDOS,"sdos.ID_ORDEN_SERVICIO = sd.ID_ORDEN_SERVICIO ")
-						.innerJoin(TABLA_SVC_ORDEN_SERVICIO_SOS,"sos.ID_ORDEN_SERVICIO = sdos.ID_ORDEN_SERVICIO  ")
-						.innerJoin(TABLA_SVC_CONTRANTANTE_SC,"sc.ID_CONTRATANTE = sos.ID_CONTRATANTE ")
-						.innerJoin(TABLA_SVC_PERSONA_SP,"sp.ID_PERSONA =sc.ID_PERSONA  ")
-						.innerJoin(TABLA_SVT_INVENTARIO_ARTICULO_SIA,"sia.ID_INVE_ARTICULO = sdos.ID_INVE_ARTICULO")
-						.innerJoin("svt_inventario si","si.ID_INVENTARIO = sia.ID_ARTICULO ")
-						.innerJoin(TABLA_SVT_ARTICULO_SA,"sa.ID_ARTICULO = sia.ID_ARTICULO  ")
-						.innerJoin("SVC_TIPO_ARTICULO sta","sta.ID_TIPO_ARTICULO = sa.ID_TIPO_ARTICULO  ")
-						.innerJoin(TABLA_SVC_TIPO_MATERIAL_STM,"stm.ID_TIPO_MATERIAL = sa.ID_TIPO_MATERIAL   ")
-						.innerJoin(TABLA_SVC_FINADO_SF,PARAM_SF_ID_ORDEN_SERVICIO_SOS)
-						 .innerJoin(TABLA_SVC_VELATORIO_SV,"sv.ID_VELATORIO = sf.ID_VELATORIO ")
+		queryUtil.select(CAMPO_SV_NOM_VELATORIO_AS_VELATORIO,CAMPO_STM_DES_TIPO_MATERIAL_AS_TIPOMATERIAL,CAMPO_SA_DES_MODELO_ARTICULO_AS_MODELOARTICULO
+				,CAMPO_SIA_FOLIO_ARTICULO_AS_NUM_INVENTARIO,"date_format(sd.FEC_ALTA,'%d/%m/%Y') AS fecDonacion","'Instituto' AS donadoPor","sp2.NOM_PROVEEDOR  AS nomDonador")
+				.from(TABLA_SVC_DONACION_SD)
+				.join(TABLA_SVC_ATAUDES_DONADOS_SAD,"sad.ID_DONACION  = sd.ID_DONACION ")
+				.join(TABLA_SVT_ARTICULO_SA,"sa.ID_ARTICULO = sad.ID_ARTICULO")  
+				.join(TABLA_SVC_TIPO_MATERIAL_STM,CAMPOS_VAL_STM_VS_SA_TIPO_MATERIAL)
+				.join(TABLA_SVT_INVENTARIO_ARTICULO_SIA,"sia.ID_ARTICULO = sa.ID_ARTICULO AND sia.ID_TIPO_ASIGNACION_ART = 3")
+				.join(TABLA_SVT_ORDEN_ENTRADA_SOE,"soe.ID_ODE = sia.ID_ODE") 
+				.join(TABLA_SVT_CONTRATO_SC2,"sc2.ID_CONTRATO = soe.ID_CONTRATO") 
+				.join(TABLA_SVC_VELATORIO_SV,"sv.ID_VELATORIO = sc2.ID_VELATORIO") 
+				.join(TABLA_SVC_DELEGACION_SD2,"sd2.ID_DELEGACION = sv.ID_DELEGACION") 
+				.join(TABLA_SVT_PROVEEDOR_SP2,"sp2.ID_PROVEEDOR = soe.ID_CONTRATO") 
 				.where(PARAM_SF_ID_VELATORIO_IDVEL)
 				.setParameter(PARAM_IDVELATORIO, this.idVelatorio).and(PARAM_SV_DELEGACION_IDDEL)
 				.setParameter(PARAM_IDDELEGACION, this.idDelegacion);
@@ -181,59 +193,59 @@ public class ConsultaDonado {
 	}
 
 	public DatosRequest consultarDonados(DatosRequest request, String formatoFecha) {
-		SelectQueryUtil primerQuery = new SelectQueryUtil();
-		SelectQueryUtil segundoQuery = new SelectQueryUtil();
-		primerQuery.select(CAMPO_NOMBRE_VELATORIO,CAMPO_STM_DES_TIPO_MATERIAL,CAMPO_MODELO_ATAUD
-				,CAMPO_SIA_FOLIO_ARTICULO,"date_format(ssd.FEC_SOLICITUD,'" + formatoFecha + "')  AS fecDonacion",CAMPO_ODS_DONADO_POR
-				,"CONCAT(sp.NOM_PERSONA,' ', sp.NOM_PRIMER_APELLIDO, ' ', sp.NOM_SEGUNDO_APELLIDO) AS nomDonador") 
-				.from(TABLA_SVT_INVENTARIO_ARTICULO_SIA) 
-				.innerJoin(TABLA_SVT_ARTICULO_SA,"sa.ID_ARTICULO = sia.ID_ARTICULO")  
-				.innerJoin(TABLA_SVC_TIPO_MATERIAL_STM,"stm.ID_TIPO_MATERIAL = sa.ID_TIPO_MATERIAL")
-				.innerJoin(TABLA_SVC_DONACION_ORDEN_SERVICIO_SDOS,"sdos.ID_INVE_ARTICULO = sia.ID_INVE_ARTICULO ")
-				.innerJoin(TABLA_SVC_ORDEN_SERVICIO_SOS,"sos.ID_ORDEN_SERVICIO = sdos.ID_ORDEN_SERVICIO ")
-				.innerJoin(TABLA_SVC_FINADO_SF,PARAM_SF_ID_ORDEN_SERVICIO_SOS)
-				.innerJoin(TABLA_SVC_VELATORIO_SV,"sv.ID_VELATORIO = sf.ID_VELATORIO ")
-				.innerJoin(TABLA_SVC_SALIDA_DONACION_ATAUDES_SSDA,"ssda.ID_ARTICULO = sa.ID_ARTICULO  ")
-				.innerJoin(TABLA_SVC_SALIDA_DONACION_SSD,"ssd.ID_SALIDA_DONACION  = ssda.ID_SALIDA_DONACION ")
-				.innerJoin(TABLA_SVC_CONTRANTANTE_SC,"sc.ID_CONTRATANTE = ssd.ID_CONTRATANTE  ")
-				.innerJoin(TABLA_SVC_PERSONA_SP,"sp.ID_PERSONA = sc.ID_PERSONA ");
+		SelectQueryUtil querySalida = new SelectQueryUtil();
+		SelectQueryUtil queryEntrada = new SelectQueryUtil();
+		querySalida.select(CAMPO_SV_NOM_VELATORIO_AS_VELATORIO,CAMPO_STM_DES_TIPO_MATERIAL_AS_TIPOMATERIAL,CAMPO_SA_DES_MODELO_ARTICULO_AS_MODELOARTICULO,CAMPO_SIA_FOLIO_ARTICULO_AS_NUM_INVENTARIO
+				,CAMPO_SSD_FEC_SOLICITU_AS_FECDONACION + formatoFecha + CAMPO_SSD_FEC_SOLICITU_AS_FECDONACION_COMPL,CAMPO_ODS_DONADO_POR
+				,CAMPO_SSDF_NOM_FINADO_AS_NOMDONADOPOR)
+				.from(TABLA_SVC_SALIDA_DONACION_SSD)
+				.join(TABLA_SVC_SALIDA_DONACION_ATAUDES_SSDA,"ssda.ID_SALIDA_DONACION  = ssd.ID_SALIDA_DONACION")
+				.join(TABLA_SVT_ARTICULO_SA,"sa.ID_ARTICULO = ssda.ID_ARTICULO") 
+				.join(TABLA_SVC_TIPO_MATERIAL_STM,CAMPOS_VAL_STM_VS_SA_TIPO_MATERIAL)
+				.join(TABLA_SVT_INVENTARIO_ARTICULO_SIA,"sia.ID_ARTICULO = sa.ID_ARTICULO") 
+				.join(TABLA_SVC_DONACION_ORDEN_SERVICIO_SDOS,"sdos.ID_INVE_ARTICULO  = sia.ID_INVE_ARTICULO") 
+				.join(TABLA_SVC_ORDEN_SERVICIO_SOS,"sos.ID_ORDEN_SERVICIO = sdos.ID_ORDEN_SERVICIO") 
+				.leftJoin(TABLA_SVC_SALIDA_DONACION_FINADOS_SSDF,"ssdf.ID_SALIDA_DONACION = ssd.ID_SALIDA_DONACION") 
+				.join(TABLA_SVC_DONACION_SD,"sd.ID_ORDEN_SERVICIO = sos.ID_ORDEN_SERVICIO") 
+				.join(TABLA_SVC_ATAUDES_DONADOS_SAD,"sad.ID_DONACION = sd.ID_DONACION") 
+				.join(TABLA_SVT_ARTICULO_SA2,"sa2.ID_ARTICULO = sad.ID_ARTICULO") 
+				.join(TABLA_SVC_PARTIDA_PRESUPUESTAL_SPP,"spp.ID_PART_PRESUPUESTAL = sa2.ID_PART_PRESUPUESTAL") 
+				.join(TABLA_SVT_INVENTARIO_SI,"si.ID_PART_PRESUPUESTAL  = spp.ID_PART_PRESUPUESTAL") 
+				.join(TABLA_SVC_VELATORIO_SV,"sv.ID_VELATORIO = si.ID_VELATORIO") ;
 		if (this.idVelatorio != null && this.idDelegacion != null) {
-			primerQuery.where(PARAM_SF_ID_VELATORIO_IDVEL)
+			querySalida.where(PARAM_SF_ID_VELATORIO_IDVEL)
 				.setParameter(PARAM_IDVELATORIO, this.idVelatorio).and(PARAM_SV_DELEGACION_IDDEL)
 				.setParameter(PARAM_IDDELEGACION, this.idDelegacion);
 			if (this.fechaInicio != null && this.fechaFin != null) {
-				primerQuery.and("ssd.FEC_SOLICITUD >= :fecIni").setParameter(PARAM_FECHA_INICIO, this.fechaInicio)
+				querySalida.and("ssd.FEC_SOLICITUD >= :fecIni").setParameter(PARAM_FECHA_INICIO, this.fechaInicio)
 				.and("ssd.FEC_SOLICITUD <= :fecFin").setParameter(PARAM_FECHA_FIN, this.fechaFin);
 			}
 		}
-		segundoQuery.select(CAMPO_NOMBRE_VELATORIO,CAMPO_STM_DES_TIPO_MATERIAL,CAMPO_MODELO_ATAUD
-				,"si.NUM_INVENTARIO AS numInventario","date_format(sd.FEC_ALTA ,'%d/%m/%Y')  AS fecDonacion","'Instituto' AS donadoPor"
-				,"CONCAT(sp.NOM_PERSONA,' ', sp.NOM_PRIMER_APELLIDO, ' ', sp.NOM_SEGUNDO_APELLIDO) AS nomDonador ")
-				.from("SVC_DONACION sd ") 
-				.innerJoin(TABLA_SVC_DONACION_ORDEN_SERVICIO_SDOS,"sdos.ID_ORDEN_SERVICIO = sd.ID_ORDEN_SERVICIO ")
-				.innerJoin(TABLA_SVC_ORDEN_SERVICIO_SOS,"sos.ID_ORDEN_SERVICIO = sdos.ID_ORDEN_SERVICIO  ")
-				.innerJoin(TABLA_SVC_CONTRANTANTE_SC,"sc.ID_CONTRATANTE = sos.ID_CONTRATANTE ")
-				.innerJoin(TABLA_SVC_PERSONA_SP,"sp.ID_PERSONA =sc.ID_PERSONA  ")
-				.innerJoin(TABLA_SVT_INVENTARIO_ARTICULO_SIA,"sia.ID_INVE_ARTICULO = sdos.ID_INVE_ARTICULO")
-				.innerJoin("svt_inventario si","si.ID_INVENTARIO = sia.ID_ARTICULO ")
-				.innerJoin(TABLA_SVT_ARTICULO_SA,"sa.ID_ARTICULO = sia.ID_ARTICULO  ")
-				.innerJoin("SVC_TIPO_ARTICULO sta","sta.ID_TIPO_ARTICULO = sa.ID_TIPO_ARTICULO  ")
-				.innerJoin(TABLA_SVC_TIPO_MATERIAL_STM,"stm.ID_TIPO_MATERIAL = sa.ID_TIPO_MATERIAL   ")
-				.innerJoin(TABLA_SVC_FINADO_SF,PARAM_SF_ID_ORDEN_SERVICIO_SOS)
-				 .innerJoin(TABLA_SVC_VELATORIO_SV,"sv.ID_VELATORIO = sf.ID_VELATORIO ");
+		queryEntrada.select(CAMPO_SV_NOM_VELATORIO_AS_VELATORIO,CAMPO_STM_DES_TIPO_MATERIAL_AS_TIPOMATERIAL,CAMPO_SA_DES_MODELO_ARTICULO_AS_MODELOARTICULO
+				,CAMPO_SIA_FOLIO_ARTICULO_AS_NUM_INVENTARIO,"date_format(sd.FEC_ALTA,'%d/%m/%Y') AS fecDonacion","'Instituto' AS donadoPor","sp2.NOM_PROVEEDOR  AS nomDonador")
+				.from(TABLA_SVC_DONACION_SD)
+				.join(TABLA_SVC_ATAUDES_DONADOS_SAD,"sad.ID_DONACION  = sd.ID_DONACION ")
+				.join(TABLA_SVT_ARTICULO_SA,"sa.ID_ARTICULO = sad.ID_ARTICULO")  
+				.join(TABLA_SVC_TIPO_MATERIAL_STM,CAMPOS_VAL_STM_VS_SA_TIPO_MATERIAL)
+				.join(TABLA_SVT_INVENTARIO_ARTICULO_SIA,"sia.ID_ARTICULO = sa.ID_ARTICULO AND sia.ID_TIPO_ASIGNACION_ART = 3")
+				.join(TABLA_SVT_ORDEN_ENTRADA_SOE,"soe.ID_ODE = sia.ID_ODE") 
+				.join(TABLA_SVT_CONTRATO_SC2,"sc2.ID_CONTRATO = soe.ID_CONTRATO") 
+				.join(TABLA_SVC_VELATORIO_SV,"sv.ID_VELATORIO = sc2.ID_VELATORIO") 
+				.join(TABLA_SVC_DELEGACION_SD2,"sd2.ID_DELEGACION = sv.ID_DELEGACION") 
+				.join(TABLA_SVT_PROVEEDOR_SP2,"sp2.ID_PROVEEDOR = soe.ID_CONTRATO") ;
 		if (this.idVelatorio != null && this.idDelegacion != null) {
-			segundoQuery.where(PARAM_SF_ID_VELATORIO_IDVEL)
+			queryEntrada.where(PARAM_SF_ID_VELATORIO_IDVEL)
 			.setParameter(PARAM_IDVELATORIO, this.idVelatorio).and(PARAM_SV_DELEGACION_IDDEL)
 			.setParameter(PARAM_IDDELEGACION, this.idDelegacion);
 			if (this.fechaInicio != null && this.fechaFin != null) {
-				segundoQuery.and("date_format(sd.FEC_ALTA,'" + formatoFecha + "') >= :fecIni")
+				queryEntrada.and("date_format(sd.FEC_ALTA,'" + formatoFecha + "') >= :fecIni")
 					.setParameter(PARAM_FECHA_INICIO, this.fechaInicio)
 					.and(CAMPO_FECHA_DONACION_ENTRADA+ formatoFecha + "') <= :fecFin")
 					.setParameter(PARAM_FECHA_FIN, this.fechaFin);
 			}
 		}
 		
-		  final String query = primerQuery.union(segundoQuery);
+		  final String query = querySalida.union(queryEntrada);
 		  String encoded =DatatypeConverter.printBase64Binary(query.getBytes());
 		  request.getDatos().put(AppConstantes.QUERY, encoded);
 		  
