@@ -15,7 +15,7 @@ import com.imss.sivimss.donaciones.util.NoRedirectSimpleClientHttpRequestFactory
 public class GestionarDonacionesApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(GestionarDonacionesApplication.class, args);
+		SpringApplication.run(GestionarDonacionesApplication.class);
 	}
 
 	@Bean

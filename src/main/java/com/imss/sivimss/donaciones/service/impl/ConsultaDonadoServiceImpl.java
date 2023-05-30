@@ -1,6 +1,7 @@
 package com.imss.sivimss.donaciones.service.impl;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -88,6 +89,7 @@ public class ConsultaDonadoServiceImpl implements ConsultaDonadosService {
 		ConsultaDonadoRequest consultaDonadoRequest = gson.fromJson(datosJson, ConsultaDonadoRequest.class);
 		consultarDonado = new ConsultaDonado(consultaDonadoRequest);
 
+
 		Map<String, Object> envioDatos = new HashMap<>();
 		logUtil.crearArchivoLog(Level.INFO.toString(), CU064_NOMBRE + this.getClass().getSimpleName() + ".consultaFiltroDonado",
 				this.getClass().getPackage().toString(), "consultaFiltroDonado", CONSULTA, authentication);
@@ -97,6 +99,7 @@ public class ConsultaDonadoServiceImpl implements ConsultaDonadosService {
 			envioDatos = consultarDonado.consultarFiltroDonadosSalida(request, formatoFecha).getDatos();
 		} else if (consultaDonadoRequest.getDonadoPor().equals("2")) {
 			envioDatos = consultarDonado.consultarFiltroDonadosEntrada(request, formatoFecha).getDatos();
+
 		}
 	
 		try {

@@ -1,7 +1,6 @@
 package com.imss.sivimss.donaciones.util;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 
 import org.springframework.http.HttpEntity;
@@ -196,15 +195,6 @@ public class RestTemplateUtil {
 		header.set("Authorization", "Bearer " + subject);
 
 		header.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-		return header;
-	}
-
-	private static HttpHeaders createHttpHeadersArchivosToken(String subject) {
-
-		HttpHeaders header = new HttpHeaders();
-		header.setContentType(MediaType.MULTIPART_FORM_DATA);
-		header.setAccept(Arrays.asList(MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON));
-		header.set("Authorization", "Bearer " + subject);
 		return header;
 	}
 

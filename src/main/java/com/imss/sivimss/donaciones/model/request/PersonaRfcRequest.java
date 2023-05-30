@@ -8,11 +8,11 @@ import lombok.Data;
 
 @Data
 public class PersonaRfcRequest {
-    
-    @JsonProperty
-    List<IdentificacionRequest> identificacion;
-    
-    @JsonProperty
-    List<UbicacionRequest> ubicacion;
+
+	@JsonProperty
+	List<IdentificacionRequest> identificacion;
+
+	@JsonProperty
+	List<UbicacionRequest> ubicacion;
 
 }

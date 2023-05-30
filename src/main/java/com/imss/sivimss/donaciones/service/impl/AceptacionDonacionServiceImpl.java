@@ -32,6 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class AceptacionDonacionServiceImpl implements AceptacionDonacionService {
 	
+	
 	private static final String ERROR_AL_DESCARGAR_DOCUMENTO= "64"; // Error en la descarga del documento.Intenta nuevamente.
 	private static final String ERROR_AL_EJECUTAR_EL_QUERY = "Error al ejecutar el query ";
 	private static final String FALLO_AL_EJECUTAR_EL_QUERY = "Fallo al ejecutar el query: ";
@@ -40,20 +41,15 @@ public class AceptacionDonacionServiceImpl implements AceptacionDonacionService 
 	private static final String ATAUD_REGISTRADO = "114"; // El ataúd ya fue registrado como donado exitosamente.
 	private static final String SIN_INFORMACION = "45";  // No se encontró información relacionada a tu búsqueda.
 	private static final String ERROR_INFORMACION = "52";  // Error al consultar la información.
+	private static final String CONSULTA_GENERICA = "/consulta";
 	private static final String CONSULTA = "consulta";
 	private static final String ALTA = "alta";
 	
 	@Autowired
 	private ProviderServiceRestTemplate providerRestTemplate;
 	
-	@Value("${endpoints.dominio-crear-multiple}")
-	private String urlCrearMultiple;
-	
-	@Value("${endpoints.dominio-consulta}")
-	private String urlConsulta;
-	
-	@Value("${endpoints.dominio-actualizar-multiples}")
-	private String urlActualizarMultiple;
+	@Value("${endpoints.mod-catalogos}")
+	private String urlModCatalogos;
 	
 	@Value("${plantilla.aceptacion-control-ataudes-donacion}")
 	private String nombrePdfAceptacionControl;
@@ -75,7 +71,7 @@ public class AceptacionDonacionServiceImpl implements AceptacionDonacionService 
 					throw new BadRequestException(HttpStatus.BAD_REQUEST, INFORMACION_INCOMPLETA);
 				}
 		
-				return MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(new Donacion().detalleNombreContratante(request, donacionRequest).getDatos(), urlConsulta, authentication),
+				return MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(new Donacion().detalleNombreContratante(request, donacionRequest).getDatos(), urlModCatalogos.concat(CONSULTA_GENERICA), authentication),
 						NUMERO_FOLIO_NO_EXISTE);
 		
         } catch (Exception e) {
@@ -97,7 +93,29 @@ public class AceptacionDonacionServiceImpl implements AceptacionDonacionService 
 					throw new BadRequestException(HttpStatus.BAD_REQUEST, INFORMACION_INCOMPLETA);
 				}
 		
-				return MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(new Donacion().detalleNombreFinado(request, donacionRequest).getDatos(),urlConsulta, authentication),
+				return MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(new Donacion().detalleNombreFinado(request, donacionRequest).getDatos(),urlModCatalogos.concat(CONSULTA_GENERICA), authentication),
+						NUMERO_FOLIO_NO_EXISTE);
+		
+        } catch (Exception e) {
+            String consulta = new Donacion().detalleNombreFinado(request, donacionRequest).getDatos().get(AppConstantes.QUERY).toString();
+            String decoded = new String(DatatypeConverter.parseBase64Binary(consulta));
+            log.error(ERROR_AL_EJECUTAR_EL_QUERY + decoded);
+            logUtil.crearArchivoLog(Level.SEVERE.toString(), this.getClass().getSimpleName(), this.getClass().getPackage().toString(), FALLO_AL_EJECUTAR_EL_QUERY + decoded, CONSULTA, authentication);
+            throw new IOException(ERROR_INFORMACION, e.getCause());
+        }
+	}
+	
+	@Override
+	public Response<?> detalleAceptacionDonacion(DatosRequest request, Authentication authentication) throws IOException {
+		DonacionRequest donacionRequest = mappeoObject(request);
+		try {
+				logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString()," detalle aceptacion donacion ", CONSULTA,authentication);
+		
+				if (donacionRequest.getIdVelatorio() == null) {
+					throw new BadRequestException(HttpStatus.BAD_REQUEST, INFORMACION_INCOMPLETA);
+				}
+		
+				return MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(new Donacion().detalleAceptacionDonacion(request, donacionRequest).getDatos(),urlModCatalogos.concat(CONSULTA_GENERICA), authentication),
 						NUMERO_FOLIO_NO_EXISTE);
 		
         } catch (Exception e) {
@@ -112,6 +130,7 @@ public class AceptacionDonacionServiceImpl implements AceptacionDonacionService 
 	@Override
 	public Response<?> detalleAtaudDonado(DatosRequest request, Authentication authentication) throws IOException {
 		DonacionRequest donacionRequest = mappeoObject(request);
+		UsuarioDto usuarioDto = new Gson().fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
 		try {
 				logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString()," detalle nombre finado ", CONSULTA,authentication);
 				
@@ -119,11 +138,11 @@ public class AceptacionDonacionServiceImpl implements AceptacionDonacionService 
 					throw new BadRequestException(HttpStatus.BAD_REQUEST, INFORMACION_INCOMPLETA);
 				}
 		
-				return MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(new Donacion().detalleAtaudDonado(request,donacionRequest).getDatos(),urlConsulta, authentication),
+				return MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(new Donacion().detalleAtaudDonado(request,donacionRequest,usuarioDto).getDatos(),urlModCatalogos.concat(CONSULTA_GENERICA), authentication),
 						SIN_INFORMACION);
 		
         } catch (Exception e) {
-            String consulta = new Donacion().detalleAtaudDonado(request, donacionRequest).getDatos().get(AppConstantes.QUERY).toString();
+            String consulta = new Donacion().detalleAtaudDonado(request, donacionRequest, usuarioDto).getDatos().get(AppConstantes.QUERY).toString();
             String decoded = new String(DatatypeConverter.parseBase64Binary(consulta));
             log.error(ERROR_AL_EJECUTAR_EL_QUERY + decoded);
             logUtil.crearArchivoLog(Level.SEVERE.toString(), this.getClass().getSimpleName(), this.getClass().getPackage().toString(), FALLO_AL_EJECUTAR_EL_QUERY + decoded, CONSULTA, authentication);
@@ -141,9 +160,9 @@ public class AceptacionDonacionServiceImpl implements AceptacionDonacionService 
 		UsuarioDto usuarioDto = new Gson().fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
 		try {
 				logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString()," insert ataud donado ", ALTA,authentication);
-				Response<?> response = providerRestTemplate.consumirServicio(new Donacion().insertarDonacion(donacionRequest, usuarioDto).getDatos(),urlCrearMultiple,authentication);
+				Response<?> response = providerRestTemplate.consumirServicio(new Donacion().insertarDonacion(donacionRequest, usuarioDto).getDatos(),urlModCatalogos.concat("/crearMultiple"),authentication);
 				if(200 == response.getCodigo()) {
-					response = providerRestTemplate.consumirServicio(new Donacion().actualizarStockArticulo(donacionRequest, usuarioDto),urlActualizarMultiple,authentication);
+					response = providerRestTemplate.consumirServicio(new Donacion().actualizarStockArticulo(donacionRequest, usuarioDto),urlModCatalogos.concat("/actualizar/multiples"),authentication);
 				}
 				return MensajeResponseUtil.mensajeResponse(response , ATAUD_REGISTRADO);
         } catch (Exception e) {

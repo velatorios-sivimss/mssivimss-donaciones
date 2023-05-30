@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 public class PlantillaControlSalidaDonacionRequest {
-	
+
 	@JsonProperty
 	private Double version;
 	@JsonProperty
@@ -32,9 +32,13 @@ public class PlantillaControlSalidaDonacionRequest {
 	@JsonProperty
 	private String nomResponsableAlmacen;
 	@JsonProperty
+	private String claveResponsableAlmacen;
+	@JsonProperty
 	private String nomSolicitante;
 	@JsonProperty
 	private String nomAdministrador;
+	@JsonProperty
+	private String claveAdministrador;
 	@JsonProperty
 	private String lugar;
 	@JsonProperty

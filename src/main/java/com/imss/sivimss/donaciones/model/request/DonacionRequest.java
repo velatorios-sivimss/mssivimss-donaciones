@@ -1,4 +1,5 @@
 package com.imss.sivimss.donaciones.model.request;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -7,10 +8,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
 
-
 @Data
 public class DonacionRequest {
-	
+
 	@JsonProperty
 	private Integer idSalidaDonacion;
 	@JsonProperty
@@ -41,7 +41,7 @@ public class DonacionRequest {
 	private Integer estudioSocieconomico;
 	@JsonProperty
 	private Integer estudioLibre;
-	@JsonFormat(pattern="yyyy-MM-dd")
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	private String fecSolicitad;
 	@JsonProperty
 	private Integer idOrdenServicio;
@@ -75,8 +75,10 @@ public class DonacionRequest {
 	private Integer numSexo;
 	@JsonProperty
 	private String desOtroSexo;
-	@JsonFormat(pattern="yyyy-MM-dd")
-	private String  fecNacimiento;
+	@JsonProperty
+	private Integer idVelatorio;
+	@JsonFormat(pattern = "yyyy-MM-dd")
+	private String fecNacimiento;
 	@JsonProperty
 	Set<AgregarArticuloRequest> ataudesDonados = new HashSet<>();
 	@JsonProperty
