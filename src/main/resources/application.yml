@@ -38,6 +38,7 @@ plantilla:
   control-salida-ataudes-donacion: ${msit_REPORTE_SALIDA_DONACION}
   consulta-donacion: ${msit_REPORTE_CONSULTA_DONACION}
 
+
 jwt:
   secretkey-flujo: ${msit_SECRET_KEY}
   secretkey-dominios: ${msit_SECRET_KEY_DOMINIO}

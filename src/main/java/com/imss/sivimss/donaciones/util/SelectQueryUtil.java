@@ -25,7 +25,7 @@ public class SelectQueryUtil {
     private static final String COLON = ":";
     private static final String ORDER_BY = "ORDER BY";
     private static final String GROUP_BY = "GROUP BY";
-    private static final String LIMIT = "LIMIT";
+    private static final String LIMITE = "LIMIT";
     private static final String UNION = "UNION";
     // campos
     private final List<String> tablas = new ArrayList<>();
@@ -384,7 +384,7 @@ public class SelectQueryUtil {
     private void agregarLimit(StringBuilder stringBuilder) {
         if (limite != null) {
             stringBuilder.append(SPACE)
-                    .append(LIMIT)
+                    .append(LIMITE)
                     .append(SPACE)
                     .append(limite.toString());
         }
