@@ -256,9 +256,9 @@ public class ConsultaDonado {
 		String condicion = " ";
 		String condicion1 = " ";
 		if (this.idVelatorio != null && this.idDelegacion != null) {
-			condicion = condicion + " AND sf.ID_VELATORIO = " + this.idVelatorio + "  AND sv.ID_DELEGACION = "
+			condicion = condicion + " AND sv.ID_VELATORIO = " + this.idVelatorio + "  AND sv.ID_DELEGACION = "
 					+ this.idDelegacion;
-			condicion1 = condicion1 + " AND sf.ID_VELATORIO = " + this.idVelatorio + "  AND sv.ID_DELEGACION = "
+			condicion1 = condicion1 + " AND sv.ID_VELATORIO = " + this.idVelatorio + "  AND sv.ID_DELEGACION = "
 					+ this.idDelegacion;
 		}
 		if (this.fechaInicio != null && this.fechaFin != null) {
