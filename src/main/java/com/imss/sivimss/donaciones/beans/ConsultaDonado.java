@@ -61,7 +61,7 @@ public class ConsultaDonado {
 	private static final String TABLA_SVT_ARTICULO_SA = "SVT_ARTICULO sa";
 	private static final String TABLA_SVC_DONACION_ORDEN_SERVICIO_SDOS = "SVC_DONACION_ORDEN_SERVICIO_TEMP sdos";
 	private static final String TABLA_SVC_ORDEN_SERVICIO_SOS = "SVC_ORDEN_SERVICIO sos";
-	private static final String TABLA_SVC_SALIDA_DONACION_FINADOS_SSDF = "svc_salida_donacion_finados ssdf"; 
+	private static final String TABLA_SVC_SALIDA_DONACION_FINADOS_SSDF = "SVC_SALIDA_DONACION_FINADOS ssdf"; 
 	private static final String TABLA_SVC_DONACION_SD = "SVC_DONACION sd"; 
 	private static final String TABLA_SVC_ATAUDES_DONADOS_SAD = "SVC_ATAUDES_DONADOS sad"; 
 	private static final String TABLA_SVT_ARTICULO_SA2 = "SVT_ARTICULO sa2"; 
