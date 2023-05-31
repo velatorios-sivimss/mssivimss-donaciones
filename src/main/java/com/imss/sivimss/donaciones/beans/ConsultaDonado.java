@@ -41,7 +41,7 @@ public class ConsultaDonado {
 
 
 	private static final String CAMPO_ODS_DONADO_POR = "'ODS' AS donadoPor";
-	private static final String CAMPO_FECHA_DONACION_ENTRADA = "date_format(sd.FEC_ALTA ,'" ;
+	private static final String CAMPO_FECHA_DONACION_ENTRADA = "date_format(sd.FEC_ALTA" ;
 	private static final String CAMPO_SV_NOM_VELATORIO_AS_VELATORIO = "sv.DES_VELATORIO  AS velatorio";
 	private static final String CAMPO_STM_DES_TIPO_MATERIAL_AS_TIPOMATERIAL = "stm.DES_TIPO_MATERIAL AS tipoMaterial";
 	private static final String CAMPO_SA_DES_MODELO_ARTICULO_AS_MODELOARTICULO = "sa.DES_MODELO_ARTICULO AS modeloAtaud";
@@ -53,7 +53,6 @@ public class ConsultaDonado {
 	
 	
 	private static final String TABLA_SVC_VELATORIO_SV = "SVC_VELATORIO sv";
-	private static final String TABLA_SVC_DELEGACION_SD = "SVC_DELEGACION sd";
 	private static final String TABLA_SVC_TIPO_MATERIAL_STM = "SVC_TIPO_MATERIAL stm";
 	private static final String TABLA_SVC_SALIDA_DONACION_ATAUDES_SSDA = "SVC_SALIDA_DONACION_ATAUDES ssda";
 	private static final String TABLA_SVC_SALIDA_DONACION_SSD = "SVC_SALIDA_DONACION ssd";
@@ -79,8 +78,11 @@ public class ConsultaDonado {
 	private static final String PARAM_IDVELATORIO = "idVel";
 	private static final String PARAM_IDDELEGACION = "idDel";
 	private static final String PARAM_SF_ID_VELATORIO_IDVEL = "sv.ID_VELATORIO = :idVel";
-	
+	private static final String PARAM_FECINI = ") >= :fecIni";
+	private static final String PARAM_FECFIN = ") <= :fecFin";
+
 	private static final String CAMPOS_VAL_STM_VS_SA_TIPO_MATERIAL = "stm.ID_TIPO_MATERIAL = sa.ID_TIPO_MATERIAL";
+	private static final String VALIDACION_DATE_FORMAT = "date_format(";
 	
 	public ConsultaDonado(ConsultaDonadoRequest consultaDonadoRequest) {
 		this.idInventario = consultaDonadoRequest.getIdInventario();
@@ -116,15 +118,10 @@ public class ConsultaDonado {
 				.join(TABLA_SVT_ARTICULO_SA2,"sa2.ID_ARTICULO = sad.ID_ARTICULO") 
 				.join(TABLA_SVC_PARTIDA_PRESUPUESTAL_SPP,"spp.ID_PART_PRESUPUESTAL = sa2.ID_PART_PRESUPUESTAL") 
 				.join(TABLA_SVT_INVENTARIO_SI,"si.ID_PART_PRESUPUESTAL  = spp.ID_PART_PRESUPUESTAL") 
-				.join(TABLA_SVC_VELATORIO_SV,"sv.ID_VELATORIO = si.ID_VELATORIO") 
+				.join(TABLA_SVC_VELATORIO_SV,"sv.ID_VELATORIO = si.ID_VELATORIO");
 
-			.where(PARAM_SF_ID_VELATORIO_IDVEL)
-				.setParameter(PARAM_IDVELATORIO, this.idVelatorio).and(PARAM_SV_DELEGACION_IDDEL)
-				.setParameter(PARAM_IDDELEGACION, this.idDelegacion);
-		if (this.fechaInicio != null && this.fechaFin != null) {
-			queryUtil.and("ssd.FEC_SOLICITUD >= :fecIni").setParameter(PARAM_FECHA_INICIO, this.fechaInicio)
-					.and("ssd.FEC_SOLICITUD <= :fecFin").setParameter(PARAM_FECHA_FIN, this.fechaFin);
-		}
+		queryUtil = genWhere(queryUtil, "sd.FEC_ALTA");
+		
 		final String query = queryUtil.build();
 		String encoded = DatatypeConverter.printBase64Binary(query.getBytes());
 		request.getDatos().put(AppConstantes.QUERY, encoded);
@@ -132,35 +129,6 @@ public class ConsultaDonado {
 		return request;
 	}
 
-	public DatosRequest obtenerDelegaciones(DatosRequest request) {
-
-		SelectQueryUtil queryUtil = new SelectQueryUtil();
-		queryUtil.select("sd.ID_DELEGACION, sd.DES_DELEGACION").from(TABLA_SVC_DELEGACION_SD);
-		final String query = queryUtil.build();
-		String encoded = DatatypeConverter.printBase64Binary(query.getBytes());
-		request.getDatos().put(AppConstantes.QUERY, encoded);
-		return request;
-	}
-
-	public DatosRequest obtenerVelatorio(DatosRequest request) {
-
-		SelectQueryUtil queryUtil = new SelectQueryUtil();
-		queryUtil.select("sv.ID_VELATORIO", "sv.NOM_VELATORIO").from(TABLA_SVC_VELATORIO_SV);
-		final String query = queryUtil.build();
-		String encoded = DatatypeConverter.printBase64Binary(query.getBytes());
-		request.getDatos().put(AppConstantes.QUERY, encoded);
-		return request;
-	}
-
-	public DatosRequest obtenerNivel(DatosRequest request) {
-
-		SelectQueryUtil queryUtil = new SelectQueryUtil();
-		queryUtil.select("sno.ID_OFICINA", "sno.DES_NIVELOFICINA").from("svc_nivel_oficina sno ");
-		final String query = queryUtil.build();
-		String encoded = DatatypeConverter.printBase64Binary(query.getBytes());
-		request.getDatos().put(AppConstantes.QUERY, encoded);
-		return request;
-	}
 
 	public DatosRequest consultarFiltroDonadosEntrada(DatosRequest request, String formatoFecha) {
 		SelectQueryUtil queryUtil = new SelectQueryUtil();
@@ -175,16 +143,10 @@ public class ConsultaDonado {
 				.join(TABLA_SVT_CONTRATO_SC2,"sc2.ID_CONTRATO = soe.ID_CONTRATO") 
 				.join(TABLA_SVC_VELATORIO_SV,"sv.ID_VELATORIO = sc2.ID_VELATORIO") 
 				.join(TABLA_SVC_DELEGACION_SD2,"sd2.ID_DELEGACION = sv.ID_DELEGACION") 
-				.join(TABLA_SVT_PROVEEDOR_SP2,"sp2.ID_PROVEEDOR = soe.ID_CONTRATO") 
-				.where(PARAM_SF_ID_VELATORIO_IDVEL)
-				.setParameter(PARAM_IDVELATORIO, this.idVelatorio).and(PARAM_SV_DELEGACION_IDDEL)
-				.setParameter(PARAM_IDDELEGACION, this.idDelegacion);
-		if (this.fechaInicio != null && this.fechaFin != null) {
-			queryUtil.and("date_format(sd.FEC_ALTA,'" + formatoFecha + "') >= :fecIni")
-					.setParameter(PARAM_FECHA_INICIO, this.fechaInicio)
-					.and(CAMPO_FECHA_DONACION_ENTRADA+ formatoFecha + "') <= :fecFin")
-					.setParameter(PARAM_FECHA_FIN, this.fechaFin);
-		}
+				.join(TABLA_SVT_PROVEEDOR_SP2,"sp2.ID_PROVEEDOR = soe.ID_CONTRATO"); 
+
+		queryUtil = genWhere(queryUtil, "sd.FEC_ALTA");
+		
 		final String query = queryUtil.build();
 		String encoded = DatatypeConverter.printBase64Binary(query.getBytes());
 		request.getDatos().put(AppConstantes.QUERY, encoded);
@@ -212,15 +174,8 @@ public class ConsultaDonado {
 				.join(TABLA_SVC_PARTIDA_PRESUPUESTAL_SPP,"spp.ID_PART_PRESUPUESTAL = sa2.ID_PART_PRESUPUESTAL") 
 				.join(TABLA_SVT_INVENTARIO_SI,"si.ID_PART_PRESUPUESTAL  = spp.ID_PART_PRESUPUESTAL") 
 				.join(TABLA_SVC_VELATORIO_SV,"sv.ID_VELATORIO = si.ID_VELATORIO") ;
-		if (this.idVelatorio != null && this.idDelegacion != null) {
-			querySalida.where(PARAM_SF_ID_VELATORIO_IDVEL)
-				.setParameter(PARAM_IDVELATORIO, this.idVelatorio).and(PARAM_SV_DELEGACION_IDDEL)
-				.setParameter(PARAM_IDDELEGACION, this.idDelegacion);
-			if (this.fechaInicio != null && this.fechaFin != null) {
-				querySalida.and("ssd.FEC_SOLICITUD >= :fecIni").setParameter(PARAM_FECHA_INICIO, this.fechaInicio)
-				.and("ssd.FEC_SOLICITUD <= :fecFin").setParameter(PARAM_FECHA_FIN, this.fechaFin);
-			}
-		}
+		querySalida = genWhere(querySalida,"ssd.FEC_SOLICITUD");
+		
 		queryEntrada.select(CAMPO_SV_NOM_VELATORIO_AS_VELATORIO,CAMPO_STM_DES_TIPO_MATERIAL_AS_TIPOMATERIAL,CAMPO_SA_DES_MODELO_ARTICULO_AS_MODELOARTICULO
 				,CAMPO_SIA_FOLIO_ARTICULO_AS_NUM_INVENTARIO,"date_format(sd.FEC_ALTA,'%d/%m/%Y') AS fecDonacion","'Instituto' AS donadoPor","sp2.NOM_PROVEEDOR  AS nomDonador")
 				.from(TABLA_SVC_DONACION_SD)
@@ -233,17 +188,7 @@ public class ConsultaDonado {
 				.join(TABLA_SVC_VELATORIO_SV,"sv.ID_VELATORIO = sc2.ID_VELATORIO") 
 				.join(TABLA_SVC_DELEGACION_SD2,"sd2.ID_DELEGACION = sv.ID_DELEGACION") 
 				.join(TABLA_SVT_PROVEEDOR_SP2,"sp2.ID_PROVEEDOR = soe.ID_CONTRATO") ;
-		if (this.idVelatorio != null && this.idDelegacion != null) {
-			queryEntrada.where(PARAM_SF_ID_VELATORIO_IDVEL)
-			.setParameter(PARAM_IDVELATORIO, this.idVelatorio).and(PARAM_SV_DELEGACION_IDDEL)
-			.setParameter(PARAM_IDDELEGACION, this.idDelegacion);
-			if (this.fechaInicio != null && this.fechaFin != null) {
-				queryEntrada.and("date_format(sd.FEC_ALTA,'" + formatoFecha + "') >= :fecIni")
-					.setParameter(PARAM_FECHA_INICIO, this.fechaInicio)
-					.and(CAMPO_FECHA_DONACION_ENTRADA+ formatoFecha + "') <= :fecFin")
-					.setParameter(PARAM_FECHA_FIN, this.fechaFin);
-			}
-		}
+		queryEntrada = genWhere(queryEntrada, "sd.FEC_ALTA");
 		
 		  final String query = querySalida.union(queryEntrada);
 		  String encoded =DatatypeConverter.printBase64Binary(query.getBytes());
@@ -274,5 +219,29 @@ public class ConsultaDonado {
 
 		return envioDatos;
 	}
-
+	private SelectQueryUtil genWhere (SelectQueryUtil query, String fecha) {
+		String formatoFechaAMD = "'%Y-%m-%d'";
+		if (this.idVelatorio != null ) {
+			query.where(PARAM_SF_ID_VELATORIO_IDVEL).setParameter(PARAM_IDVELATORIO, this.idVelatorio);
+			if( this.idDelegacion != null) {
+				query.and(PARAM_SV_DELEGACION_IDDEL).setParameter(PARAM_IDDELEGACION, this.idDelegacion);
+			}if (this.fechaInicio != null ) { 
+				query.and(VALIDACION_DATE_FORMAT + fecha + "," + formatoFechaAMD + PARAM_FECINI).setParameter(PARAM_FECHA_INICIO, this.fechaInicio);
+			}if( this.fechaFin != null) {
+					query.and(CAMPO_FECHA_DONACION_ENTRADA + "," + formatoFechaAMD + PARAM_FECFIN).setParameter(PARAM_FECHA_FIN, this.fechaFin);
+				}
+		}else if( this.idDelegacion != null) {
+			query.where(PARAM_SV_DELEGACION_IDDEL).setParameter(PARAM_IDDELEGACION, this.idDelegacion);
+			if (this.fechaInicio != null )
+				query.and(VALIDACION_DATE_FORMAT + fecha + "," + formatoFechaAMD + PARAM_FECINI).setParameter(PARAM_FECHA_INICIO, this.fechaInicio);
+			if( this.fechaFin != null)
+				query.and(CAMPO_FECHA_DONACION_ENTRADA + "," + formatoFechaAMD + PARAM_FECFIN).setParameter(PARAM_FECHA_FIN, this.fechaFin);
+		}else if (this.fechaInicio != null ) {
+			query.where(VALIDACION_DATE_FORMAT + fecha + "," + formatoFechaAMD + PARAM_FECINI).setParameter(PARAM_FECHA_INICIO, this.fechaInicio);
+			if( this.fechaFin != null)
+				query.and(CAMPO_FECHA_DONACION_ENTRADA + "," + formatoFechaAMD + PARAM_FECFIN).setParameter(PARAM_FECHA_FIN, this.fechaFin);
+		}else if( this.fechaFin != null)
+			query.where(CAMPO_FECHA_DONACION_ENTRADA + "," + formatoFechaAMD + PARAM_FECFIN).setParameter(PARAM_FECHA_FIN, this.fechaFin);
+		return query;
+		}
 }
