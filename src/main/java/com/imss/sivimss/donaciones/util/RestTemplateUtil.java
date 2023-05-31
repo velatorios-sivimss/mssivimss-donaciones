@@ -197,7 +197,7 @@ public class RestTemplateUtil {
 		header.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 		return header;
 	}
-
+	
 //////////////////////////////////////////
 	/**
 	 * Enviar una peticion con Body para reportes.

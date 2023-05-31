@@ -1,7 +1,6 @@
 package com.imss.sivimss.donaciones.service.impl;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -64,18 +63,21 @@ public class ConsultaDonadoServiceImpl implements ConsultaDonadosService {
 	private static final String CONSULTA = "consulta";
 	private static final String CU064_NOMBRE = "ConsultarDonados: ";
 	private static final String CONSULTAR_PAGINADO = "/paginado";
+	private static final String CONULTA_FILTROS = "consu-filtrodonados: ";
+	private static final String GENERAR_DOCUMENTO = "generarDocumento: ";
+	private static final String CONSULTAR_DONADOS = "consultar-donados: " ;
 
 	@Override
 	public Response<Object> consultarDonados(DatosRequest request, Authentication authentication) throws IOException {
 		Map<String, Object> envioDatos = consultarDonado.consultarDonados(request, formatoFecha).getDatos();
 		try {
-			log.info("consultarDonados: " + queryDecoded(envioDatos));
-			logUtil.crearArchivoLog(Level.INFO.toString(), CU064_NOMBRE + this.getClass().getSimpleName() + ".consultarDonados", this.getClass().getPackage().toString(), "consultarDonados", CONSULTA, authentication);
+			log.info(CU064_NOMBRE + CONSULTAR_DONADOS + queryDecoded(envioDatos));
+			logUtil.crearArchivoLog(Level.INFO.toString(), CU064_NOMBRE + CONSULTAR_DONADOS + this.getClass().getSimpleName(), this.getClass().getPackage().toString(), "consultarDonados", CONSULTA, authentication);
 			response = providerRestTemplate.consumirServicio(envioDatos, urlModCatalogos + CONSULTAR_PAGINADO, authentication);
 			return MensajeResponseUtil.mensajeConsultaResponse(response, NO_SE_ENCONTRO_INFORMACION);
 		} catch (Exception e) {
-			log.error( CU064_NOMBRE +ERROR_QUERY +  queryDecoded(envioDatos));
-			logUtil.crearArchivoLog(Level.WARNING.toString(), CU064_NOMBRE + this.getClass().getSimpleName(),
+			log.error( CU064_NOMBRE +CONSULTAR_DONADOS +ERROR_QUERY +  queryDecoded(envioDatos));
+			logUtil.crearArchivoLog(Level.WARNING.toString(), CU064_NOMBRE + CONSULTAR_DONADOS + this.getClass().getSimpleName(),
 					this.getClass().getPackage().toString(), ERROR_QUERY +  queryDecoded(envioDatos), CONSULTA, authentication);
 			throw new IOException("52", e.getCause());
 		}
@@ -89,9 +91,8 @@ public class ConsultaDonadoServiceImpl implements ConsultaDonadosService {
 		ConsultaDonadoRequest consultaDonadoRequest = gson.fromJson(datosJson, ConsultaDonadoRequest.class);
 		consultarDonado = new ConsultaDonado(consultaDonadoRequest);
 
-
 		Map<String, Object> envioDatos = new HashMap<>();
-		logUtil.crearArchivoLog(Level.INFO.toString(), CU064_NOMBRE + this.getClass().getSimpleName() + ".consultaFiltroDonado",
+		logUtil.crearArchivoLog(Level.INFO.toString(), CU064_NOMBRE + CONULTA_FILTROS +this.getClass().getSimpleName(),
 				this.getClass().getPackage().toString(), "consultaFiltroDonado", CONSULTA, authentication);
 		if (consultaDonadoRequest.getDonadoPor() == null) {
 			envioDatos = consultarDonado.consultarDonados(request, formatoFecha).getDatos();
@@ -99,17 +100,16 @@ public class ConsultaDonadoServiceImpl implements ConsultaDonadosService {
 			envioDatos = consultarDonado.consultarFiltroDonadosSalida(request, formatoFecha).getDatos();
 		} else if (consultaDonadoRequest.getDonadoPor().equals("2")) {
 			envioDatos = consultarDonado.consultarFiltroDonadosEntrada(request, formatoFecha).getDatos();
-
 		}
 	
 		try {
-			log.info( CU064_NOMBRE + "consultaFiltroDonado: " + queryDecoded(envioDatos));
+			log.info( CU064_NOMBRE + CONULTA_FILTROS + queryDecoded(envioDatos));
 			response = providerRestTemplate.consumirServicio(envioDatos, urlModCatalogos + CONSULTAR_PAGINADO,
 					authentication);
 			return MensajeResponseUtil.mensajeConsultaResponse(response, NO_SE_ENCONTRO_INFORMACION);
 		} catch (Exception e) {
-			log.error( CU064_NOMBRE + ERROR_QUERY + queryDecoded(envioDatos));
-			logUtil.crearArchivoLog(Level.WARNING.toString(), CU064_NOMBRE + this.getClass().getSimpleName(),
+			log.error( CU064_NOMBRE + CONULTA_FILTROS + ERROR_QUERY + queryDecoded(envioDatos));
+			logUtil.crearArchivoLog(Level.WARNING.toString(), CU064_NOMBRE + CONULTA_FILTROS + this.getClass().getSimpleName(),
 					this.getClass().getPackage().toString(), ERROR_QUERY + queryDecoded(envioDatos), CONSULTA, authentication);
 			throw new IOException("52", e.getCause());
 		}
@@ -126,14 +126,14 @@ public class ConsultaDonadoServiceImpl implements ConsultaDonadosService {
 		Map<String, Object> envioDatos = consultarDonado.generarReportePDF(reporteDto, nombrePdfReportes);
 		String queryDecoded = envioDatos.get("condicion").toString();
 		try {
-			log.info( CU064_NOMBRE + queryDecoded);
-			logUtil.crearArchivoLog(Level.INFO.toString(), CU064_NOMBRE + this.getClass().getSimpleName() + ".generarDocumento",
+			log.info( CU064_NOMBRE + GENERAR_DOCUMENTO + queryDecoded);
+			logUtil.crearArchivoLog(Level.INFO.toString(), CU064_NOMBRE + GENERAR_DOCUMENTO + this.getClass().getSimpleName(),
 					this.getClass().getPackage().toString(), "generarDocumento", GENERA_DOCUMENTO, authentication);
 			response = providerRestTemplate.consumirServicioReportes(envioDatos, urlReportes, authentication);
 			return MensajeResponseUtil.mensajeConsultaResponse(response, ERROR_AL_DESCARGAR_DOCUMENTO);
 		} catch (Exception e) {
-			log.error( CU064_NOMBRE + ERROR_QUERY + queryDecoded);
-			logUtil.crearArchivoLog(Level.WARNING.toString(), CU064_NOMBRE + this.getClass().getSimpleName(),
+			log.error( CU064_NOMBRE + GENERAR_DOCUMENTO + ERROR_QUERY + queryDecoded);
+			logUtil.crearArchivoLog(Level.WARNING.toString(), CU064_NOMBRE + GENERAR_DOCUMENTO + this.getClass().getSimpleName(),
 					this.getClass().getPackage().toString(), ERROR_QUERY + queryDecoded, GENERA_DOCUMENTO,
 					authentication);
 			throw new IOException("52", e.getCause());
