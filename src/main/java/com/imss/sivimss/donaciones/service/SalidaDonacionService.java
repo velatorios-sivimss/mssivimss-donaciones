@@ -13,12 +13,12 @@ public interface SalidaDonacionService {
 	
 	Response<Object> detalleContratanteCurp(DatosRequest request, Authentication authentication) throws IOException;
 	
-	Response<?> detalleSalidaAtaudDonado(DatosRequest request, Authentication authentication) throws IOException;
+	Response<Object> detalleSalidaAtaudDonado(DatosRequest request, Authentication authentication) throws IOException;
 	
-	Response<?> cantidadSalidaAtaudDonado(DatosRequest request, Authentication authentication) throws IOException;
+	Response<Object> cantidadSalidaAtaudDonado(DatosRequest request, Authentication authentication) throws IOException;
 	
-	Response<?> insertSalidaAtaudDonado(DatosRequest request, Authentication authentication)throws IOException;
+	Response<Object> insertSalidaAtaudDonado(DatosRequest request, Authentication authentication)throws IOException;
 	
-	Response<?> generarDocumentoControlSalidaDonacion(DatosRequest request, Authentication authentication) throws IOException;
+	Response<Object> generarDocumentoControlSalidaDonacion(DatosRequest request, Authentication authentication) throws IOException;
 
 }
