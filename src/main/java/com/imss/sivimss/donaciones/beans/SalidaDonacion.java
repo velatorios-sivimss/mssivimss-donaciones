@@ -57,7 +57,7 @@ public class SalidaDonacion {
 		.innerJoin("SVC_CATEGORIA_ARTICULO CA", "A.ID_CATEGORIA_ARTICULO = CA.ID_CATEGORIA_ARTICULO").and("A.ID_CATEGORIA_ARTICULO = 1")
 		.innerJoin("SVC_TIPO_ARTICULO TA", "A.ID_TIPO_ARTICULO = TA.ID_TIPO_ARTICULO").and("A.ID_TIPO_ARTICULO = 1")
 		.innerJoin("SVC_TIPO_MATERIAL TM", "A.ID_TIPO_MATERIAL = TM.ID_TIPO_MATERIAL")
-		.where("C.ID_VELATORIO = :idVelatorio").setParameter("idVelatorio", usuarioDto.getIdVelatorio());
+		.where("C.ID_VELATORIO = :idVelatorio").setParameter("idVelatorio", ConsultaConstantes.getIdVelatorio(usuarioDto.getIdVelatorio()));
 		final String query = queryUtil.build();
 		log.info(" detalleSalidaAtaudDonado: " + query );
 		String encoded = DatatypeConverter.printBase64Binary(query.getBytes(StandardCharsets.UTF_8));

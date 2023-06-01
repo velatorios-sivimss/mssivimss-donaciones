@@ -90,7 +90,7 @@ public class Donacion {
 		.innerJoin("SVC_TIPO_MATERIAL TM", "A.ID_TIPO_MATERIAL = TM.ID_TIPO_MATERIAL")
 		.where(ConsultaConstantes.OS_CVE_FOLIO_CVE_FOLIO).setParameter(ConsultaConstantes.CVE_FOLIO, donacionRequest.getClaveFolio())
 		.and(ConsultaConstantes.AND_CVE_ESTATUS).setParameter(ConsultaConstantes.ESTATUS_ORDEN_SERVICIO, donacionRequest.getEstatusOrdenServicio())
-		.and("OS.ID_VELATORIO = :idVelatorio").setParameter("idVelatorio", usuarioDto.getIdVelatorio());
+		.and("OS.ID_VELATORIO = :idVelatorio").setParameter("idVelatorio", ConsultaConstantes.getIdVelatorio(usuarioDto.getIdVelatorio()));
 		final String query = queryUtil.build();
 		log.info(" detalleAtaudDonado: " + query );
 		String encoded = DatatypeConverter.printBase64Binary(query.getBytes(StandardCharsets.UTF_8));
