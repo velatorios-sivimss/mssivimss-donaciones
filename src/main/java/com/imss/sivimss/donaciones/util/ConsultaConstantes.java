@@ -19,6 +19,10 @@ public class ConsultaConstantes {
 	public static final String ID_TABLA = "idTabla";
 	public static final String REPLACE = "replace";
 	
+	private ConsultaConstantes() {
+		super();
+	}
+	
 	public static SelectQueryUtil detalleContratante () {
 		SelectQueryUtil queryUtil = new SelectQueryUtil();
 		queryUtil.select("P.ID_PERSONA AS idPersona","P.CVE_RFC AS rfc","P.CVE_CURP AS curp","P.CVE_NSS AS nss","P.NOM_PERSONA AS nomPersona","P.NOM_PRIMER_APELLIDO AS nomPersonaPaterno",
@@ -30,8 +34,11 @@ public class ConsultaConstantes {
 		.innerJoin("SVT_DOMICILIO D", "C.ID_DOMICILIO = D.ID_DOMICILIO");
 		return queryUtil;
 	}
-
-	private ConsultaConstantes() {
-		super();
+	
+	public static Integer getIdVelatorio(Integer idVelatorio) {
+		if(idVelatorio == null){
+			return 0;
+		}
+		return idVelatorio;
 	}
 }
