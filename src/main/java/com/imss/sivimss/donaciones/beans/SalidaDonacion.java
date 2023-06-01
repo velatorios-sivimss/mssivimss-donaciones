@@ -26,22 +26,27 @@ import lombok.extern.slf4j.Slf4j;
 public class SalidaDonacion {
 	
 	public DatosRequest detalleContratanteRfc(DatosRequest request, DonacionRequest donacionRequest) {
+		log.info(" INICIO - detalleContratanteRfc");
 		String query = ConsultaConstantes.detalleContratante().where("P.CVE_RFC = :rfc").setParameter("rfc", donacionRequest.getRfc()).build();
 		log.info(" detalleContratanteRfc: " + query );
 		String encoded = DatatypeConverter.printBase64Binary(query.getBytes(StandardCharsets.UTF_8));
 		request.getDatos().put(AppConstantes.QUERY, encoded);
+		log.info(" TERMINO - detalleContratanteRfc");
 		return request;
 	}
 	
 	public DatosRequest detalleContratanteCurp(DatosRequest request, DonacionRequest donacionRequest) {
+		log.info(" INICIO - detalleContratanteCurp");
 		String query = ConsultaConstantes.detalleContratante().where("P.CVE_CURP = :curp").setParameter("curp", donacionRequest.getCurp()).build();
 		log.info(" detalleContratanteCurp: " + query );
 		String encoded = DatatypeConverter.printBase64Binary(query.getBytes(StandardCharsets.UTF_8));
 		request.getDatos().put(AppConstantes.QUERY, encoded);
+		log.info(" TERMINO - detalleContratanteCurp");
 		return request;
 	}
 	
 	public DatosRequest detalleSalidaAtaudDonado(DatosRequest request, UsuarioDto usuarioDto) {
+		log.info(" INICIO - detalleSalidaAtaudDonado");
 		SelectQueryUtil queryUtil = new SelectQueryUtil();
 		queryUtil.select("S.FOLIO_ARTICULO AS folioArticulo","A.ID_ARTICULO AS idArticulo","TM.DES_TIPO_MATERIAL AS desTipoMaterial",
 				"CONCAT_WS('-',S.FOLIO_ARTICULO,A.DES_MODELO_ARTICULO ) AS  desModeloArticulo")
@@ -57,10 +62,12 @@ public class SalidaDonacion {
 		log.info(" detalleSalidaAtaudDonado: " + query );
 		String encoded = DatatypeConverter.printBase64Binary(query.getBytes(StandardCharsets.UTF_8));
 		request.getDatos().put(AppConstantes.QUERY, encoded);
+		log.info(" TERMINO - detalleSalidaAtaudDonado");
 		return request;
 	}
 	
 	public DatosRequest countSalidaAtaudDonado(DatosRequest request, AgregarArticuloRequest agregarArticuloRequest) {
+		log.info(" INICIO - countSalidaAtaudDonado");
 		SelectQueryUtil queryUtil = new SelectQueryUtil();
 		queryUtil.select("COUNT(*) AS numArticulo")
 		.from("SVT_ORDEN_ENTRADA OE")
@@ -71,10 +78,12 @@ public class SalidaDonacion {
 		log.info(" countSalidaAtaudDonado: " + query );
 		String encoded = DatatypeConverter.printBase64Binary(query.getBytes(StandardCharsets.UTF_8));
 		request.getDatos().put(AppConstantes.QUERY, encoded);
+		log.info(" TERMINO - countSalidaAtaudDonado");
 		return request;
 	}
 	
 	public InsertMultiNivelRequest insertPersona(DonacionRequest donacionRequest, UsuarioDto usuarioDto) {
+		log.info(" INICIO - insertPersona");
 		InsertMultiNivelRequest convertirQuery = new InsertMultiNivelRequest();
 		List<String> unoAuno = new ArrayList<>();
 		List<String> unoAn = new ArrayList<>();
@@ -113,11 +122,13 @@ public class SalidaDonacion {
 		 convertirQuery.setId(ConsultaConstantes.ID_TABLA);
 		 
 		 log.info(" insertPersona: " + convertirQuery.toString() );
-		
+		 
+		 log.info(" TERMINO - insertPersona");
 		return convertirQuery;
 	}
 	
 	public String insertDomicilio(DonacionRequest donacionRequest, UsuarioDto usuarioDto) {
+		log.info(" INICIO - insertDomicilio");
 		final QueryHelper q = new QueryHelper("INSERT INTO SVT_DOMICILIO");
 		q.agregarParametroValues("DES_CALLE", "'" + donacionRequest.getDesCalle() + "'");
 		q.agregarParametroValues("NUM_EXTERIOR", "'" + donacionRequest.getNumExterior() + "'");
@@ -128,22 +139,24 @@ public class SalidaDonacion {
 		q.agregarParametroValues("DES_ESTADO", "'" + donacionRequest.getDesEstado() + "'");
 		q.agregarParametroValues(ConsultaConstantes.ID_USUARIO_ALTA, String.valueOf(usuarioDto.getIdUsuario()));
 		q.agregarParametroValues(ConsultaConstantes.FEC_ALTA, ConsultaConstantes.CURRENT_TIMESTAMP);
-        
+		log.info(" TERMINO - insertDomicilio");
         return DatatypeConverter.printBase64Binary(q.obtenerQueryInsertar().getBytes(StandardCharsets.UTF_8));
 	}
 
 	public String insertContratante(DonacionRequest donacionRequest, UsuarioDto usuarioDto) {
+		log.info(" INICIO - insertContratante");
 		final QueryHelper q = new QueryHelper("INSERT INTO SVC_CONTRATANTE");
 		q.agregarParametroValues("ID_PERSONA", "idTabla1");
 		q.agregarParametroValues("CVE_MATRICULA", "'" + donacionRequest.getClaveMatricula() + "'");
 		q.agregarParametroValues("ID_DOMICILIO", "idTabla2");
 		q.agregarParametroValues(ConsultaConstantes.ID_USUARIO_ALTA, String.valueOf(usuarioDto.getIdUsuario()));
 		q.agregarParametroValues(ConsultaConstantes.FEC_ALTA, ConsultaConstantes.CURRENT_TIMESTAMP);
-        
+		log.info(" TERMINO - insertContratante");
         return DatatypeConverter.printBase64Binary(q.obtenerQueryInsertar().getBytes(StandardCharsets.UTF_8));
 	}
 
 	public String insertSalidaDonacion(DonacionRequest donacionRequest, UsuarioDto usuarioDto) {
+		log.info(" INICIO - insertSalidaDonacion");
 		final QueryHelper q = new QueryHelper("INSERT INTO SVC_SALIDA_DONACION");
 		q.agregarParametroValues("ID_CONTRATANTE", ConsultaConstantes.ID_TABLA);
 		q.agregarParametroValues("DES_INSTITUCION", "'" + donacionRequest.getNomInstitucion() + "'");
@@ -156,11 +169,12 @@ public class SalidaDonacion {
 		q.agregarParametroValues("IND_ACTIVO", String.valueOf(1));
 		q.agregarParametroValues(ConsultaConstantes.ID_USUARIO_ALTA, String.valueOf(usuarioDto.getIdUsuario()));
 		q.agregarParametroValues(ConsultaConstantes.FEC_ALTA, ConsultaConstantes.CURRENT_TIMESTAMP);
-
+		log.info(" TERMINO - insertSalidaDonacion");
 		return DatatypeConverter.printBase64Binary(q.obtenerQueryInsertar().getBytes(StandardCharsets.UTF_8));
 	}
 
 	public List<String> insertSalidaDonacionAtaudes(DonacionRequest donacionRequest, UsuarioDto usuarioDto) {
+		log.info(" INICIO - insertSalidaDonacionAtaudes");
 		List<String> unoAn = new ArrayList<>();
 		donacionRequest.getAtaudesDonados().forEach(agregarArticuloRequest -> {
 			final QueryHelper q = new QueryHelper("INSERT INTO SVC_SALIDA_DONACION_ATAUDES");
@@ -170,11 +184,12 @@ public class SalidaDonacion {
 			q.agregarParametroValues(ConsultaConstantes.FEC_ALTA, ConsultaConstantes.CURRENT_TIMESTAMP);
 			unoAn.add(DatatypeConverter.printBase64Binary(q.obtenerQueryInsertar().getBytes(StandardCharsets.UTF_8)));
 		});
-
+		log.info(" TERMINO - insertSalidaDonacionAtaudes");
 		return unoAn;
 	}
 
 	public List<String>  insertSalidaDonacionFinados(DonacionRequest donacionRequest, UsuarioDto usuarioDto) {
+		log.info(" INICIO - insertSalidaDonacionFinados");
 		List<String> unoAn = new ArrayList<>();
 		donacionRequest.getAgregarFinados().forEach(agregarArticuloRequest -> {
 			final QueryHelper q = new QueryHelper("INSERT INTO SVC_SALIDA_DONACION_FINADOS");
@@ -186,11 +201,12 @@ public class SalidaDonacion {
 			q.agregarParametroValues(ConsultaConstantes.FEC_ALTA, ConsultaConstantes.CURRENT_TIMESTAMP);
 			unoAn.add(DatatypeConverter.printBase64Binary(q.obtenerQueryInsertar().getBytes(StandardCharsets.UTF_8)));
 		});
-
+		log.info(" TERMINO - insertSalidaDonacionFinados");
 		return unoAn;
 	}
 	
 	public ActualizarMultiRequest actualizarStockArticulo(DonacionRequest donacionRequest, UsuarioDto usuarioDto) {
+		log.info(" INICIO - actualizarStockArticulo");
 		ActualizarMultiRequest actualizarMultiRequest = new ActualizarMultiRequest();
 		List<String> updates = new ArrayList<>();
         donacionRequest.getAtaudesDonados().forEach(agregarArticuloRequest -> {
@@ -205,10 +221,14 @@ public class SalidaDonacion {
         
         log.info(" insertPersona: " + actualizarMultiRequest.toString() );
 
+        log.info(" TERMINO - actualizarStockArticulo");
+        
 		return actualizarMultiRequest;
     }
 	
 	public Map<String, Object> generarPlantillaControlSalidaDonacionPDF(PlantillaControlSalidaDonacionRequest plantillaControlSalidaRequest, String nombrePdfControlSalida) {
+		log.info(" INICIO - generarPlantillaControlSalidaDonacionPDF");
+		
 		Map<String, Object> envioDatos = new HashMap<>();
 		
 		envioDatos.put("version", plantillaControlSalidaRequest.getVersion());
@@ -233,6 +253,8 @@ public class SalidaDonacion {
 		envioDatos.put("anio", plantillaControlSalidaRequest.getAnio());
 		envioDatos.put(ConsultaConstantes.TIPO_REPORTE, plantillaControlSalidaRequest.getTipoReporte());
 		envioDatos.put("rutaNombreReporte", nombrePdfControlSalida);
+		
+		log.info(" TERMINO - generarPlantillaControlSalidaDonacionPDF");
 
 		return envioDatos;
 	}

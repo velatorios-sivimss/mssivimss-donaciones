@@ -9,16 +9,16 @@ import com.imss.sivimss.donaciones.util.Response;
 
 public interface AceptacionDonacionService {
 	
-	Response<?> detalleNombreContratante(DatosRequest request, Authentication authentication) throws IOException;
+	Response<Object> detalleNombreContratante(DatosRequest request, Authentication authentication) throws IOException;
 	
-	Response<?> detalleNombreFinado(DatosRequest request, Authentication authentication) throws IOException;
+	Response<Object> detalleNombreFinado(DatosRequest request, Authentication authentication) throws IOException;
 	
-	Response<?> detalleAceptacionDonacion(DatosRequest request, Authentication authentication) throws IOException;
+	Response<Object> detalleAceptacionDonacion(DatosRequest request, Authentication authentication) throws IOException;
 	
-	Response<?> detalleAtaudDonado(DatosRequest request, Authentication authentication) throws IOException;
+	Response<Object> detalleAtaudDonado(DatosRequest request, Authentication authentication) throws IOException;
 	
-	Response<?> insertAtaudDonado(DatosRequest request, Authentication authentication)throws IOException;
+	Response<Object> insertAtaudDonado(DatosRequest request, Authentication authentication)throws IOException;
 	
-	Response<?> generarDocumentoAceptacionControl(DatosRequest request, Authentication authentication) throws IOException;
+	Response<Object> generarDocumentoAceptacionControl(DatosRequest request, Authentication authentication) throws IOException;
 
 }

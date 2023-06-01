@@ -25,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 public class Donacion {
 
 	public DatosRequest detalleNombreContratante(DatosRequest request, DonacionRequest donacionRequest) {
+		log.info(" INICIO - detalleNombreContratante");
 		SelectQueryUtil queryUtil = new SelectQueryUtil();
 		queryUtil.select("OS.ID_ORDEN_SERVICIO AS idOrdenService",
 				"CONCAT_WS(' ',P.NOM_PERSONA,P.NOM_PRIMER_APELLIDO,P.NOM_SEGUNDO_APELLIDO ) AS  nombreContratante")
@@ -37,10 +38,12 @@ public class Donacion {
 		log.info(" detalleNombreContratante: " + query );
 		String encoded = DatatypeConverter.printBase64Binary(query.getBytes(StandardCharsets.UTF_8));
 		request.getDatos().put(AppConstantes.QUERY, encoded);
+		log.info(" TERMINO - detalleNombreContratante");
 		return request;
 	}
 
 	public DatosRequest detalleNombreFinado(DatosRequest request, DonacionRequest donacionRequest) throws UnsupportedEncodingException {
+		log.info(" INICIO - detalleNombreFinado");
 		SelectQueryUtil queryUtil = new SelectQueryUtil();
 		queryUtil.select("OS.ID_ORDEN_SERVICIO AS idOrdenService",
 				"CONCAT_WS(' ',P.NOM_PERSONA,P.NOM_PRIMER_APELLIDO,P.NOM_SEGUNDO_APELLIDO ) AS  nombreFinado")
@@ -53,10 +56,12 @@ public class Donacion {
 		log.info(" detalleNombreFinado: " + query );
 		String encoded = DatatypeConverter.printBase64Binary(query.getBytes(StandardCharsets.UTF_8));
 		request.getDatos().put(AppConstantes.QUERY, encoded);
+		log.info(" TERMINO - detalleNombreFinado");
 		return request;
 	}
 	
 	public DatosRequest detalleAceptacionDonacion(DatosRequest request, DonacionRequest donacionRequest) {
+		log.info(" INICIO - detalleAceptacionDonacion");
 		SelectQueryUtil queryUtil = new SelectQueryUtil();
 		queryUtil.select("CONCAT_WS(' ',U.NOM_USUARIO,U.NOM_APELLIDO_PATERNO,U.NOM_APELLIDO_MATERNO) AS nombreAdministrador",
 				"U.CVE_MATRICULA AS matriculaAdministrador","CONCAT_WS(',',V.DES_VELATORIO,D.DES_DELEGACION) AS lugardonacion")
@@ -68,10 +73,12 @@ public class Donacion {
 		log.info(" detalleAceptacionDonacion: " + query );
 		String encoded = DatatypeConverter.printBase64Binary(query.getBytes(StandardCharsets.UTF_8));
 		request.getDatos().put(AppConstantes.QUERY, encoded);
+		log.info(" TERMINO - detalleAceptacionDonacion");
 		return request;
 	}
 
 	public DatosRequest detalleAtaudDonado(DatosRequest request, DonacionRequest donacionRequest, UsuarioDto usuarioDto) {
+		log.info(" INICIO - detalleAtaudDonado");
 		SelectQueryUtil queryUtil = new SelectQueryUtil();
 		queryUtil.select("S.FOLIO_ARTICULO AS folioArticulo","A.ID_ARTICULO AS idArticulo", "TM.DES_TIPO_MATERIAL AS desTipoMaterial",
 				"CONCAT_WS('-',S.FOLIO_ARTICULO,A.DES_MODELO_ARTICULO ) AS  desModeloArticulo")
@@ -88,10 +95,12 @@ public class Donacion {
 		log.info(" detalleAtaudDonado: " + query );
 		String encoded = DatatypeConverter.printBase64Binary(query.getBytes(StandardCharsets.UTF_8));
 		request.getDatos().put(AppConstantes.QUERY, encoded);
+		log.info(" TERMINO - detalleAtaudDonado");
 		return request;
 	}
 
 	public DatosRequest insertarDonacion(DonacionRequest donacionRequest, UsuarioDto usuarioDto) {
+		log.info(" INICIO - insertarDonacion");
 		DatosRequest request = new DatosRequest();
 		Map<String, Object> parametro = new HashMap<>();
 
@@ -111,11 +120,12 @@ public class Donacion {
 		parametro.put(ConsultaConstantes.REPLACE, ConsultaConstantes.ID_TABLA);
 
 		request.setDatos(parametro);
-
+		log.info(" TERMINO - insertarDonacion");
 		return request;
 	}
 
 	public String insertAtaudDonado(DonacionRequest donacionRequest, UsuarioDto usuarioDto) {
+		log.info(" INICIO - insertAtaudDonado");
 		StringBuilder query = new StringBuilder();
 		donacionRequest.getAtaudesDonados().forEach(agregarArticuloRequest -> {
 			final QueryHelper q = new QueryHelper("INSERT INTO SVC_ATAUDES_DONADOS");
@@ -125,11 +135,12 @@ public class Donacion {
 			q.agregarParametroValues(ConsultaConstantes.FEC_ALTA, ConsultaConstantes.CURRENT_TIMESTAMP);
 			query.append("$$").append(q.obtenerQueryInsertar());
 		});
-		
+		log.info(" TERMINO - insertAtaudDonado");
 		return query.toString();
 	}
 	
 	public ActualizarMultiRequest actualizarStockArticulo(DonacionRequest donacionRequest, UsuarioDto usuarioDto) {
+		log.info(" INICIO - actualizarStockArticulo");
 		ActualizarMultiRequest actualizarMultiRequest = new ActualizarMultiRequest();
 		List<String> updates = new ArrayList<>();
         donacionRequest.getAtaudesDonados().forEach(agregarArticuloRequest -> {
@@ -141,12 +152,14 @@ public class Donacion {
         	updates.add(DatatypeConverter.printBase64Binary(q.obtenerQueryActualizar().getBytes(StandardCharsets.UTF_8)));
         });
         actualizarMultiRequest.setUpdates(updates);
-
+        log.info(" TERMINO - actualizarStockArticulo");
 		return actualizarMultiRequest;
     }
 	
 	
 	public Map<String, Object> generarPlantillaAceptacionControlPDF(PlantillaAceptacionControlRequest plantillaAceptacionControlRequest, String nombrePdfAceptacionControl) {
+		log.info(" INICIO - generarPlantillaAceptacionControlPDF");
+		
 		Map<String, Object> envioDatos = new HashMap<>();
 		
 		envioDatos.put("version", plantillaAceptacionControlRequest.getVersion());
@@ -168,7 +181,9 @@ public class Donacion {
 		envioDatos.put("anio", plantillaAceptacionControlRequest.getAnio());
 		envioDatos.put(ConsultaConstantes.TIPO_REPORTE, plantillaAceptacionControlRequest.getTipoReporte());
 		envioDatos.put("rutaNombreReporte", nombrePdfAceptacionControl);
-
+		
+		log.info(" TERMINO - generarPlantillaAceptacionControlPDF");
+		
 		return envioDatos;
 	}
 	
