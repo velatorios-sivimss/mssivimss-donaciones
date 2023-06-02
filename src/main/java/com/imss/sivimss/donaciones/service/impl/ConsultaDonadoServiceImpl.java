@@ -95,9 +95,11 @@ public class ConsultaDonadoServiceImpl implements ConsultaDonadosService {
 		logUtil.crearArchivoLog(Level.INFO.toString(), CU064_NOMBRE + CONULTA_FILTROS +this.getClass().getSimpleName(),
 				this.getClass().getPackage().toString(), "consultaFiltroDonado", CONSULTA, authentication);
 		if (consultaDonadoRequest.getDonadoPor() == null) {
-			envioDatos = consultarDonado.consultarDonados(request, formatoFecha).getDatos();
+			envioDatos = consultarDonado.consultarFiltroDonadosEntrada(request, formatoFecha).getDatos();
+			//envioDatos = consultarDonado.consultarDonados(request, formatoFecha).getDatos();
 		} else if (consultaDonadoRequest.getDonadoPor().equals("1")) {
-			envioDatos = consultarDonado.consultarFiltroDonadosSalida(request, formatoFecha).getDatos();
+			envioDatos = consultarDonado.consultarFiltroDonadosEntrada(request, formatoFecha).getDatos();
+			//envioDatos = consultarDonado.consultarFiltroDonadosSalida(request, formatoFecha).getDatos();
 		} else if (consultaDonadoRequest.getDonadoPor().equals("2")) {
 			envioDatos = consultarDonado.consultarFiltroDonadosEntrada(request, formatoFecha).getDatos();
 		}
