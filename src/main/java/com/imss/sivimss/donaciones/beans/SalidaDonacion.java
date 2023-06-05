@@ -48,7 +48,7 @@ public class SalidaDonacion {
 	public DatosRequest detalleSalidaAtaudDonado(DatosRequest request, UsuarioDto usuarioDto) {
 		log.info(" INICIO - detalleSalidaAtaudDonado");
 		SelectQueryUtil queryUtil = new SelectQueryUtil();
-		queryUtil.select("S.FOLIO_ARTICULO AS folioArticulo","A.ID_ARTICULO AS idArticulo","TM.DES_TIPO_MATERIAL AS desTipoMaterial",
+		queryUtil.select("S.FOLIO_ARTICULO AS folioArticulo","S.ID_INVE_ARTICULO AS idInventarioArticulo","TM.DES_TIPO_MATERIAL AS desTipoMaterial",
 				"CONCAT_WS('-',S.FOLIO_ARTICULO,A.DES_MODELO_ARTICULO ) AS  desModeloArticulo")
 		.from("SVT_ORDEN_ENTRADA OE")
 		.innerJoin("SVT_CONTRATO C", "OE.ID_CONTRATO = C.ID_CONTRATO")
