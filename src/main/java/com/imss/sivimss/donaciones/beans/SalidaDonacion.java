@@ -214,7 +214,7 @@ public class SalidaDonacion {
         	q.agregarParametroValues("ID_TIPO_ASIGNACION_ART",  String.valueOf(4));
         	q.agregarParametroValues(ConsultaConstantes.ID_USUARIO_MODIFICA, String.valueOf(usuarioDto.getIdUsuario()));
     		q.agregarParametroValues(ConsultaConstantes.FEC_ACTUALIZACION, ConsultaConstantes.CURRENT_TIMESTAMP);
-        	q.addWhere(" ID_ARTICULO = " + agregarArticuloRequest.getIdArticulo() + " AND FOLIO_ARTICULO = '" + agregarArticuloRequest.getFolioArticulo().concat("'"));
+    		q.addWhere(" ID_INVE_ARTICULO = " + agregarArticuloRequest.getIdInventarioArticulo());
         	updates.add(DatatypeConverter.printBase64Binary(q.obtenerQueryActualizar().getBytes(StandardCharsets.UTF_8)));
         });
         actualizarMultiRequest.setUpdates(updates);
