@@ -25,7 +25,7 @@ public class SelectQueryUtil {
     private static final String COLON = ":";
     private static final String ORDER_BY = "ORDER BY";
     private static final String GROUP_BY = "GROUP BY";
-    private static final String LIMITE = "LIMIT";
+    private static final String LIMIT = "LIMIT";
     private static final String UNION = "UNION";
     // campos
     private final List<String> tablas = new ArrayList<>();
@@ -40,7 +40,7 @@ public class SelectQueryUtil {
     private boolean isFromCalled;
     private boolean isSelectCalled;
     private boolean isJoinCalled;
-    private Integer limite;
+    private Integer limit;
 
     /**
      * La funci&oacute;n <b>{@code select()}</b>, se tiene que invocar 2 veces, la primera es para crear una instancia de
@@ -317,8 +317,8 @@ public class SelectQueryUtil {
      * @return
      * @since 1.0.1
      */
-    public SelectQueryUtil limit(Integer limite) {
-        this.limite = limite;
+    public SelectQueryUtil limit(Integer limit) {
+        this.limit = limit;
         return this;
     }
 
@@ -382,11 +382,11 @@ public class SelectQueryUtil {
      * @since 1.0.1
      */
     private void agregarLimit(StringBuilder stringBuilder) {
-        if (limite != null) {
+        if (limit != null) {
             stringBuilder.append(SPACE)
-                    .append(LIMITE)
+                    .append(LIMIT)
                     .append(SPACE)
-                    .append(limite.toString());
+                    .append(limit.toString());
         }
     }
 
@@ -576,10 +576,6 @@ public class SelectQueryUtil {
                 "#" + tipo +
                 SPACE +
                 condicion;
-    }
-    
-    public static String eliminarEspacios(String texto) {
-        return texto.replaceAll(" +"," ");
     }
 
 }

@@ -65,15 +65,6 @@ public class DonacionController {
 		return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
 	
-	@PostMapping("/detalle-aceptacion-donacion")
-	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
-	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
-	@TimeLimiter(name = "msflujo")
-	public CompletableFuture<Object> detalleAceptacionDonacion(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
-		Response<?> response =  aceptacionDonacionService.detalleAceptacionDonacion(request,authentication);
-		return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
-	}
-	
 	@PostMapping("/detalle-ataud-donado")
 	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")

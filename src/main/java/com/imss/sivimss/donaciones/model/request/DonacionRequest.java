@@ -75,8 +75,6 @@ public class DonacionRequest {
 	private Integer numSexo;
 	@JsonProperty
 	private String desOtroSexo;
-	@JsonProperty
-	private Integer idVelatorio;
 	@JsonFormat(pattern = "yyyy-MM-dd")
 	private String fecNacimiento;
 	@JsonProperty

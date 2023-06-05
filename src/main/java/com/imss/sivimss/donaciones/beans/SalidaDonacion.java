@@ -1,6 +1,5 @@
 package com.imss.sivimss.donaciones.beans;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,58 +17,43 @@ import com.imss.sivimss.donaciones.util.AppConstantes;
 import com.imss.sivimss.donaciones.util.ConsultaConstantes;
 import com.imss.sivimss.donaciones.util.DatosRequest;
 import com.imss.sivimss.donaciones.util.QueryHelper;
-import com.imss.sivimss.donaciones.util.SelectQueryUtil;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 public class SalidaDonacion {
 	
 	public DatosRequest detalleContratanteRfc(DatosRequest request, DonacionRequest donacionRequest) {
-		String query = ConsultaConstantes.detalleContratante().where("P.CVE_RFC = :rfc").setParameter("rfc", donacionRequest.getRfc()).build();
-		log.info(" detalleContratanteRfc: " + query );
-		String encoded = DatatypeConverter.printBase64Binary(query.getBytes(StandardCharsets.UTF_8));
+		String query = ConsultaConstantes.DETALLECONTRATANTE.concat("  WHERE P.CVE_RFC = '").concat(donacionRequest.getRfc()).concat("'");
+		String encoded = DatatypeConverter.printBase64Binary(query.getBytes());
 		request.getDatos().put(AppConstantes.QUERY, encoded);
 		return request;
 	}
 	
 	public DatosRequest detalleContratanteCurp(DatosRequest request, DonacionRequest donacionRequest) {
-		String query = ConsultaConstantes.detalleContratante().where("P.CVE_CURP = :curp").setParameter("curp", donacionRequest.getCurp()).build();
-		log.info(" detalleContratanteCurp: " + query );
-		String encoded = DatatypeConverter.printBase64Binary(query.getBytes(StandardCharsets.UTF_8));
+		String query = ConsultaConstantes.DETALLECONTRATANTE.concat("  WHERE P.CVE_CURP = '").concat(donacionRequest.getCurp()).concat("'");
+		String encoded = DatatypeConverter.printBase64Binary(query.getBytes());
 		request.getDatos().put(AppConstantes.QUERY, encoded);
 		return request;
 	}
 	
-	public DatosRequest detalleSalidaAtaudDonado(DatosRequest request, UsuarioDto usuarioDto) {
-		SelectQueryUtil queryUtil = new SelectQueryUtil();
-		queryUtil.select("S.FOLIO_ARTICULO AS folioArticulo","A.ID_ARTICULO AS idArticulo","TM.DES_TIPO_MATERIAL AS desTipoMaterial",
-				"CONCAT_WS('-',S.FOLIO_ARTICULO,A.DES_MODELO_ARTICULO ) AS  desModeloArticulo")
-		.from("SVT_ORDEN_ENTRADA OE")
-		.innerJoin("SVT_CONTRATO C", "OE.ID_CONTRATO = C.ID_CONTRATO")
-		.innerJoin("SVT_INVENTARIO_ARTICULO S","OE.ID_ODE = S.ID_ODE")
-		.innerJoin("SVT_ARTICULO A", "S.ID_ARTICULO = A.ID_ARTICULO").and("S.ID_TIPO_ASIGNACION_ART = 3").and("A.IND_ACTIVO = 1")
-		.innerJoin("SVC_CATEGORIA_ARTICULO CA", "A.ID_CATEGORIA_ARTICULO = CA.ID_CATEGORIA_ARTICULO").and("A.ID_CATEGORIA_ARTICULO = 1")
-		.innerJoin("SVC_TIPO_ARTICULO TA", "A.ID_TIPO_ARTICULO = TA.ID_TIPO_ARTICULO").and("A.ID_TIPO_ARTICULO = 1")
-		.innerJoin("SVC_TIPO_MATERIAL TM", "A.ID_TIPO_MATERIAL = TM.ID_TIPO_MATERIAL")
-		.where("C.ID_VELATORIO = :idVelatorio").setParameter("idVelatorio", usuarioDto.getIdVelatorio());
-		final String query = queryUtil.build();
-		log.info(" detalleSalidaAtaudDonado: " + query );
-		String encoded = DatatypeConverter.printBase64Binary(query.getBytes(StandardCharsets.UTF_8));
+	public DatosRequest detalleSalidaAtaudDonado(DatosRequest request) {
+		StringBuilder query = new StringBuilder(
+				"  SELECT DISTINCT S.FOLIO_ARTICULO AS folioArticulo,  A.ID_ARTICULO AS idArticulo, TM.DES_TIPO_MATERIAL AS desTipoMaterial,  "
+				        .concat(" CONCAT_WS('-',S.FOLIO_ARTICULO,A.DES_MODELO_ARTICULO ) AS  desModeloArticulo ")
+						.concat(" FROM SVT_INVENTARIO_ARTICULO S  INNER JOIN SVT_ARTICULO A ON S.ID_ARTICULO = A.ID_ARTICULO AND S.ID_TIPO_ASIGNACION_ART = 3 AND A.IND_ACTIVO = 1  ")
+						.concat(" INNER JOIN SVC_CATEGORIA_ARTICULO CA ON A.ID_CATEGORIA_ARTICULO = CA.ID_CATEGORIA_ARTICULO  ")
+						.concat("  AND A.ID_CATEGORIA_ARTICULO = 1 INNER JOIN SVC_TIPO_ARTICULO TA ON A.ID_TIPO_ARTICULO = TA.ID_TIPO_ARTICULO ")
+						.concat(" AND A.ID_TIPO_ARTICULO = 1 INNER JOIN SVC_TIPO_MATERIAL TM ON A.ID_TIPO_MATERIAL = TM.ID_TIPO_MATERIAL  "));
+		String encoded = DatatypeConverter.printBase64Binary(query.toString().getBytes());
 		request.getDatos().put(AppConstantes.QUERY, encoded);
 		return request;
 	}
 	
 	public DatosRequest countSalidaAtaudDonado(DatosRequest request, AgregarArticuloRequest agregarArticuloRequest) {
-		SelectQueryUtil queryUtil = new SelectQueryUtil();
-		queryUtil.select("COUNT(*) AS numArticulo")
-		.from("SVT_ORDEN_ENTRADA OE")
-		.innerJoin("SVT_INVENTARIO_ARTICULO S", "OE.ID_ODE = S.ID_ODE")
-		.innerJoin("SVT_ARTICULO A", "S.ID_ARTICULO = A.ID_ARTICULO").and("S.ID_TIPO_ASIGNACION_ART = 3").and("S.IND_DEVOLUCION IS NULL").and("A.IND_ACTIVO = 1")
-		.where("A.DES_MODELO_ARTICULO = :modeloArticlo").setParameter("modeloArticlo", agregarArticuloRequest.getModeloArticulo());
-		final String query = queryUtil.build();
-		log.info(" countSalidaAtaudDonado: " + query );
-		String encoded = DatatypeConverter.printBase64Binary(query.getBytes(StandardCharsets.UTF_8));
+		StringBuilder query = new StringBuilder(
+				" SELECT COUNT(*) AS numArticulo FROM SVT_ORDEN_ENTRADA OE INNER JOIN  SVT_INVENTARIO_ARTICULO S ON OE.ID_ODE = S.ID_ODE  "
+						.concat("  INNER JOIN SVT_ARTICULO A ON S.ID_ARTICULO = A.ID_ARTICULO AND S.ID_TIPO_ASIGNACION_ART = 3   ")
+						.concat(" AND S.IND_DEVOLUCION IS NULL AND A.IND_ACTIVO = 1 ")
+						.concat(" WHERE A.DES_MODELO_ARTICULO = '").concat(agregarArticuloRequest.getModeloArticulo()).concat("'"));
+		String encoded = DatatypeConverter.printBase64Binary(query.toString().getBytes());
 		request.getDatos().put(AppConstantes.QUERY, encoded);
 		return request;
 	}
@@ -97,7 +81,7 @@ public class SalidaDonacion {
 		q.agregarParametroValues(ConsultaConstantes.ID_USUARIO_ALTA, String.valueOf(usuarioDto.getIdUsuario()));
 		q.agregarParametroValues(ConsultaConstantes.FEC_ALTA, ConsultaConstantes.CURRENT_TIMESTAMP);
 		
-		unoAuno.add(DatatypeConverter.printBase64Binary(q.obtenerQueryInsertar().getBytes(StandardCharsets.UTF_8)));
+		unoAuno.add(DatatypeConverter.printBase64Binary(q.obtenerQueryInsertar().getBytes()));
 		unoAuno.add(insertDomicilio(donacionRequest, usuarioDto));
 		unoAuno.add(insertContratante(donacionRequest, usuarioDto));
 		unoAuno.add(insertSalidaDonacion(donacionRequest, usuarioDto));
@@ -111,8 +95,6 @@ public class SalidaDonacion {
 		 convertirQuery.setUnoAn(unoAn);
 		 
 		 convertirQuery.setId(ConsultaConstantes.ID_TABLA);
-		 
-		 log.info(" insertPersona: " + convertirQuery.toString() );
 		
 		return convertirQuery;
 	}
@@ -129,7 +111,7 @@ public class SalidaDonacion {
 		q.agregarParametroValues(ConsultaConstantes.ID_USUARIO_ALTA, String.valueOf(usuarioDto.getIdUsuario()));
 		q.agregarParametroValues(ConsultaConstantes.FEC_ALTA, ConsultaConstantes.CURRENT_TIMESTAMP);
         
-        return DatatypeConverter.printBase64Binary(q.obtenerQueryInsertar().getBytes(StandardCharsets.UTF_8));
+        return DatatypeConverter.printBase64Binary(q.obtenerQueryInsertar().getBytes());
 	}
 
 	public String insertContratante(DonacionRequest donacionRequest, UsuarioDto usuarioDto) {
@@ -140,24 +122,24 @@ public class SalidaDonacion {
 		q.agregarParametroValues(ConsultaConstantes.ID_USUARIO_ALTA, String.valueOf(usuarioDto.getIdUsuario()));
 		q.agregarParametroValues(ConsultaConstantes.FEC_ALTA, ConsultaConstantes.CURRENT_TIMESTAMP);
         
-        return DatatypeConverter.printBase64Binary(q.obtenerQueryInsertar().getBytes(StandardCharsets.UTF_8));
+        return DatatypeConverter.printBase64Binary(q.obtenerQueryInsertar().getBytes());
 	}
 
 	public String insertSalidaDonacion(DonacionRequest donacionRequest, UsuarioDto usuarioDto) {
 		final QueryHelper q = new QueryHelper("INSERT INTO SVC_SALIDA_DONACION");
 		q.agregarParametroValues("ID_CONTRATANTE", ConsultaConstantes.ID_TABLA);
-		q.agregarParametroValues("DES_INSTITUCION", "'" + donacionRequest.getNomInstitucion() + "'");
+		q.agregarParametroValues("NOM_INSTITUCION", "'" + donacionRequest.getNomInstitucion() + "'");
 		q.agregarParametroValues("NUM_TOTAL_ATAUDES", String.valueOf(donacionRequest.getNumTotalAtaudes()));
-		q.agregarParametroValues("IND_ESTUDIO_SOCIECONOMICO",String.valueOf(donacionRequest.getEstudioSocieconomico()));
-		q.agregarParametroValues("IND_ESTUDIO_LIBRE", String.valueOf(donacionRequest.getEstudioLibre()));
+		q.agregarParametroValues("INT_ESTUDIO_SOCIECONOMICO",String.valueOf(donacionRequest.getEstudioSocieconomico()));
+		q.agregarParametroValues("INT_ESTUDIO_LIBRE", String.valueOf(donacionRequest.getEstudioLibre()));
 		q.agregarParametroValues("FEC_SOLICITUD", "'" + donacionRequest.getFecSolicitad() + "'");
-		q.agregarParametroValues("DES_RESPONSABLE_ALMACEN", "'" + SelectQueryUtil.eliminarEspacios(donacionRequest.getResponsableAlmacen()) + "'");
+		q.agregarParametroValues("NOM_RESPONSABLE_ALMACEN", "'" + donacionRequest.getResponsableAlmacen() + "'");
 		q.agregarParametroValues("CVE_MATRICULA_RESPONSABLE", "'" + donacionRequest.getMatricularesponsable() + "'");
 		q.agregarParametroValues("IND_ACTIVO", String.valueOf(1));
 		q.agregarParametroValues(ConsultaConstantes.ID_USUARIO_ALTA, String.valueOf(usuarioDto.getIdUsuario()));
 		q.agregarParametroValues(ConsultaConstantes.FEC_ALTA, ConsultaConstantes.CURRENT_TIMESTAMP);
 
-		return DatatypeConverter.printBase64Binary(q.obtenerQueryInsertar().getBytes(StandardCharsets.UTF_8));
+		return DatatypeConverter.printBase64Binary(q.obtenerQueryInsertar().getBytes());
 	}
 
 	public List<String> insertSalidaDonacionAtaudes(DonacionRequest donacionRequest, UsuarioDto usuarioDto) {
@@ -168,7 +150,7 @@ public class SalidaDonacion {
 			q.agregarParametroValues(ConsultaConstantes.ID_ARTICULO, String.valueOf(agregarArticuloRequest.getIdArticulo()));
 			q.agregarParametroValues(ConsultaConstantes.ID_USUARIO_ALTA, String.valueOf(usuarioDto.getIdUsuario()));
 			q.agregarParametroValues(ConsultaConstantes.FEC_ALTA, ConsultaConstantes.CURRENT_TIMESTAMP);
-			unoAn.add(DatatypeConverter.printBase64Binary(q.obtenerQueryInsertar().getBytes(StandardCharsets.UTF_8)));
+			unoAn.add(DatatypeConverter.printBase64Binary(q.obtenerQueryInsertar().getBytes()));
 		});
 
 		return unoAn;
@@ -184,7 +166,7 @@ public class SalidaDonacion {
 			q.agregarParametroValues("NOM_SEGUNDO_APELLIDO", "'" + agregarArticuloRequest.getNomFinadoMaterno() + "'");
 			q.agregarParametroValues(ConsultaConstantes.ID_USUARIO_ALTA, String.valueOf(usuarioDto.getIdUsuario()));
 			q.agregarParametroValues(ConsultaConstantes.FEC_ALTA, ConsultaConstantes.CURRENT_TIMESTAMP);
-			unoAn.add(DatatypeConverter.printBase64Binary(q.obtenerQueryInsertar().getBytes(StandardCharsets.UTF_8)));
+			unoAn.add(DatatypeConverter.printBase64Binary(q.obtenerQueryInsertar().getBytes()));
 		});
 
 		return unoAn;
@@ -199,11 +181,9 @@ public class SalidaDonacion {
         	q.agregarParametroValues(ConsultaConstantes.ID_USUARIO_MODIFICA, String.valueOf(usuarioDto.getIdUsuario()));
     		q.agregarParametroValues(ConsultaConstantes.FEC_ACTUALIZACION, ConsultaConstantes.CURRENT_TIMESTAMP);
         	q.addWhere(" ID_ARTICULO = " + agregarArticuloRequest.getIdArticulo() + " AND FOLIO_ARTICULO = '" + agregarArticuloRequest.getFolioArticulo().concat("'"));
-        	updates.add(DatatypeConverter.printBase64Binary(q.obtenerQueryActualizar().getBytes(StandardCharsets.UTF_8)));
+        	updates.add(DatatypeConverter.printBase64Binary(q.obtenerQueryActualizar().getBytes()));
         });
         actualizarMultiRequest.setUpdates(updates);
-        
-        log.info(" insertPersona: " + actualizarMultiRequest.toString() );
 
 		return actualizarMultiRequest;
     }
@@ -223,10 +203,8 @@ public class SalidaDonacion {
 		envioDatos.put("nomFinados", plantillaControlSalidaRequest.getNomFinados());
 		envioDatos.put("fecSolicitud", plantillaControlSalidaRequest.getFecSolicitud());
 		envioDatos.put(ConsultaConstantes.RESPONSABLE_ALMACEN, plantillaControlSalidaRequest.getNomResponsableAlmacen());
-		envioDatos.put("matriculaResponSable", plantillaControlSalidaRequest.getClaveResponsableAlmacen());
 		envioDatos.put("solicitante", plantillaControlSalidaRequest.getNomSolicitante());
 		envioDatos.put("administrador", plantillaControlSalidaRequest.getNomAdministrador());
-		envioDatos.put("matriculaAdministrador", plantillaControlSalidaRequest.getClaveAdministrador());
 		envioDatos.put("lugar", plantillaControlSalidaRequest.getLugar());
 		envioDatos.put("dia", plantillaControlSalidaRequest.getDia());
 		envioDatos.put("mes", plantillaControlSalidaRequest.getMes());
