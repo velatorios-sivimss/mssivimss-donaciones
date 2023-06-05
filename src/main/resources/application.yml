@@ -1,7 +1,7 @@
 server:
   port: 8080
   servlet:
-    contextPath: /mssivimss-gestionar-donaciones/v1
+    contextPath: /mssivimss-donaciones/v1
 spring:
   mvc:
     pathmatch:
@@ -37,6 +37,7 @@ plantilla:
   aceptacion-control-ataudes-donacion: ${msit_REPORTE_ACEPTACION_DONACION}
   control-salida-ataudes-donacion: ${msit_REPORTE_SALIDA_DONACION}
   consulta-donacion: ${msit_REPORTE_CONSULTA_DONACION}
+
 
 jwt:
   secretkey-flujo: ${msit_SECRET_KEY}

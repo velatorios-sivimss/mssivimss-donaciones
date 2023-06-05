@@ -31,6 +31,8 @@ public class AgregarArticuloRequest {
 	@JsonProperty
 	private Integer idTipoAsignacionArt;
 	@JsonProperty
+	private Integer idInventarioArticulo;
+	@JsonProperty
 	private String folioArticulo;
 
 }

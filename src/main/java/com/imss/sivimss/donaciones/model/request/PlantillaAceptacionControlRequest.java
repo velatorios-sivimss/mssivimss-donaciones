@@ -26,9 +26,13 @@ public class PlantillaAceptacionControlRequest {
 	@JsonProperty
 	private String nomResponsableAlmacen;
 	@JsonProperty
+	private String claveResponsableAlmacen;
+	@JsonProperty
 	private String nomContratante;
 	@JsonProperty
 	private String nomAdministrador;
+	@JsonProperty
+	private String claveAdministrador;
 	@JsonProperty
 	private String lugar;
 	@JsonProperty

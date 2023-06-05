@@ -9,9 +9,9 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.imss.sivimss</groupId>
-	<artifactId>mssivimss-gestionar-donaciones</artifactId>
+	<artifactId>mssivimss-donaciones</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>mssivimss-gestionar-donaciones</name>
+	<name>mssivimss-donaciones</name>
 	<description>gestionar donaciones</description>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

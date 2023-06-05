@@ -27,6 +27,7 @@ public class LogUtil {
         Gson json = new Gson();
         UsuarioDto usuarioDto = json.fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
         File archivo = new File(rutaLog + "mssivimss-donaciones" +  new SimpleDateFormat("ddMMyyyy").format(new Date()) + ".log");
+ 
         FileWriter escribirArchivo = new FileWriter(archivo, true);
         try {
             escribirArchivo.write("" + formatoFechaLog + " --- [" + tipoLog + "] " + origen + " " + clasePath + " : " + mensaje + " , Usuario: " + usuarioDto.getCveUsuario() + " - " + tiempoEjecucion);
@@ -36,27 +37,10 @@ public class LogUtil {
         } catch (Exception e) {
             log.error("No se puede escribir el log.");
             log.error(e.getMessage());
-        } finally {
             escribirArchivo.close();
         }
 
     }
 
-    public void crearArchivoLogDTO(String tipoLog, String origen, String clasePath, String mensaje, String tiempoEjecucion, UsuarioDto usuarioDto) throws IOException {
-        File archivo = new File(rutaLog + new SimpleDateFormat("ddMMyyyy").format(new Date()) + ".log");
-        FileWriter escribirArchivo = new FileWriter(archivo, true);
-        try {
-            escribirArchivo.write("" + formatoFechaLog + " --- [" + tipoLog + "] " + origen + " " + clasePath + " : " + mensaje + " , Usuario: " + usuarioDto.getCveUsuario() + " - " + tiempoEjecucion);
-            escribirArchivo.write("\r\n");
-            escribirArchivo.close();
-            escribirArchivo.close();
-        } catch (Exception e) {
-            log.error("No se puede escribir el log.");
-            log.error(e.getMessage());
-        } finally {
-            escribirArchivo.close();
-        }
-
-    }
 
 }
