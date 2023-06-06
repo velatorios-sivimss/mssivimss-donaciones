@@ -52,7 +52,7 @@ public class DonacionController {
 	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@TimeLimiter(name = "msflujo")
 	public CompletableFuture<Object> nombreContratante(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
-		Response<?> response =  aceptacionDonacionService.detalleNombreContratante(request,authentication);
+		Response<Object> response =  aceptacionDonacionService.detalleNombreContratante(request,authentication);
 		return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
 	
@@ -61,7 +61,16 @@ public class DonacionController {
 	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@TimeLimiter(name = "msflujo")
 	public CompletableFuture<Object> nombreFinado(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
-		Response<?> response =  aceptacionDonacionService.detalleNombreFinado(request,authentication);
+		Response<Object> response =  aceptacionDonacionService.detalleNombreFinado(request,authentication);
+		return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
+	}
+	
+	@PostMapping("/detalle-aceptacion-donacion")
+	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@TimeLimiter(name = "msflujo")
+	public CompletableFuture<Object> detalleAceptacionDonacion(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
+		Response<Object> response =  aceptacionDonacionService.detalleAceptacionDonacion(request,authentication);
 		return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
 	
@@ -70,7 +79,7 @@ public class DonacionController {
 	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@TimeLimiter(name = "msflujo")
 	public CompletableFuture<Object> ataudDonado(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
-		Response<?> response =  aceptacionDonacionService.detalleAtaudDonado(request,authentication);
+		Response<Object> response =  aceptacionDonacionService.detalleAtaudDonado(request,authentication);
 		return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
 	
@@ -79,7 +88,7 @@ public class DonacionController {
 	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@TimeLimiter(name = "msflujo")
 	public CompletableFuture<Object> detalleContratanteRfc(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
-		Response<?> response =  salidaDonacionService.detalleContratanteRfc(request,authentication);
+		Response<Object> response =  salidaDonacionService.detalleContratanteRfc(request,authentication);
 		return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
 	
@@ -88,7 +97,7 @@ public class DonacionController {
 	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@TimeLimiter(name = "msflujo")
 	public CompletableFuture<Object> detalleContratanteCurp(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
-		Response<?> response =  salidaDonacionService.detalleContratanteCurp(request,authentication);
+		Response<Object> response =  salidaDonacionService.detalleContratanteCurp(request,authentication);
 		return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
 	
@@ -106,7 +115,7 @@ public class DonacionController {
 	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@TimeLimiter(name = "msflujo")
 	public CompletableFuture<Object> countSalidaAtaudDonado(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
-		Response<?> response =  salidaDonacionService.cantidadSalidaAtaudDonado(request,authentication);
+		Response<Object> response =  salidaDonacionService.cantidadSalidaAtaudDonado(request,authentication);
 		return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
 	
@@ -115,7 +124,7 @@ public class DonacionController {
 	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@TimeLimiter(name = "msflujo")
 	public CompletableFuture<Object> agregar(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
-		Response<?> response =   aceptacionDonacionService.insertAtaudDonado(request,authentication);
+		Response<Object> response =   aceptacionDonacionService.insertAtaudDonado(request,authentication);
 		return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
 	
@@ -124,7 +133,7 @@ public class DonacionController {
 	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@TimeLimiter(name = "msflujo")
 	public CompletableFuture<Object> agregarSalidaDonacion(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
-		Response<?> response =   salidaDonacionService.insertSalidaAtaudDonado(request,authentication);
+		Response<Object> response =   salidaDonacionService.insertSalidaAtaudDonado(request,authentication);
 		return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
 	
@@ -133,7 +142,7 @@ public class DonacionController {
 	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@TimeLimiter(name = "msflujo")
 	public CompletableFuture<Object>  generarDocumentoAceptacionControl(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
-		Response<?> response =  aceptacionDonacionService.generarDocumentoAceptacionControl(request, authentication);
+		Response<Object> response =  aceptacionDonacionService.generarDocumentoAceptacionControl(request, authentication);
 		return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
 	
@@ -142,7 +151,7 @@ public class DonacionController {
 	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@TimeLimiter(name = "msflujo")
 	public CompletableFuture<Object>  generarDocumentoControlSalidaDonacion(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
-		Response<?> response =  salidaDonacionService.generarDocumentoControlSalidaDonacion(request, authentication);
+		Response<Object> response =  salidaDonacionService.generarDocumentoControlSalidaDonacion(request, authentication);
 		return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
 	}
 	
@@ -154,7 +163,7 @@ public class DonacionController {
 	 */
 	CompletableFuture<Object> fallbackGenerico(@RequestBody DatosRequest request, Authentication authentication,
 			CallNotPermittedException e) throws IOException {
-		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
+		Response<Object> response = providerRestTemplate.respuestaProvider(e.getMessage());
 		logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString(),RESILENCIA, CONSULTA,authentication);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
@@ -162,7 +171,7 @@ public class DonacionController {
 
 	CompletableFuture<Object> fallbackGenerico(@RequestBody DatosRequest request, Authentication authentication,
 			RuntimeException e) throws IOException {
-		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
+		Response<Object> response = providerRestTemplate.respuestaProvider(e.getMessage());
 		logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString(),RESILENCIA, CONSULTA,authentication);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
@@ -170,7 +179,7 @@ public class DonacionController {
 
 	CompletableFuture<Object> fallbackGenerico(@RequestBody DatosRequest request, Authentication authentication,
 			NumberFormatException e) throws IOException {
-		Response<?> response = providerRestTemplate.respuestaProvider(e.getMessage());
+		Response<Object> response = providerRestTemplate.respuestaProvider(e.getMessage());
 		logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString(),RESILENCIA, CONSULTA,authentication);
 		return CompletableFuture
 				.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));

@@ -12,7 +12,7 @@ public class MensajeResponseUtil {
 	}
 
 	
-	public  static Response<Object>mensajeResponse(Response<?> respuestaGenerado, String numeroMensaje) {
+	public  static Response<Object>mensajeResponse(Response<Object> respuestaGenerado, String numeroMensaje) {
 		Integer codigo = respuestaGenerado.getCodigo();
 		if (codigo == 200) {
 			respuestaGenerado.setMensaje(numeroMensaje);
@@ -20,15 +20,15 @@ public class MensajeResponseUtil {
 			log.error("Error.. {}", respuestaGenerado.getMensaje());
 			respuestaGenerado.setMensaje("5");
 		} 
-		return (Response<Object>) respuestaGenerado;
+		return respuestaGenerado;
 	}
 	
-	public  static Response<Object>mensajeConsultaResponse(Response<?> respuestaGenerado, String numeroMensaje) {
+	public  static Response<Object>mensajeConsultaResponse(Response<Object> respuestaGenerado, String numeroMensaje) {
 		Integer codigo = respuestaGenerado.getCodigo();
 		if (codigo == 200 &&  (!respuestaGenerado.getDatos().toString().contains("id"))){
 			respuestaGenerado.setMensaje(numeroMensaje);
 		}
-		return (Response<Object>) respuestaGenerado;
+		return respuestaGenerado;
 	}
 	
 	public  static Response<Object>mensajeConsultaResponseObject(Response<Object> respuestaGenerado, String numeroMensaje) {

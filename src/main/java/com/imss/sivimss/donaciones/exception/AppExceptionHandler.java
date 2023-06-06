@@ -19,16 +19,6 @@ import com.imss.sivimss.donaciones.util.ValidacionErrores;
 
 
 
-
-
-
-/**
- * Clase principal para manejar las excepciones de la aplicacion
- *
- * @author Pablo Nolasco
- * @puesto dev
- * @date 24 nov. 2022
- */
 @ControllerAdvice // permite manejar exepciones handler de toda la aplicacion
 public class AppExceptionHandler {
 

@@ -61,11 +61,11 @@ public class AceptacionDonacionServiceImpl implements AceptacionDonacionService 
 	private LogUtil logUtil;
 	
 	@Override
-	public Response<?> detalleNombreContratante(DatosRequest request, Authentication authentication)
+	public Response<Object> detalleNombreContratante(DatosRequest request, Authentication authentication)
 			throws IOException {
 		DonacionRequest donacionRequest = mappeoObject(request);
 		try {
-				logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString()," detalle nombre contratante ", CONSULTA,authentication, null);
+				logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString()," detalle nombre contratante ", CONSULTA,authentication);
 		
 				if (donacionRequest.getClaveFolio() == null) {
 					throw new BadRequestException(HttpStatus.BAD_REQUEST, INFORMACION_INCOMPLETA);
@@ -78,16 +78,16 @@ public class AceptacionDonacionServiceImpl implements AceptacionDonacionService 
             String consulta = new Donacion().detalleNombreContratante(request, donacionRequest).getDatos().get(AppConstantes.QUERY).toString();
             String decoded = new String(DatatypeConverter.parseBase64Binary(consulta));
             log.error(ERROR_AL_EJECUTAR_EL_QUERY + decoded);
-            logUtil.crearArchivoLog(Level.SEVERE.toString(), this.getClass().getSimpleName(), this.getClass().getPackage().toString(), FALLO_AL_EJECUTAR_EL_QUERY + decoded, CONSULTA, authentication,null);
+            logUtil.crearArchivoLog(Level.SEVERE.toString(), this.getClass().getSimpleName(), this.getClass().getPackage().toString(), FALLO_AL_EJECUTAR_EL_QUERY + decoded, CONSULTA, authentication);
             throw new IOException(ERROR_INFORMACION, e.getCause());
         }
 	}
 
 	@Override
-	public Response<?> detalleNombreFinado(DatosRequest request, Authentication authentication) throws IOException {
+	public Response<Object> detalleNombreFinado(DatosRequest request, Authentication authentication) throws IOException {
 		DonacionRequest donacionRequest = mappeoObject(request);
 		try {
-				logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString()," detalle nombre finado ", CONSULTA,authentication, null);
+				logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString()," detalle nombre finado ", CONSULTA,authentication);
 		
 				if (donacionRequest.getClaveFolio() == null) {
 					throw new BadRequestException(HttpStatus.BAD_REQUEST, INFORMACION_INCOMPLETA);
@@ -100,29 +100,52 @@ public class AceptacionDonacionServiceImpl implements AceptacionDonacionService 
             String consulta = new Donacion().detalleNombreFinado(request, donacionRequest).getDatos().get(AppConstantes.QUERY).toString();
             String decoded = new String(DatatypeConverter.parseBase64Binary(consulta));
             log.error(ERROR_AL_EJECUTAR_EL_QUERY + decoded);
-            logUtil.crearArchivoLog(Level.SEVERE.toString(), this.getClass().getSimpleName(), this.getClass().getPackage().toString(), FALLO_AL_EJECUTAR_EL_QUERY + decoded, CONSULTA, authentication, null);
+            logUtil.crearArchivoLog(Level.SEVERE.toString(), this.getClass().getSimpleName(), this.getClass().getPackage().toString(), FALLO_AL_EJECUTAR_EL_QUERY + decoded, CONSULTA, authentication);
+            throw new IOException(ERROR_INFORMACION, e.getCause());
+        }
+	}
+	
+	@Override
+	public Response<Object> detalleAceptacionDonacion(DatosRequest request, Authentication authentication) throws IOException {
+		DonacionRequest donacionRequest = mappeoObject(request);
+		try {
+				logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString()," detalle aceptacion donacion ", CONSULTA,authentication);
+		
+				if (donacionRequest.getIdVelatorio() == null) {
+					throw new BadRequestException(HttpStatus.BAD_REQUEST, INFORMACION_INCOMPLETA);
+				}
+		
+				return MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(new Donacion().detalleAceptacionDonacion(request, donacionRequest).getDatos(),urlModCatalogos.concat(CONSULTA_GENERICA), authentication),
+						NUMERO_FOLIO_NO_EXISTE);
+		
+        } catch (Exception e) {
+            String consulta = new Donacion().detalleNombreFinado(request, donacionRequest).getDatos().get(AppConstantes.QUERY).toString();
+            String decoded = new String(DatatypeConverter.parseBase64Binary(consulta));
+            log.error(ERROR_AL_EJECUTAR_EL_QUERY + decoded);
+            logUtil.crearArchivoLog(Level.SEVERE.toString(), this.getClass().getSimpleName(), this.getClass().getPackage().toString(), FALLO_AL_EJECUTAR_EL_QUERY + decoded, CONSULTA, authentication);
             throw new IOException(ERROR_INFORMACION, e.getCause());
         }
 	}
 
 	@Override
-	public Response<?> detalleAtaudDonado(DatosRequest request, Authentication authentication) throws IOException {
+	public Response<Object> detalleAtaudDonado(DatosRequest request, Authentication authentication) throws IOException {
 		DonacionRequest donacionRequest = mappeoObject(request);
+		UsuarioDto usuarioDto = new Gson().fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
 		try {
-				logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString()," detalle nombre finado ", CONSULTA,authentication, null);
+				logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString()," detalle nombre finado ", CONSULTA,authentication);
 				
 				if (donacionRequest.getClaveFolio() == null) {
 					throw new BadRequestException(HttpStatus.BAD_REQUEST, INFORMACION_INCOMPLETA);
 				}
 		
-				return MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(new Donacion().detalleAtaudDonado(request,donacionRequest).getDatos(),urlModCatalogos.concat(CONSULTA_GENERICA), authentication),
+				return MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicio(new Donacion().detalleAtaudDonado(request,donacionRequest,usuarioDto).getDatos(),urlModCatalogos.concat(CONSULTA_GENERICA), authentication),
 						SIN_INFORMACION);
 		
         } catch (Exception e) {
-            String consulta = new Donacion().detalleAtaudDonado(request, donacionRequest).getDatos().get(AppConstantes.QUERY).toString();
+            String consulta = new Donacion().detalleAtaudDonado(request, donacionRequest, usuarioDto).getDatos().get(AppConstantes.QUERY).toString();
             String decoded = new String(DatatypeConverter.parseBase64Binary(consulta));
             log.error(ERROR_AL_EJECUTAR_EL_QUERY + decoded);
-            logUtil.crearArchivoLog(Level.SEVERE.toString(), this.getClass().getSimpleName(), this.getClass().getPackage().toString(), FALLO_AL_EJECUTAR_EL_QUERY + decoded, CONSULTA, authentication, null);
+            logUtil.crearArchivoLog(Level.SEVERE.toString(), this.getClass().getSimpleName(), this.getClass().getPackage().toString(), FALLO_AL_EJECUTAR_EL_QUERY + decoded, CONSULTA, authentication);
             throw new IOException(ERROR_INFORMACION, e.getCause());
         }
 	}
@@ -132,12 +155,12 @@ public class AceptacionDonacionServiceImpl implements AceptacionDonacionService 
 	}
 
 	@Override
-	public Response<?> insertAtaudDonado(DatosRequest request, Authentication authentication) throws IOException {
+	public Response<Object> insertAtaudDonado(DatosRequest request, Authentication authentication) throws IOException {
 		DonacionRequest donacionRequest = mappeoObject(request);
 		UsuarioDto usuarioDto = new Gson().fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
 		try {
-				logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString()," insert ataud donado ", ALTA,authentication, null);
-				Response<?> response = providerRestTemplate.consumirServicio(new Donacion().insertarDonacion(donacionRequest, usuarioDto).getDatos(),urlModCatalogos.concat("/crearMultiple"),authentication);
+				logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString()," insert ataud donado ", ALTA,authentication);
+				Response<Object> response = providerRestTemplate.consumirServicio(new Donacion().insertarDonacion(donacionRequest, usuarioDto).getDatos(),urlModCatalogos.concat("/crearMultiple"),authentication);
 				if(200 == response.getCodigo()) {
 					response = providerRestTemplate.consumirServicio(new Donacion().actualizarStockArticulo(donacionRequest, usuarioDto),urlModCatalogos.concat("/actualizar/multiples"),authentication);
 				}
@@ -146,21 +169,21 @@ public class AceptacionDonacionServiceImpl implements AceptacionDonacionService 
             String consulta = new Donacion().insertarDonacion(donacionRequest, usuarioDto).getDatos().get(AppConstantes.QUERY).toString();
             String decoded = new String(DatatypeConverter.parseBase64Binary(consulta));
             log.error(ERROR_AL_EJECUTAR_EL_QUERY + decoded);
-            logUtil.crearArchivoLog(Level.SEVERE.toString(), this.getClass().getSimpleName(), this.getClass().getPackage().toString(), FALLO_AL_EJECUTAR_EL_QUERY + decoded, ALTA, authentication, null);
+            logUtil.crearArchivoLog(Level.SEVERE.toString(), this.getClass().getSimpleName(), this.getClass().getPackage().toString(), FALLO_AL_EJECUTAR_EL_QUERY + decoded, ALTA, authentication);
             throw new IOException("5", e.getCause());
         }
 	}
 	
 	@Override
-	public Response<?> generarDocumentoAceptacionControl(DatosRequest request, Authentication authentication) throws IOException {
+	public Response<Object> generarDocumentoAceptacionControl(DatosRequest request, Authentication authentication) throws IOException {
 		try {
-		logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString()," generar documento aceptacion control ", CONSULTA,authentication,null);
+		logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString()," generar documento aceptacion control ", CONSULTA,authentication);
 		Map<String, Object> envioDatos = new Donacion().generarPlantillaAceptacionControlPDF(new Gson().fromJson(String.valueOf(request.getDatos().get(AppConstantes.DATOS)), PlantillaAceptacionControlRequest.class),nombrePdfAceptacionControl);
 		return MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicioReportes(envioDatos, urlReportes, authentication)
 				, ERROR_AL_DESCARGAR_DOCUMENTO);
         } catch (Exception e) {
         	log.error("Error.. {}", e.getMessage());
-            logUtil.crearArchivoLog(Level.SEVERE.toString(), this.getClass().getSimpleName(), this.getClass().getPackage().toString(), "Fallo al ejecutar la plantilla : " + e.getMessage(), CONSULTA, authentication, null);
+            logUtil.crearArchivoLog(Level.SEVERE.toString(), this.getClass().getSimpleName(), this.getClass().getPackage().toString(), "Fallo al ejecutar la plantilla : " + e.getMessage(), CONSULTA, authentication);
             throw new IOException("64", e.getCause());
         }
 	}
