@@ -80,7 +80,7 @@ public class Donacion {
 	public DatosRequest detalleAtaudDonado(DatosRequest request, DonacionRequest donacionRequest, UsuarioDto usuarioDto) {
 		log.info(" INICIO - detalleAtaudDonado");
 		SelectQueryUtil queryUtil = new SelectQueryUtil();
-		queryUtil.select("S.FOLIO_ARTICULO AS folioArticulo","A.ID_ARTICULO AS idArticulo", "TM.DES_TIPO_MATERIAL AS desTipoMaterial",
+		queryUtil.select("S.FOLIO_ARTICULO AS folioArticulo","S.ID_INVE_ARTICULO AS idInventarioArticulo", "TM.DES_TIPO_MATERIAL AS desTipoMaterial",
 				"CONCAT_WS('-',S.FOLIO_ARTICULO,A.DES_MODELO_ARTICULO ) AS  desModeloArticulo")
 		.from(ConsultaConstantes.SVC_ORDEN_SERVICIO_OS)
 		.innerJoin("SVC_CARACTERISTICAS_PRESUPUESTO CP", "OS.ID_ORDEN_SERVICIO  = CP.ID_ORDEN_SERVICIO").and("CP.IND_ACTIVO = 1")
@@ -130,7 +130,7 @@ public class Donacion {
 		donacionRequest.getAtaudesDonados().forEach(agregarArticuloRequest -> {
 			final QueryHelper q = new QueryHelper("INSERT INTO SVC_ATAUDES_DONADOS");
 			q.agregarParametroValues("ID_DONACION",ConsultaConstantes. ID_TABLA);
-			q.agregarParametroValues(ConsultaConstantes.ID_ARTICULO, String.valueOf(agregarArticuloRequest.getIdArticulo()));
+			q.agregarParametroValues("ID_INVE_ARTICULO", String.valueOf(agregarArticuloRequest.getIdInventarioArticulo()));
 			q.agregarParametroValues(ConsultaConstantes.ID_USUARIO_ALTA, String.valueOf(usuarioDto.getIdUsuario()));
 			q.agregarParametroValues(ConsultaConstantes.FEC_ALTA, ConsultaConstantes.CURRENT_TIMESTAMP);
 			query.append("$$").append(q.obtenerQueryInsertar());
@@ -148,7 +148,7 @@ public class Donacion {
         	q.agregarParametroValues("ID_TIPO_ASIGNACION_ART",  String.valueOf(3));
         	q.agregarParametroValues(ConsultaConstantes.ID_USUARIO_MODIFICA, String.valueOf(usuarioDto.getIdUsuario()));
     		q.agregarParametroValues(ConsultaConstantes.FEC_ACTUALIZACION, ConsultaConstantes.CURRENT_TIMESTAMP);
-        	q.addWhere(" ID_ARTICULO = " + agregarArticuloRequest.getIdArticulo() + " AND FOLIO_ARTICULO = '" + agregarArticuloRequest.getFolioArticulo().concat("'"));
+    		q.addWhere(" ID_INVE_ARTICULO = " + agregarArticuloRequest.getIdInventarioArticulo());
         	updates.add(DatatypeConverter.printBase64Binary(q.obtenerQueryActualizar().getBytes(StandardCharsets.UTF_8)));
         });
         actualizarMultiRequest.setUpdates(updates);
