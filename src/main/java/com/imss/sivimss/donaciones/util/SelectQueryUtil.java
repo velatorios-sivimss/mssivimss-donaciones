@@ -40,7 +40,7 @@ public class SelectQueryUtil {
     private boolean isFromCalled;
     private boolean isSelectCalled;
     private boolean isJoinCalled;
-    private Integer limite;
+    private Integer limit;
 
     /**
      * La funci&oacute;n <b>{@code select()}</b>, se tiene que invocar 2 veces, la primera es para crear una instancia de
@@ -318,7 +318,7 @@ public class SelectQueryUtil {
      * @since 1.0.1
      */
     public SelectQueryUtil limit(Integer limite) {
-        this.limite = limite;
+        this.limit = limite;
         return this;
     }
 
@@ -382,11 +382,11 @@ public class SelectQueryUtil {
      * @since 1.0.1
      */
     private void agregarLimit(StringBuilder stringBuilder) {
-        if (limite != null) {
+        if (limit != null) {
             stringBuilder.append(SPACE)
                     .append(LIMITE)
                     .append(SPACE)
-                    .append(limite.toString());
+                    .append(limit.toString());
         }
     }
 
