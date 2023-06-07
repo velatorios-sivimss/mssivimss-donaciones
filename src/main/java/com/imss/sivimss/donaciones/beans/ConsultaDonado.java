@@ -40,7 +40,6 @@ public class ConsultaDonado {
 	private Integer idDelegacion;
 
 
-	private static final String CAMPO_ODS_DONADO_POR = "'ODS' AS donadoPor";
 	private static final String CAMPO_FECHA_DONACION_ENTRADA = "date_format(sd.FEC_ALTA" ;
 	private static final String CAMPO_SV_NOM_VELATORIO_AS_VELATORIO = "sv.DES_VELATORIO  AS velatorio";
 	private static final String CAMPO_STM_DES_TIPO_MATERIAL_AS_TIPOMATERIAL = "stm.DES_TIPO_MATERIAL AS tipoMaterial";
@@ -48,12 +47,13 @@ public class ConsultaDonado {
 	private static final String CAMPO_SIA_FOLIO_ARTICULO_AS_NUM_INVENTARIO = "sia.FOLIO_ARTICULO AS numInventario";
 	private static final String CAMPO_SSD_FEC_ALTA = "ssd.FEC_ALTA,'";
 	private static final String CAMPO_SD_FEC_ALTA = "sd.FEC_ALTA,'";
-	private static final String CAMPO_AS_NOMDONADOPOR_SALIDA = "IFNULL((CONCAT(ssdf.NOM_FINADO, ' ', ssdf.NOM_PRIMER_APELLIDO, ' ', ssdf.NOM_SEGUNDO_APELLIDO)), ssd.DES_INSTITUCION) AS nomDonador";
+	private static final String CAMPO_AS_NOMDONADOPOR_SALIDA = "IFNULL((CONCAT(sp.NOM_PERSONA , ' ', sp.NOM_PRIMER_APELLIDO , ' ', sp.NOM_SEGUNDO_APELLIDO)), ssd.DES_INSTITUCION) AS nomDonador";
 	private static final String CAMPO_SD_FECHA_ALTA = "sd.FEC_ALTA";
 	private static final String CAMPO_AS_NOMDONADOPOR_ENTRADA = "sp2.NOM_PROVEEDOR as nomDonador";
 
 	private static final String CAMPO_ALIAS_AS_FECDONACION = "AS fecDonacion";
 	private static final String CAMPO_ALIAS_AS_INSTITUTO_DONADO_POR = "'Instituto' AS donadoPor";
+	private static final String CAMPO_ALIAS_AS_ODS_DONADO_POR = "'ODS' AS donadoPor";
 	
 	private static final String TABLA_SVC_VELATORIO_SV = "SVC_VELATORIO sv";
 	private static final String TABLA_SVC_TIPO_MATERIAL_STM = "SVC_TIPO_MATERIAL stm";
@@ -61,13 +61,14 @@ public class ConsultaDonado {
 	private static final String TABLA_SVC_SALIDA_DONACION_SSD = "SVC_SALIDA_DONACION ssd";
 	private static final String TABLA_SVT_INVENTARIO_ARTICULO_SIA = "SVT_INVENTARIO_ARTICULO sia";
 	private static final String TABLA_SVT_ARTICULO_SA = "SVT_ARTICULO sa";
-	private static final String TABLA_SVC_SALIDA_DONACION_FINADOS_SSDF = "SVC_SALIDA_DONACION_FINADOS ssdf"; 
 	private static final String TABLA_SVC_DONACION_SD = "SVC_DONACION sd"; 
 	private static final String TABLA_SVC_ATAUDES_DONADOS_SAD = "SVC_ATAUDES_DONADOS sad";
 	private static final String TABLA_SVT_ORDEN_ENTRADA_SOE = "SVT_ORDEN_ENTRADA soe";
 	private static final String TABLA_SVT_CONTRATO_SC2 = "SVT_CONTRATO sc2";
 	private static final String TABLA_SVC_DELEGACION_SD2 = "SVC_DELEGACION sd2";
 	private static final String TABLA_SVT_PROVEEDOR_SP2 = "SVT_PROVEEDOR sp2";
+	private static final String TABLA_SVC_CONTRATANTE_SC = "SVC_CONTRATANTE sc";
+	private static final String TABLA_SVC_PERSONA_SP = "SVC_PERSONA sp";
 	
 	
 	private static final String PARAM_SV_DELEGACION_IDDEL = "sv.ID_DELEGACION = :idDel";
@@ -172,7 +173,7 @@ public class ConsultaDonado {
 	private SelectQueryUtil construirQueryEntrada(String formatoFecha) {
 		SelectQueryUtil queryUtil = new SelectQueryUtil();
 	queryUtil.select("distinct(sd.ID_DONACION )",CAMPO_SV_NOM_VELATORIO_AS_VELATORIO,CAMPO_STM_DES_TIPO_MATERIAL_AS_TIPOMATERIAL,CAMPO_SA_DES_MODELO_ARTICULO_AS_MODELOARTICULO,CAMPO_SIA_FOLIO_ARTICULO_AS_NUM_INVENTARIO
-			,VALIDACION_DATE_FORMAT + CAMPO_SD_FEC_ALTA + formatoFecha + "')" + CAMPO_ALIAS_AS_FECDONACION + "," + CAMPO_ALIAS_AS_INSTITUTO_DONADO_POR
+			,VALIDACION_DATE_FORMAT + CAMPO_SD_FEC_ALTA + formatoFecha + "')" + CAMPO_ALIAS_AS_FECDONACION + "," + CAMPO_ALIAS_AS_ODS_DONADO_POR
 			,CAMPO_AS_NOMDONADOPOR_ENTRADA)
 		.from(TABLA_SVC_DONACION_SD)
 		.join(TABLA_SVC_ATAUDES_DONADOS_SAD,"sad.ID_DONACION = sd.ID_DONACION")
@@ -191,7 +192,7 @@ public class ConsultaDonado {
 	private SelectQueryUtil construirQuerySalida(String formatoFecha) {
 		SelectQueryUtil queryUtil = new SelectQueryUtil();
 		queryUtil.select("distinct(ssda.ID_SALIDA_DONACION )",CAMPO_SV_NOM_VELATORIO_AS_VELATORIO,CAMPO_STM_DES_TIPO_MATERIAL_AS_TIPOMATERIAL,CAMPO_SA_DES_MODELO_ARTICULO_AS_MODELOARTICULO,CAMPO_SIA_FOLIO_ARTICULO_AS_NUM_INVENTARIO
-				,VALIDACION_DATE_FORMAT + CAMPO_SSD_FEC_ALTA + formatoFecha + "')" + CAMPO_ALIAS_AS_FECDONACION,CAMPO_ODS_DONADO_POR
+				,VALIDACION_DATE_FORMAT + CAMPO_SSD_FEC_ALTA + formatoFecha + "')" + CAMPO_ALIAS_AS_FECDONACION, CAMPO_ALIAS_AS_INSTITUTO_DONADO_POR
 				,CAMPO_AS_NOMDONADOPOR_SALIDA)
 		.from(TABLA_SVC_DONACION_SD)
 			.join(TABLA_SVC_ATAUDES_DONADOS_SAD,"sad.ID_DONACION = sd.ID_DONACION")
@@ -205,7 +206,8 @@ public class ConsultaDonado {
 			.join(TABLA_SVT_PROVEEDOR_SP2,"sp2.ID_PROVEEDOR = soe.ID_CONTRATO")
 			.join(TABLA_SVC_SALIDA_DONACION_ATAUDES_SSDA,"ssda.ID_INVE_ARTICULO = sad.ID_INVE_ARTICULO")
 			.join(TABLA_SVC_SALIDA_DONACION_SSD,"ssd.ID_SALIDA_DONACION = ssda.ID_SALIDA_DONACION")
-			.leftJoin(TABLA_SVC_SALIDA_DONACION_FINADOS_SSDF,"ssdf.ID_SALIDA_DONACION = ssd.ID_SALIDA_DONACION");
+			.join(TABLA_SVC_CONTRATANTE_SC,"sc.ID_CONTRATANTE = ssd.ID_CONTRATANTE") 
+			.join(TABLA_SVC_PERSONA_SP,"sp.ID_PERSONA = sc.ID_PERSONA");
 		genWhere(queryUtil, CAMPO_SD_FECHA_ALTA);
 		return queryUtil;
 	}
