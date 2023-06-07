@@ -96,9 +96,9 @@ public class ConsultaDonadoServiceImpl implements ConsultaDonadosService {
 				this.getClass().getPackage().toString(), "consultaFiltroDonado", CONSULTA, authentication);
 		if (consultaDonadoRequest.getDonadoPor() == null) {
 			envioDatos = consultarDonado.consultarDonados(request, formatoFecha).getDatos();
-		} else if (consultaDonadoRequest.getDonadoPor().equals("1")) {
+		} else if (consultaDonadoRequest.getDonadoPor().equals("1")) { // Instituto
 			envioDatos = consultarDonado.consultarFiltroDonadosSalida(request, formatoFecha).getDatos();
-		} else if (consultaDonadoRequest.getDonadoPor().equals("2")) {
+		} else if (consultaDonadoRequest.getDonadoPor().equals("2")) { // ODS
 			envioDatos = consultarDonado.consultarFiltroDonadosEntrada(request, formatoFecha).getDatos();
 		}
 	
