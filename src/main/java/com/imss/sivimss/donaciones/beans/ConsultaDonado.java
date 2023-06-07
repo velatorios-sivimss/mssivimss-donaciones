@@ -152,9 +152,9 @@ public class ConsultaDonado {
 			query.where(PARAM_SF_ID_VELATORIO_IDVEL).setParameter(PARAM_IDVELATORIO, this.idVelatorio);
 			if( this.idDelegacion != null)
 				query.and(PARAM_SV_DELEGACION_IDDEL).setParameter(PARAM_IDDELEGACION, this.idDelegacion);
-			else if (this.fechaInicio != null ) 
+			if (this.fechaInicio != null ) 
 				query.and(VALIDACION_DATE_FORMAT + fecha + "," + formatoFechaAMD + PARAM_FECINI).setParameter(PARAM_FECHA_INICIO, this.fechaInicio);
-			else if( this.fechaFin != null) 
+			if( this.fechaFin != null) 
 					query.and(CAMPO_FECHA_DONACION_ENTRADA + "," + formatoFechaAMD + PARAM_FECFIN).setParameter(PARAM_FECHA_FIN, this.fechaFin);
 		}else if( this.idDelegacion != null) {
 			query.where(PARAM_SV_DELEGACION_IDDEL).setParameter(PARAM_IDDELEGACION, this.idDelegacion);
