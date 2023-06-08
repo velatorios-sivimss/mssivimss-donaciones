@@ -1,8 +1,10 @@
 server:
   port: 8080
   servlet:
-    contextPath: /mssivimss-donaciones/v1
-spring:
+    contextPath: /${spring.application.name}/v1
+spring: 
+  application:
+    name: mssivimss-donaciones
   mvc:
     pathmatch:
       matching-strategy: ANT_PATH_MATCHER
