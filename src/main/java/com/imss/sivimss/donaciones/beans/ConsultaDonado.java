@@ -123,23 +123,23 @@ public class ConsultaDonado {
 		  
 		  return request; 
 	  }
-	public Map<String, Object> generarReportePDF(ReporteDto reporteDto, String nombrePdfReportes) {
+	public Map<String, Object> generarReportePDF(ReporteDto reporteDto, String nombrePdfReportes, int entradaSalida,String formatoFecha) {
 		Map<String, Object> envioDatos = new HashMap<>();
-		String strOld = "SELECT * FROM   WHERE ";
-		String strNew = " AND ";
-		SelectQueryUtil queryUtil = new SelectQueryUtil();
-		genWhere(queryUtil);
-		String condicion = queryUtil.build();
-		condicion = condicion.replace(strOld,strNew);
-
-		SelectQueryUtil queryUtil1 = new SelectQueryUtil();
-		genWhere(queryUtil1);
-		String condicion1 = queryUtil1.build();
-		condicion1 = condicion1.replace(strOld,strNew);
-
-
-		envioDatos.put("condicion", condicion);
-		envioDatos.put("condicion1", condicion1);
+		String query1 = "";
+		String query2 = "";
+		String union = "";
+		if(entradaSalida == 0) {
+			query1 = construirQueryEntrada(formatoFecha).build();
+			union = " UNION ";
+			query2 = construirQuerySalida(formatoFecha).build();
+		}else if(entradaSalida == 1) {
+			query2 = construirQuerySalida(formatoFecha).build();
+		}else if(entradaSalida == 2) {
+			query1 = construirQueryEntrada(formatoFecha).build();
+		}
+		envioDatos.put("query1", query1);
+		envioDatos.put("union", union);
+		envioDatos.put("query2", query2);
 		envioDatos.put("tipoReporte", reporteDto.getTipoReporte());
 		envioDatos.put("rutaNombreReporte", nombrePdfReportes);
 
@@ -171,7 +171,7 @@ public class ConsultaDonado {
 	}
 	private SelectQueryUtil construirQueryEntrada(String formatoFecha) {
 		SelectQueryUtil queryUtil = new SelectQueryUtil();
-	queryUtil.select("distinct(sd.ID_DONACION )",CAMPO_SV_NOM_VELATORIO_AS_VELATORIO,CAMPO_STM_DES_TIPO_MATERIAL_AS_TIPOMATERIAL,CAMPO_SA_DES_MODELO_ARTICULO_AS_MODELOARTICULO,CAMPO_SIA_FOLIO_ARTICULO_AS_NUM_INVENTARIO
+	queryUtil.select("distinct(sd.ID_DONACION )"," sia.ID_INVE_ARTICULO AS idInventario",CAMPO_SV_NOM_VELATORIO_AS_VELATORIO,CAMPO_STM_DES_TIPO_MATERIAL_AS_TIPOMATERIAL,CAMPO_SA_DES_MODELO_ARTICULO_AS_MODELOARTICULO,CAMPO_SIA_FOLIO_ARTICULO_AS_NUM_INVENTARIO
 			,VALIDACION_DATE_FORMAT + CAMPO_SD_FEC_ALTA + formatoFecha + "')" + CAMPO_ALIAS_AS_FECDONACION + "," + CAMPO_ALIAS_AS_ODS_DONADO_POR
 			,CAMPO_AS_NOMDONADOPOR_ENTRADA)
 		.from(TABLA_SVC_DONACION_SD)
@@ -190,7 +190,7 @@ public class ConsultaDonado {
 	}
 	private SelectQueryUtil construirQuerySalida(String formatoFecha) {
 		SelectQueryUtil queryUtil = new SelectQueryUtil();
-		queryUtil.select("distinct(ssda.ID_SALIDA_DONACION )",CAMPO_SV_NOM_VELATORIO_AS_VELATORIO,CAMPO_STM_DES_TIPO_MATERIAL_AS_TIPOMATERIAL,CAMPO_SA_DES_MODELO_ARTICULO_AS_MODELOARTICULO,CAMPO_SIA_FOLIO_ARTICULO_AS_NUM_INVENTARIO
+		queryUtil.select("distinct(ssda.ID_SALIDA_DONACION )"," sia.ID_INVE_ARTICULO AS idInventario",CAMPO_SV_NOM_VELATORIO_AS_VELATORIO,CAMPO_STM_DES_TIPO_MATERIAL_AS_TIPOMATERIAL,CAMPO_SA_DES_MODELO_ARTICULO_AS_MODELOARTICULO,CAMPO_SIA_FOLIO_ARTICULO_AS_NUM_INVENTARIO
 				,VALIDACION_DATE_FORMAT + CAMPO_SSD_FEC_ALTA + formatoFecha + "')" + CAMPO_ALIAS_AS_FECDONACION, CAMPO_ALIAS_AS_INSTITUTO_DONADO_POR
 				,CAMPO_AS_NOMDONADOPOR_SALIDA)
 		.from(TABLA_SVC_DONACION_SD)
