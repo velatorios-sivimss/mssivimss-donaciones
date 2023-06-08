@@ -125,20 +125,19 @@ public class ConsultaDonado {
 	  }
 	public Map<String, Object> generarReportePDF(ReporteDto reporteDto, String nombrePdfReportes) {
 		Map<String, Object> envioDatos = new HashMap<>();
-		String condicion = " ";
-		String condicion1 = " ";
-		if (this.idVelatorio != null && this.idDelegacion != null) {
-			condicion = condicion + " AND sv.ID_VELATORIO = " + this.idVelatorio + "  AND sv.ID_DELEGACION = "
-					+ this.idDelegacion;
-			condicion1 = condicion1 + " AND sv.ID_VELATORIO = " + this.idVelatorio + "  AND sv.ID_DELEGACION = "
-					+ this.idDelegacion;
-		}
-		if (this.fechaInicio != null && this.fechaFin != null) {
-			condicion = condicion + " AND date_format(ssd.FEC_SOLICITUD,'%Y-%m-%d') >= '" + this.fechaInicio + "'"
-					+ " AND date_format(ssd.FEC_SOLICITUD,'%Y-%m-%d') <= '" + this.fechaFin + "'";
-			condicion1 = condicion1 + " AND date_format(sd.FEC_ALTA ,'%Y-%m-%d') >= '" + this.fechaInicio + "'"
-					+ " AND date_format(sd.FEC_ALTA ,'%Y-%m-%d') <= '" + this.fechaFin + "'";
-		}
+		String strOld = "SELECT * FROM   WHERE ";
+		String strNew = " AND ";
+		SelectQueryUtil queryUtil = new SelectQueryUtil();
+		genWhere(queryUtil);
+		String condicion = queryUtil.build();
+		condicion = condicion.replace(strOld,strNew);
+
+		SelectQueryUtil queryUtil1 = new SelectQueryUtil();
+		genWhere(queryUtil1);
+		String condicion1 = queryUtil1.build();
+		condicion1 = condicion1.replace(strOld,strNew);
+
+
 		envioDatos.put("condicion", condicion);
 		envioDatos.put("condicion1", condicion1);
 		envioDatos.put("tipoReporte", reporteDto.getTipoReporte());
