@@ -123,18 +123,27 @@ public class ConsultaDonadoServiceImpl implements ConsultaDonadosService {
 		ConsultaDonadoRequest consultaDonadoRequest = gson.fromJson(datosJson, ConsultaDonadoRequest.class);
 		consultarDonado = new ConsultaDonado(consultaDonadoRequest);
 		ReporteDto reporteDto = gson.fromJson(datosJson, ReporteDto.class);
-		Map<String, Object> envioDatos = consultarDonado.generarReportePDF(reporteDto, nombrePdfReportes);
-		String queryDecoded = envioDatos.get("condicion").toString();
+		Map<String, Object> envioDatos = new HashMap<>();
+		if (consultaDonadoRequest.getDonadoPor() == null) {
+			envioDatos = consultarDonado.generarReportePDF(reporteDto, nombrePdfReportes,0, formatoFecha);
+		} else if (consultaDonadoRequest.getDonadoPor().equals("1")) { // Instituto
+			envioDatos = consultarDonado.generarReportePDF(reporteDto, nombrePdfReportes,1, formatoFecha);
+		} else if (consultaDonadoRequest.getDonadoPor().equals("2")) { // ODS
+			envioDatos = consultarDonado.generarReportePDF(reporteDto, nombrePdfReportes,2, formatoFecha);
+		}
+		String queryDecoded1 = envioDatos.get("query1").toString();
+		String queryUnion = envioDatos.get("union").toString();
+		String queryDecoded2 = envioDatos.get("query2").toString();
 		try {
-			log.info( CU064_NOMBRE + GENERAR_DOCUMENTO + queryDecoded);
+			log.info( CU064_NOMBRE + GENERAR_DOCUMENTO + queryDecoded1 + queryUnion + queryDecoded2);
 			logUtil.crearArchivoLog(Level.INFO.toString(), CU064_NOMBRE + GENERAR_DOCUMENTO + this.getClass().getSimpleName(),
 					this.getClass().getPackage().toString(), "generarDocumento", GENERA_DOCUMENTO, authentication);
 			response = providerRestTemplate.consumirServicioReportes(envioDatos, urlReportes, authentication);
 			return MensajeResponseUtil.mensajeConsultaResponse(response, ERROR_AL_DESCARGAR_DOCUMENTO);
 		} catch (Exception e) {
-			log.error( CU064_NOMBRE + GENERAR_DOCUMENTO + ERROR_QUERY + queryDecoded);
+			log.error( CU064_NOMBRE + GENERAR_DOCUMENTO + ERROR_QUERY + queryDecoded1 + queryUnion + queryDecoded2);
 			logUtil.crearArchivoLog(Level.WARNING.toString(), CU064_NOMBRE + GENERAR_DOCUMENTO + this.getClass().getSimpleName(),
-					this.getClass().getPackage().toString(), ERROR_QUERY + queryDecoded, GENERA_DOCUMENTO,
+					this.getClass().getPackage().toString(), ERROR_QUERY + queryDecoded1 + queryUnion + queryDecoded2, GENERA_DOCUMENTO,
 					authentication);
 			throw new IOException("52", e.getCause());
 		}
