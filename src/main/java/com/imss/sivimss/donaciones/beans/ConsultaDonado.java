@@ -41,6 +41,7 @@ public class ConsultaDonado {
 
 
 	private static final String CAMPO_FECHA_DONACION_ENTRADA = "date_format(sd.FEC_ALTA" ;
+	private static final String CAMPO_FECHA_DONACION_SALIDA = "date_format(ssd.FEC_ALTA" ;
 	private static final String CAMPO_SV_NOM_VELATORIO_AS_VELATORIO = "sv.DES_VELATORIO  AS velatorio";
 	private static final String CAMPO_STM_DES_TIPO_MATERIAL_AS_TIPOMATERIAL = "stm.DES_TIPO_MATERIAL AS tipoMaterial";
 	private static final String CAMPO_SA_DES_MODELO_ARTICULO_AS_MODELOARTICULO = "sa.DES_MODELO_ARTICULO AS modeloAtaud";
@@ -48,7 +49,6 @@ public class ConsultaDonado {
 	private static final String CAMPO_SSD_FEC_ALTA = "ssd.FEC_ALTA,'";
 	private static final String CAMPO_SD_FEC_ALTA = "sd.FEC_ALTA,'";
 	private static final String CAMPO_AS_NOMDONADOPOR_SALIDA = "IFNULL((CONCAT(sp.NOM_PERSONA , ' ', sp.NOM_PRIMER_APELLIDO , ' ', sp.NOM_SEGUNDO_APELLIDO)), ssd.DES_INSTITUCION) AS nomDonador";
-	private static final String CAMPO_SD_FECHA_ALTA = "sd.FEC_ALTA";
 	private static final String CAMPO_AS_NOMDONADOPOR_ENTRADA = "sp2.NOM_PROVEEDOR as nomDonador";
 
 	private static final String CAMPO_ALIAS_AS_FECDONACION = "AS fecDonacion";
@@ -146,24 +146,24 @@ public class ConsultaDonado {
 
 		return envioDatos;
 	}
-	private void genWhere (SelectQueryUtil query, String fecha) {
+	private void genWhere (SelectQueryUtil query) {
 		String formatoFechaAMD = "'%Y-%m-%d'";
 		if (this.idVelatorio != null ) {
 			query.where(PARAM_SF_ID_VELATORIO_IDVEL).setParameter(PARAM_IDVELATORIO, this.idVelatorio);
 			if( this.idDelegacion != null)
 				query.and(PARAM_SV_DELEGACION_IDDEL).setParameter(PARAM_IDDELEGACION, this.idDelegacion);
 			if (this.fechaInicio != null ) 
-				query.and(VALIDACION_DATE_FORMAT + fecha + "," + formatoFechaAMD + PARAM_FECINI).setParameter(PARAM_FECHA_INICIO, this.fechaInicio);
+				query.and(CAMPO_FECHA_DONACION_ENTRADA+ "," + formatoFechaAMD + PARAM_FECINI).setParameter(PARAM_FECHA_INICIO, this.fechaInicio);
 			if( this.fechaFin != null) 
 					query.and(CAMPO_FECHA_DONACION_ENTRADA + "," + formatoFechaAMD + PARAM_FECFIN).setParameter(PARAM_FECHA_FIN, this.fechaFin);
 		}else if( this.idDelegacion != null) {
 			query.where(PARAM_SV_DELEGACION_IDDEL).setParameter(PARAM_IDDELEGACION, this.idDelegacion);
 			if (this.fechaInicio != null )
-				query.and(VALIDACION_DATE_FORMAT + fecha + "," + formatoFechaAMD + PARAM_FECINI).setParameter(PARAM_FECHA_INICIO, this.fechaInicio);
+				query.and(CAMPO_FECHA_DONACION_ENTRADA+ "," + formatoFechaAMD + PARAM_FECINI).setParameter(PARAM_FECHA_INICIO, this.fechaInicio);
 			if( this.fechaFin != null)
 				query.and(CAMPO_FECHA_DONACION_ENTRADA + "," + formatoFechaAMD + PARAM_FECFIN).setParameter(PARAM_FECHA_FIN, this.fechaFin);
 		}else if (this.fechaInicio != null ) {
-			query.where(VALIDACION_DATE_FORMAT + fecha + "," + formatoFechaAMD + PARAM_FECINI).setParameter(PARAM_FECHA_INICIO, this.fechaInicio);
+			query.where(CAMPO_FECHA_DONACION_ENTRADA + "," + formatoFechaAMD + PARAM_FECINI).setParameter(PARAM_FECHA_INICIO, this.fechaInicio);
 			if( this.fechaFin != null)
 				query.and(CAMPO_FECHA_DONACION_ENTRADA + "," + formatoFechaAMD + PARAM_FECFIN).setParameter(PARAM_FECHA_FIN, this.fechaFin);
 		}else if( this.fechaFin != null)
@@ -186,7 +186,7 @@ public class ConsultaDonado {
 		.join(TABLA_SVC_DELEGACION_SD2,"sd2.ID_DELEGACION = sv.ID_DELEGACION")
 		.join(TABLA_SVT_PROVEEDOR_SP2,"sp2.ID_PROVEEDOR = soe.ID_CONTRATO");
 
-		genWhere(queryUtil, CAMPO_SD_FECHA_ALTA);
+		genWhere(queryUtil);
 		return queryUtil;
 	}
 	private SelectQueryUtil construirQuerySalida(String formatoFecha) {
@@ -208,7 +208,32 @@ public class ConsultaDonado {
 			.join(TABLA_SVC_SALIDA_DONACION_SSD,"ssd.ID_SALIDA_DONACION = ssda.ID_SALIDA_DONACION")
 			.join(TABLA_SVC_CONTRATANTE_SC,"sc.ID_CONTRATANTE = ssd.ID_CONTRATANTE") 
 			.join(TABLA_SVC_PERSONA_SP,"sp.ID_PERSONA = sc.ID_PERSONA");
-		genWhere(queryUtil, CAMPO_SD_FECHA_ALTA);
+		genWhereSalida(queryUtil);
 		return queryUtil;
+	}
+
+	private void genWhereSalida (SelectQueryUtil query) {
+		String formatoFechaAMD = "'%Y-%m-%d'";
+		if (this.idVelatorio != null ) {
+			query.where(PARAM_SF_ID_VELATORIO_IDVEL).setParameter(PARAM_IDVELATORIO, this.idVelatorio);
+			if( this.idDelegacion != null)
+				query.and(PARAM_SV_DELEGACION_IDDEL).setParameter(PARAM_IDDELEGACION, this.idDelegacion);
+			if (this.fechaInicio != null ) 
+				query.and(CAMPO_FECHA_DONACION_SALIDA + "," + formatoFechaAMD + PARAM_FECINI).setParameter(PARAM_FECHA_INICIO, this.fechaInicio);
+			if( this.fechaFin != null) 
+					query.and(CAMPO_FECHA_DONACION_SALIDA + "," + formatoFechaAMD + PARAM_FECFIN).setParameter(PARAM_FECHA_FIN, this.fechaFin);
+		}else if( this.idDelegacion != null) {
+			query.where(PARAM_SV_DELEGACION_IDDEL).setParameter(PARAM_IDDELEGACION, this.idDelegacion);
+			if (this.fechaInicio != null )
+				query.and(CAMPO_FECHA_DONACION_SALIDA + "," + formatoFechaAMD + PARAM_FECINI).setParameter(PARAM_FECHA_INICIO, this.fechaInicio);
+			if( this.fechaFin != null)
+				query.and(CAMPO_FECHA_DONACION_SALIDA + "," + formatoFechaAMD + PARAM_FECFIN).setParameter(PARAM_FECHA_FIN, this.fechaFin);
+		}else if (this.fechaInicio != null ) {
+			query.where(CAMPO_FECHA_DONACION_SALIDA + "," + formatoFechaAMD + PARAM_FECINI).setParameter(PARAM_FECHA_INICIO, this.fechaInicio);
+			if( this.fechaFin != null)
+				query.and(CAMPO_FECHA_DONACION_SALIDA + "," + formatoFechaAMD + PARAM_FECFIN).setParameter(PARAM_FECHA_FIN, this.fechaFin);
+		}else if( this.fechaFin != null)
+				query.where(CAMPO_FECHA_DONACION_SALIDA + "," + formatoFechaAMD + PARAM_FECFIN).setParameter(PARAM_FECHA_FIN, this.fechaFin);
+
 	}
 }
