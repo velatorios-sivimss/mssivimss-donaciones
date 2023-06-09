@@ -31,7 +31,7 @@ logging:
 endpoints:
    mod-catalogos: ${msit_CATALOGOS}
    ms-reportes: ${msit_REPORTES_GENERALES}
-   ms-rfc: ${msit_RFC}
+   ms-rfc: ${msit_SAT}
    ms-curp: ${msit_CURP}
    
    
