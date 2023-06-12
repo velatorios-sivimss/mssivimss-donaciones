@@ -90,7 +90,7 @@ public class SalidaDonacionServiceImpl implements SalidaDonacionService {
 					response.setMensaje("interno");
 					return response;
 				} else if (response.getCodigo() == 200 && !response.getDatos().toString().contains(NOM_PERSONA)) {
-					response = providerRestTemplate.consumirServicioObject(urlRfc.concat(donacionRequest.getRfc()), 0);
+					response = providerRestTemplate.consumirServicioObject("/"+urlRfc.concat(donacionRequest.getRfc()), 0);
 					if(response.getCodigo() == 200 && response.getDatos().toString().toLowerCase().contains("ACTIVO".toLowerCase())) {
 						response.setMensaje("externo");
 						return response;
@@ -125,7 +125,7 @@ public class SalidaDonacionServiceImpl implements SalidaDonacionService {
 					response.setMensaje("interno");
 					return response;
 				} else if (response.getCodigo() == 200 && !response.getDatos().toString().contains(NOM_PERSONA)) {
-					response = providerRestTemplate.consumirServicioObject(urlCurp.concat(donacionRequest.getCurp()), 1);
+					response = providerRestTemplate.consumirServicioObject("/"+urlCurp.concat(donacionRequest.getCurp()), 1);
 					if(response.getCodigo() == 200 && !response.getDatos().toString().toLowerCase().contains("LA CURP NO SE ENCUENTRA EN LA BASE DE DATOS".toLowerCase())) {
 						response.setMensaje("externo");
 						return response;
