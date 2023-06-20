@@ -2,9 +2,11 @@ package com.imss.sivimss.donaciones.util;
 
 public class ConsultaConstantes {
 	
-	public static final String OS_CVE_FOLIO_CVE_FOLIO = "OS.CVE_FOLIO = :cveFolio";
 	public static final String ESTATUS_ORDEN_SERVICIO = "estatusOrdenServicio";
+	public static final String NOM_SEGUNDO_APELLIDO = "NOM_SEGUNDO_APELLIDO";
+	public static final String OS_CVE_FOLIO_CVE_FOLIO = "OS.CVE_FOLIO = :cveFolio";
 	public static final String SVC_ORDEN_SERVICIO_OS = "SVC_ORDEN_SERVICIO OS";
+	public static final String NOM_PRIMER_APELLIDO = "NOM_PRIMER_APELLIDO";
 	public static final String RESPONSABLE_ALMACEN = "responsableAlmacen";
 	public static final String ID_USUARIO_MODIFICA = "ID_USUARIO_MODIFICA";
 	public static final String CURRENT_TIMESTAMP = "CURRENT_TIMESTAMP()";

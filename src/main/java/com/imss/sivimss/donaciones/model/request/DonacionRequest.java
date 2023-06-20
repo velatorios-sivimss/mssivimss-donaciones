@@ -77,6 +77,12 @@ public class DonacionRequest {
 	private String desOtroSexo;
 	@JsonProperty
 	private Integer idVelatorio;
+	@JsonProperty
+   private Integer idPersona;
+	@JsonProperty
+	private Integer idDomicilio;
+	@JsonProperty
+	private Integer idContratante;
 	@JsonFormat(pattern = "yyyy-MM-dd")
 	private String fecNacimiento;
 	@JsonProperty
