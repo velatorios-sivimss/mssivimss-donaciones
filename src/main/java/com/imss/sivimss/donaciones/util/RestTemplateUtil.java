@@ -2,7 +2,6 @@ package com.imss.sivimss.donaciones.util;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.List;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -34,18 +33,17 @@ public class RestTemplateUtil {
 	 * @param clazz
 	 * @return
 	 */
-	public Response<?> sendPostRequestByteArray(String url, EnviarDatosRequest body, Class<?> clazz)
+	public Response<Object> sendPostRequestByteArray(String url, EnviarDatosRequest body, Class<?> clazz)
 			throws IOException {
-		Response<?> responseBody = new Response<>();
+		Response<Object> responseBody = new Response();
 		HttpHeaders headers = RestTemplateUtil.createHttpHeaders();
 
 		HttpEntity<Object> request = new HttpEntity<>(body, headers);
-		ResponseEntity<?> responseEntity = null;
+		ResponseEntity<Object> responseEntity = null;
 		try {
-			responseEntity = restTemplate.postForEntity(url, request, clazz);
+			responseEntity = (ResponseEntity<Object>) restTemplate.postForEntity(url, request, clazz);
 			if (responseEntity.getStatusCode() == HttpStatus.OK && responseEntity.getBody() != null) {
-				// noinspection unchecked
-				responseBody = (Response<List<String>>) responseEntity.getBody();
+				responseBody = (Response<Object>) responseEntity.getBody();
 			} else {
 				throw new IOException("Ha ocurrido un error al enviar");
 			}
@@ -68,17 +66,17 @@ public class RestTemplateUtil {
 	 * @param clazz
 	 * @return
 	 */
-	public Response<?> sendPostRequestByteArrayToken(String url, EnviarDatosRequest body, String subject,
-			Class<?> clazz) throws IOException {
-		Response<?> responseBody = new Response<>();
+	public Response<Object> sendPostRequestByteArrayToken(String url, EnviarDatosRequest body, String subject,
+			Class<?> clazz) {
+		Response<Object> responseBody = new Response();
 		HttpHeaders headers = RestTemplateUtil.createHttpHeadersToken(subject);
 
 		HttpEntity<Object> request = new HttpEntity<>(body, headers);
-		ResponseEntity<?> responseEntity = null;
+		ResponseEntity<Object> responseEntity = null;
 
-		responseEntity = restTemplate.postForEntity(url, request, clazz);
+		responseEntity = (ResponseEntity<Object>) restTemplate.postForEntity(url, request, clazz);
 
-		responseBody = (Response<List<String>>) responseEntity.getBody();
+		responseBody = (Response<Object>) responseEntity.getBody();
 
 		return responseBody;
 	}
@@ -91,13 +89,13 @@ public class RestTemplateUtil {
 	 * @return
 	 */
 	public Response<Object> sendPostRequestByteArrayTokenObject(String url, EnviarDatosRequest body, String subject,
-			Class<?> clazz) throws IOException {
+			Class<?> clazz) {
 		HttpHeaders headers = RestTemplateUtil.createHttpHeadersToken(subject);
 
 		HttpEntity<Object> request = new HttpEntity<>(body, headers);
-		ResponseEntity<?> responseEntity = null;
+		ResponseEntity<Object> responseEntity = null;
 
-		responseEntity = restTemplate.postForEntity(url, request, clazz);
+		responseEntity = (ResponseEntity<Object>) restTemplate.postForEntity(url, request, clazz);
 
 		return (Response<Object>) responseEntity.getBody();
 	}
@@ -109,15 +107,15 @@ public class RestTemplateUtil {
 	 * @param clazz
 	 * @return
 	 */
-	public Response<?> sendPostRequestByteArrayToken(String url, Object body, String subject,
-			Class<?> clazz) throws IOException {
+	public Response<Object> sendPostRequestByteArrayToken(String url, Object body, String subject,
+			Class<?> clazz) {
 		HttpHeaders headers = RestTemplateUtil.createHttpHeadersToken(subject);
 
 		HttpEntity<Object> request = new HttpEntity<>(body, headers);
 
-		 ResponseEntity<?> responseEntity = restTemplate.postForEntity(url, request, clazz);
+		 ResponseEntity<Object> responseEntity = (ResponseEntity<Object>) restTemplate.postForEntity(url, request, clazz);
 
-		return (Response<List<String>>) responseEntity.getBody();
+		return (Response<Object>) responseEntity.getBody();
 	}
 	
     /**
@@ -127,7 +125,7 @@ public class RestTemplateUtil {
      * @param clazz
      * @return
      */
-    public Response<Object> sendGetRequestRfc(String url)throws IOException  {
+    public Response<Object> sendGetRequestRfc(String url)  {
     	Response<Object> response = new Response<>();
     	ResponseEntity<PersonaRfcRequest> responseEntity = null;
         try {
@@ -153,7 +151,7 @@ public class RestTemplateUtil {
      * @param clazz
      * @return
      */
-    public Response<Object> sendGetRequestCurp(String url)throws IOException  {
+    public Response<Object> sendGetRequestCurp(String url)  {
     	Response<Object> response = new Response<>();
     	ResponseEntity<PersonaCurpRequest> responseEntity = null;
         try {
@@ -199,7 +197,7 @@ public class RestTemplateUtil {
 		header.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 		return header;
 	}
-
+	
 //////////////////////////////////////////
 	/**
 	 * Enviar una peticion con Body para reportes.
@@ -208,15 +206,15 @@ public class RestTemplateUtil {
 	 * @param clazz
 	 * @return
 	 */
-	public Response<?> sendPostRequestByteArrayReportesToken(String url, DatosReporteDTO body, String subject,
-			Class<?> clazz) throws IOException {
-		Response<?> responseBody = new Response<>();
+	public Response<Object> sendPostRequestByteArrayReportesToken(String url, DatosReporteDTO body, String subject,
+			Class<?> clazz) {
+		Response<Object> responseBody = new Response();
 		HttpHeaders headers = RestTemplateUtil.createHttpHeadersToken(subject);
 
 		HttpEntity<Object> request = new HttpEntity<>(body, headers);
-		ResponseEntity<?> responseEntity = null;
-		responseEntity = restTemplate.postForEntity(url, request, clazz);
-		responseBody = (Response<List<String>>) responseEntity.getBody();
+		ResponseEntity<Object> responseEntity = null;
+		responseEntity = (ResponseEntity<Object>) restTemplate.postForEntity(url, request, clazz);
+		responseBody = (Response<Object>) responseEntity.getBody();
 
 		return responseBody;
 	}

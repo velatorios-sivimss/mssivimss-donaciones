@@ -2,13 +2,7 @@ package com.imss.sivimss.donaciones.exception;
 
 import org.springframework.http.HttpStatus;
 
-/**
- * Clase principal para manejar las excepciones BadRequestException de la aplicacion
- *
- * @author Pablo Nolasco
- * @puesto dev
- * @date 24 nov. 2022
- */
+
 public class BadRequestException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;

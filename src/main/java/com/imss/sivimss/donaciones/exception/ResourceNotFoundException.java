@@ -3,13 +3,7 @@ package com.imss.sivimss.donaciones.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-/**
- * Clase principal para manejar las excepciones ResourceNotFoundException de la aplicacion
- *
- * @author Pablo Nolasco
- * @puesto dev
- * @date 24 nov. 2022
- */
+ 
 @ResponseStatus(value = HttpStatus.NOT_FOUND)
 public class ResourceNotFoundException extends RuntimeException{
 

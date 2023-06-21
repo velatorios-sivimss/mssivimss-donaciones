@@ -61,7 +61,7 @@ public class AceptacionDonacionServiceImpl implements AceptacionDonacionService 
 	private LogUtil logUtil;
 	
 	@Override
-	public Response<?> detalleNombreContratante(DatosRequest request, Authentication authentication)
+	public Response<Object> detalleNombreContratante(DatosRequest request, Authentication authentication)
 			throws IOException {
 		DonacionRequest donacionRequest = mappeoObject(request);
 		try {
@@ -84,7 +84,7 @@ public class AceptacionDonacionServiceImpl implements AceptacionDonacionService 
 	}
 
 	@Override
-	public Response<?> detalleNombreFinado(DatosRequest request, Authentication authentication) throws IOException {
+	public Response<Object> detalleNombreFinado(DatosRequest request, Authentication authentication) throws IOException {
 		DonacionRequest donacionRequest = mappeoObject(request);
 		try {
 				logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString()," detalle nombre finado ", CONSULTA,authentication);
@@ -106,7 +106,7 @@ public class AceptacionDonacionServiceImpl implements AceptacionDonacionService 
 	}
 	
 	@Override
-	public Response<?> detalleAceptacionDonacion(DatosRequest request, Authentication authentication) throws IOException {
+	public Response<Object> detalleAceptacionDonacion(DatosRequest request, Authentication authentication) throws IOException {
 		DonacionRequest donacionRequest = mappeoObject(request);
 		try {
 				logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString()," detalle aceptacion donacion ", CONSULTA,authentication);
@@ -128,7 +128,7 @@ public class AceptacionDonacionServiceImpl implements AceptacionDonacionService 
 	}
 
 	@Override
-	public Response<?> detalleAtaudDonado(DatosRequest request, Authentication authentication) throws IOException {
+	public Response<Object> detalleAtaudDonado(DatosRequest request, Authentication authentication) throws IOException {
 		DonacionRequest donacionRequest = mappeoObject(request);
 		UsuarioDto usuarioDto = new Gson().fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
 		try {
@@ -155,12 +155,12 @@ public class AceptacionDonacionServiceImpl implements AceptacionDonacionService 
 	}
 
 	@Override
-	public Response<?> insertAtaudDonado(DatosRequest request, Authentication authentication) throws IOException {
+	public Response<Object> insertAtaudDonado(DatosRequest request, Authentication authentication) throws IOException {
 		DonacionRequest donacionRequest = mappeoObject(request);
 		UsuarioDto usuarioDto = new Gson().fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
 		try {
 				logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString()," insert ataud donado ", ALTA,authentication);
-				Response<?> response = providerRestTemplate.consumirServicio(new Donacion().insertarDonacion(donacionRequest, usuarioDto).getDatos(),urlModCatalogos.concat("/crearMultiple"),authentication);
+				Response<Object> response = providerRestTemplate.consumirServicio(new Donacion().insertarDonacion(donacionRequest, usuarioDto).getDatos(),urlModCatalogos.concat("/crearMultiple"),authentication);
 				if(200 == response.getCodigo()) {
 					response = providerRestTemplate.consumirServicio(new Donacion().actualizarStockArticulo(donacionRequest, usuarioDto),urlModCatalogos.concat("/actualizar/multiples"),authentication);
 				}
@@ -175,7 +175,7 @@ public class AceptacionDonacionServiceImpl implements AceptacionDonacionService 
 	}
 	
 	@Override
-	public Response<?> generarDocumentoAceptacionControl(DatosRequest request, Authentication authentication) throws IOException {
+	public Response<Object> generarDocumentoAceptacionControl(DatosRequest request, Authentication authentication) throws IOException {
 		try {
 		logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString()," generar documento aceptacion control ", CONSULTA,authentication);
 		Map<String, Object> envioDatos = new Donacion().generarPlantillaAceptacionControlPDF(new Gson().fromJson(String.valueOf(request.getDatos().get(AppConstantes.DATOS)), PlantillaAceptacionControlRequest.class),nombrePdfAceptacionControl);
