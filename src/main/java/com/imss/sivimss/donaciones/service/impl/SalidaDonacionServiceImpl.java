@@ -1,6 +1,7 @@
 package com.imss.sivimss.donaciones.service.impl;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
@@ -33,7 +34,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class SalidaDonacionServiceImpl implements SalidaDonacionService {
-	
 	
 	private static final String ERROR_AL_DESCARGAR_DOCUMENTO= "64"; // Error en la descarga del documento.Intenta nuevamente.
 	private static final String ERROR_AL_EJECUTAR_EL_QUERY = "Error al ejecutar el query ";
@@ -187,15 +187,31 @@ public class SalidaDonacionServiceImpl implements SalidaDonacionService {
 	
 	@Override
 	public Response<Object> insertSalidaAtaudDonado(DatosRequest request, Authentication authentication) throws IOException {
+		Response<Object> response = new Response<>();
+		Map<String, Object> map = new HashMap<>();
 		DonacionRequest donacionRequest = mappeoObject(request);
 		UsuarioDto usuarioDto = new Gson().fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
 		try {
 					logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString()," insert salida ataud donado ", ALTA,authentication);
-					
-					Response<Object> response = providerRestTemplate.consumirServicio(new SalidaDonacion().insertPersona(donacionRequest, usuarioDto),urlModCatalogos.concat("/insercion/salida/donacion"),authentication);
-					if(200 == response.getCodigo()) {
-						response = providerRestTemplate.consumirServicio(new SalidaDonacion().actualizarStockArticulo(donacionRequest, usuarioDto),urlModCatalogos.concat("/actualizar/multiples"),authentication);
-					}
+					map.put("curp", donacionRequest.getCurp());
+					map.put("rfc", donacionRequest.getRfc());
+					response = providerRestTemplate.consumirServicioObject(map,urlModCatalogos.concat("/consultas/consultaPersona"), authentication);
+					if (response.getCodigo()==200 && !response.getDatos().toString().contains("[]")) {
+						Map<?, ?> dato = (Map<?, ?>) response.getDatos();
+						log.info(" idPersona: " + dato.get("idPersona").toString());
+						donacionRequest.setIdContratante(Integer.valueOf(dato.get("idPersona").toString()));
+						donacionRequest.setIdPersona(Integer.valueOf(dato.get("idDomicilio").toString()));
+						donacionRequest.setIdDomicilio(Integer.valueOf(dato.get("idContratante").toString()));
+					    response  = providerRestTemplate.consumirServicio(new SalidaDonacion().insertSalidaDonacionPrincipal(donacionRequest, usuarioDto),urlModCatalogos.concat("/insercion/salida/donacion"),authentication);
+						if(200 == response.getCodigo()) {
+							response = providerRestTemplate.consumirServicio(new SalidaDonacion().actualizarSalidaDonacionPrincipal(donacionRequest, usuarioDto),urlModCatalogos.concat("/actualizar/multiples"),authentication);
+						}
+					} else  {
+						response = providerRestTemplate.consumirServicio(new SalidaDonacion().insertPersona(donacionRequest, usuarioDto),urlModCatalogos.concat("/insercion/salida/donacion"),authentication);
+						if(200 == response.getCodigo()) {
+							response = providerRestTemplate.consumirServicio(new SalidaDonacion().actualizarSalidaDonacionPrincipal(donacionRequest, usuarioDto),urlModCatalogos.concat("/actualizar/multiples"),authentication);
+						}
+					} 
 					
 					return MensajeResponseUtil.mensajeResponse(response, REGISTRADO_CORRECTAMENTE);
         } catch (Exception e) {
