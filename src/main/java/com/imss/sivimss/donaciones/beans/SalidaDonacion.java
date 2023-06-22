@@ -31,7 +31,6 @@ public class SalidaDonacion {
 		log.info(" detalleContratanteRfc: " + query );
 		String encoded = DatatypeConverter.printBase64Binary(query.getBytes(StandardCharsets.UTF_8));
 		request.getDatos().put(AppConstantes.QUERY, encoded);
-		request.setDatos(null);
 		log.info(" TERMINO - detalleContratanteRfc");
 		return request;
 	}
