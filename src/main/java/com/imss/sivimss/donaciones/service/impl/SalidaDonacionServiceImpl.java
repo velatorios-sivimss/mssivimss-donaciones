@@ -14,7 +14,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
-import com.imss.sivimss.donaciones.beans.Donacion;
 import com.imss.sivimss.donaciones.beans.SalidaDonacion;
 import com.imss.sivimss.donaciones.exception.BadRequestException;
 import com.imss.sivimss.donaciones.model.request.AgregarArticuloRequest;
@@ -187,6 +186,7 @@ public class SalidaDonacionServiceImpl implements SalidaDonacionService {
 	
 	@Override
 	public Response<Object> insertSalidaAtaudDonado(DatosRequest request, Authentication authentication) throws IOException {
+		String consulta = null;
 		Response<Object> response = new Response<>();
 		Map<String, Object> map = new HashMap<>();
 		DonacionRequest donacionRequest = mappeoObject(request);
@@ -203,11 +203,13 @@ public class SalidaDonacionServiceImpl implements SalidaDonacionService {
 						donacionRequest.setIdPersona(Integer.valueOf(dato.get("idDomicilio").toString()));
 						donacionRequest.setIdDomicilio(Integer.valueOf(dato.get("idContratante").toString()));
 					    response  = providerRestTemplate.consumirServicio(new SalidaDonacion().insertSalidaDonacionPrincipal(donacionRequest, usuarioDto),urlModCatalogos.concat("/insercion/salida/donacion"),authentication);
-						if(200 == response.getCodigo()) {
+					    consulta = new SalidaDonacion().insertSalidaDonacionPrincipal(donacionRequest, usuarioDto).toString();
+					    if(200 == response.getCodigo()) {
 							response = providerRestTemplate.consumirServicio(new SalidaDonacion().actualizarSalidaDonacionPrincipal(donacionRequest, usuarioDto),urlModCatalogos.concat("/actualizar/multiples"),authentication);
 						}
 					} else  {
 						response = providerRestTemplate.consumirServicio(new SalidaDonacion().insertPersona(donacionRequest, usuarioDto),urlModCatalogos.concat("/insercion/salida/donacion"),authentication);
+						 consulta = new SalidaDonacion().insertPersona(donacionRequest, usuarioDto).toString();
 						if(200 == response.getCodigo()) {
 							response = providerRestTemplate.consumirServicio(new SalidaDonacion().actualizarSalidaDonacionPrincipal(donacionRequest, usuarioDto),urlModCatalogos.concat("/actualizar/multiples"),authentication);
 						}
@@ -215,7 +217,6 @@ public class SalidaDonacionServiceImpl implements SalidaDonacionService {
 					
 					return MensajeResponseUtil.mensajeResponse(response, REGISTRADO_CORRECTAMENTE);
         } catch (Exception e) {
-        	String consulta = new Donacion().insertarDonacion(donacionRequest, usuarioDto).getDatos().get(AppConstantes.QUERY).toString();
             String decoded = new String(DatatypeConverter.parseBase64Binary(consulta));
             log.error(ERROR_AL_EJECUTAR_EL_QUERY + decoded);
             logUtil.crearArchivoLog(Level.SEVERE.toString(), this.getClass().getSimpleName(), this.getClass().getPackage().toString(), FALLO_AL_EJECUTAR_EL_QUERY + decoded, ALTA, authentication);
