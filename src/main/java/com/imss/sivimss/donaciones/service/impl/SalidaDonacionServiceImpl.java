@@ -199,9 +199,9 @@ public class SalidaDonacionServiceImpl implements SalidaDonacionService {
 					if (response.getCodigo()==200 && !response.getDatos().toString().contains("[]")) {
 						Map<?, ?> dato = (Map<?, ?>) response.getDatos();
 						log.info(" idPersona: " + dato.get("idPersona").toString());
-						donacionRequest.setIdContratante(Integer.valueOf(dato.get("idPersona").toString()));
-						donacionRequest.setIdPersona(Integer.valueOf(dato.get("idDomicilio").toString()));
-						donacionRequest.setIdDomicilio(Integer.valueOf(dato.get("idContratante").toString()));
+						donacionRequest.setIdContratante(Integer.valueOf(dato.get("idContratante").toString()));
+						donacionRequest.setIdPersona(Integer.valueOf(dato.get("idPersona").toString()));
+						donacionRequest.setIdDomicilio(Integer.valueOf(dato.get("idDomicilio").toString()));
 					    response  = providerRestTemplate.consumirServicio(new SalidaDonacion().insertSalidaDonacionPrincipal(donacionRequest, usuarioDto),urlModCatalogos.concat("/insercion/salida/donacion"),authentication);
 					    consulta = new SalidaDonacion().insertSalidaDonacionPrincipal(donacionRequest, usuarioDto).toString();
 					    if(200 == response.getCodigo()) {
