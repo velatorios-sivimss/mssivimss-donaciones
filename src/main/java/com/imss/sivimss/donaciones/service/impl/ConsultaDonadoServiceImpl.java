@@ -14,7 +14,11 @@ import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
 import com.imss.sivimss.donaciones.beans.ConsultaDonado;
+import com.imss.sivimss.donaciones.beans.Donacion;
+import com.imss.sivimss.donaciones.beans.SalidaDonacion;
 import com.imss.sivimss.donaciones.model.request.ConsultaDonadoRequest;
+import com.imss.sivimss.donaciones.model.request.PlantillaAceptacionControlRequest;
+import com.imss.sivimss.donaciones.model.request.PlantillaControlSalidaDonacionRequest;
 import com.imss.sivimss.donaciones.model.request.ReporteDto;
 import com.imss.sivimss.donaciones.service.ConsultaDonadosService;
 import com.imss.sivimss.donaciones.util.AppConstantes;
@@ -47,12 +51,21 @@ public class ConsultaDonadoServiceImpl implements ConsultaDonadosService {
 	@Value("${endpoints.ms-reportes}")
 	private String urlReportes;
 
+	@Value("${plantilla.aceptacion-control-ataudes-donacion}")
+	private String nombrePdfAceptacionControl;
+	
+	@Value("${plantilla.control-salida-ataudes-donacion}")
+	private String nombrePdfControlSalida;
+	
+	
 	@Autowired
 	private ProviderServiceRestTemplate providerRestTemplate;
 
 	ConsultaDonado consultarDonado = new ConsultaDonado();
 
 	private Response<Object> response;
+	
+	private static final Double VERSION =5.2;
 
 	private static final String GENERA_DOCUMENTO = "Genera_Documento";
 	private static final String NO_SE_ENCONTRO_INFORMACION = "45"; // No se encontró información relacionada a tu
@@ -63,6 +76,7 @@ public class ConsultaDonadoServiceImpl implements ConsultaDonadosService {
 	private static final String CONSULTA = "consulta";
 	private static final String CU064_NOMBRE = "ConsultarDonados: ";
 	private static final String CONSULTAR_PAGINADO = "/paginado";
+	private static final String CONSULTA_GENERICA = "/consulta";
 	private static final String CONULTA_FILTROS = "consu-filtrodonados: ";
 	private static final String GENERAR_DOCUMENTO = "generarDocumento: ";
 	private static final String CONSULTAR_DONADOS = "consultar-donados: " ;
@@ -152,5 +166,80 @@ public class ConsultaDonadoServiceImpl implements ConsultaDonadosService {
 	private String queryDecoded (Map<String, Object> envioDatos ) {
 		return new String(DatatypeConverter.parseBase64Binary(envioDatos.get(AppConstantes.QUERY).toString()));
 	
+	}
+
+	@Override
+	public Response<Object> generarDocumentoEntrada(DatosRequest request, Authentication authentication) throws IOException {
+		Gson gson = new Gson();
+		String datosJson = String.valueOf(request.getDatos().get(AppConstantes.DATOS));
+		ConsultaDonadoRequest consultaDonadoRequest = gson.fromJson(datosJson, ConsultaDonadoRequest.class);
+		consultarDonado = new ConsultaDonado(consultaDonadoRequest);
+		ReporteDto reporteDto = gson.fromJson(datosJson, ReporteDto.class);
+		String queryDecoded = "";
+		Map<String, Object> envioDatos = new HashMap<>();
+		try {
+				envioDatos = consultarDonado.generarQueryReporteEntrada(request, reporteDto).getDatos();
+			response = providerRestTemplate.consumirServicio(envioDatos, urlModCatalogos + CONSULTA_GENERICA, authentication);
+			queryDecoded = queryDecoded(envioDatos);
+			log.info(CU064_NOMBRE + GENERAR_DOCUMENTO + queryDecoded);
+			logUtil.crearArchivoLog(Level.INFO.toString(),
+					CU064_NOMBRE + GENERAR_DOCUMENTO + this.getClass().getSimpleName(), this.getClass().getPackage().toString(), "generarDocumentoEntrada", GENERA_DOCUMENTO, authentication);
+			datosJson = responseToJson(response.getDatos().toString());
+				PlantillaAceptacionControlRequest plantillaAceptacionControlRequest = gson.fromJson(datosJson, PlantillaAceptacionControlRequest.class);
+				plantillaAceptacionControlRequest.setVersion(VERSION);
+				envioDatos = new Donacion().generarPlantillaAceptacionControlPDF(plantillaAceptacionControlRequest,	nombrePdfAceptacionControl);
+			envioDatos.put("tipoReporte", reporteDto.getTipoReporte());
+			return MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicioReportes(envioDatos, urlReportes, authentication)
+					, ERROR_AL_DESCARGAR_DOCUMENTO);
+		} catch (Exception e) {
+			log.error( CU064_NOMBRE + GENERAR_DOCUMENTO + ERROR_QUERY + queryDecoded);
+			logUtil.crearArchivoLog(Level.WARNING.toString(), CU064_NOMBRE + GENERAR_DOCUMENTO + this.getClass().getSimpleName(),
+					this.getClass().getPackage().toString(), ERROR_QUERY + queryDecoded, GENERA_DOCUMENTO,
+					authentication);
+			throw new IOException("52", e.getCause());
+		}
+
+	}
+
+	@Override
+	public Response<Object> generarDocumentoSalida(DatosRequest request, Authentication authentication) throws IOException {
+		Gson gson = new Gson();
+		String datosJson = String.valueOf(request.getDatos().get(AppConstantes.DATOS));
+		ConsultaDonadoRequest consultaDonadoRequest = gson.fromJson(datosJson, ConsultaDonadoRequest.class);
+		consultarDonado = new ConsultaDonado(consultaDonadoRequest);
+		ReporteDto reporteDto = gson.fromJson(datosJson, ReporteDto.class);
+		String queryDecoded = "";
+		Map<String, Object> envioDatos = new HashMap<>();
+		try {
+				envioDatos = consultarDonado.generarQueryReporteSalida(request, reporteDto, formatoFecha).getDatos();
+			response = providerRestTemplate.consumirServicio(envioDatos, urlModCatalogos + CONSULTA_GENERICA, authentication);
+			queryDecoded = queryDecoded(envioDatos);
+			log.info(CU064_NOMBRE + GENERAR_DOCUMENTO + queryDecoded);
+			logUtil.crearArchivoLog(Level.INFO.toString(),
+					CU064_NOMBRE + GENERAR_DOCUMENTO + this.getClass().getSimpleName(), this.getClass().getPackage().toString(), "generarDocumentoSalida", GENERA_DOCUMENTO, authentication);
+			datosJson = responseToJson(response.getDatos().toString());
+				PlantillaControlSalidaDonacionRequest plantillaControlSalidaDonacionRequest = gson.fromJson(datosJson, PlantillaControlSalidaDonacionRequest.class);
+				plantillaControlSalidaDonacionRequest.setVersion(VERSION);
+				envioDatos = new SalidaDonacion().generarPlantillaControlSalidaDonacionPDF(plantillaControlSalidaDonacionRequest, nombrePdfControlSalida);
+			
+			envioDatos.put("tipoReporte", reporteDto.getTipoReporte());
+			envioDatos.put("version", VERSION );
+			return MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicioReportes(envioDatos, urlReportes, authentication)
+					, ERROR_AL_DESCARGAR_DOCUMENTO);
+		} catch (Exception e) {
+			log.error( CU064_NOMBRE + GENERAR_DOCUMENTO + ERROR_QUERY + queryDecoded);
+			logUtil.crearArchivoLog(Level.WARNING.toString(), CU064_NOMBRE + GENERAR_DOCUMENTO + this.getClass().getSimpleName(),
+					this.getClass().getPackage().toString(), ERROR_QUERY + queryDecoded, GENERA_DOCUMENTO,
+					authentication);
+			throw new IOException("52", e.getCause());
+		}
+
+	}
+	private String responseToJson(String str){
+		str = str.replace("=", "\":\"");
+		str = str.replace(", ", "\",\"");
+		str = str.replace("}]", "\"}");
+		str = str.replace("[{", "{\"");
+		return str;
 	}
 }

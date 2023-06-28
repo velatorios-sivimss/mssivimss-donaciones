@@ -12,7 +12,11 @@ public class ReporteDto {
 
 	private Integer idVelatorio;
 	private Integer idDelegacion;
+	private Integer idAtaudDonacion;
+	private Integer idDonacion;
+	private Integer idSalidaDona;
 	private String fechaInicio;
 	private String fechaFin;
 	private String tipoReporte;
+	private String version;
 }

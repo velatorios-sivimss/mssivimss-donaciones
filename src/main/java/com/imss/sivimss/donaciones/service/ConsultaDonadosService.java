@@ -13,4 +13,6 @@ public interface ConsultaDonadosService {
 	Response<Object> consultaFiltroDonado(DatosRequest request, Authentication authentication) throws IOException;
 	Response<Object> consultarDonados(DatosRequest request, Authentication authentication) throws IOException;
 	Response<Object> generarDocumento(DatosRequest request, Authentication authentication) throws IOException;
+	Response<Object> generarDocumentoEntrada(DatosRequest request, Authentication authentication) throws IOException;
+	Response<Object> generarDocumentoSalida(DatosRequest request, Authentication authentication) throws IOException;
 }
