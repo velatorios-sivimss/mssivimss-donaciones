@@ -328,10 +328,10 @@ public class ConsultaDonado {
 		nombreCamposSalida.put(8,"nomFinados");
 		nombreCamposSalida.put(9,"nomSolicitantes");
 		nombreCamposSalida.put(10,"nomResponsableAlmacen");
-		nombreCamposSalida.put(11,"matriculaResponSable");
+		nombreCamposSalida.put(11,"claveResponsableAlmacen");
 		nombreCamposSalida.put(12,"fecSolicitud");
 		nombreCamposSalida.put(13,"nomAdministrador");
-		nombreCamposSalida.put(14,"matriculaAdministrador");
+		nombreCamposSalida.put(14,"claveAdministrador");
 		
 		nombreCamposSalida.put(15,"lugar");
 		nombreCamposSalida.put(16,"dia");
