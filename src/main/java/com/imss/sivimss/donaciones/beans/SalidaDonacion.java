@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class SalidaDonacion {
-	
+
 	public DatosRequest detalleContratanteRfc(DatosRequest request, DonacionRequest donacionRequest) {
 		log.info(" INICIO - detalleContratanteRfc");
 		String query = ConsultaConstantes.detalleContratante().where("P.CVE_RFC = :rfc").setParameter("rfc", donacionRequest.getRfc()).build();
@@ -93,8 +93,8 @@ public class SalidaDonacion {
 		q.agregarParametroValues("CVE_CURP", "'" + donacionRequest.getCurp() + "'");
 		q.agregarParametroValues("CVE_NSS", "'" + donacionRequest.getNss() + "'");
 		q.agregarParametroValues("NOM_PERSONA", "'" + donacionRequest.getNomPersona() + "'");
-		q.agregarParametroValues("NOM_PRIMER_APELLIDO", "'" + donacionRequest.getNomPersonaPaterno() + "'");
-		q.agregarParametroValues("NOM_SEGUNDO_APELLIDO", "'" + donacionRequest.getNomPersonaMaterno() + "'");
+		q.agregarParametroValues(ConsultaConstantes.NOM_PRIMER_APELLIDO, "'" + donacionRequest.getNomPersonaPaterno() + "'");
+		q.agregarParametroValues(ConsultaConstantes.NOM_SEGUNDO_APELLIDO, "'" + donacionRequest.getNomPersonaMaterno() + "'");
 		q.agregarParametroValues("NUM_SEXO", String.valueOf(donacionRequest.getNumSexo()));
 		q.agregarParametroValues("DES_OTRO_SEXO", "'" + donacionRequest.getDesOtroSexo() + "'");
 		q.agregarParametroValues("FEC_NAC",  "'" + donacionRequest.getFecNacimiento() + "'");
@@ -124,7 +124,35 @@ public class SalidaDonacion {
 		 log.info(" insertPersona: " + convertirQuery.toString() );
 		 
 		 log.info(" TERMINO - insertPersona");
+		 
 		return convertirQuery;
+	}
+	
+	public InsertMultiNivelRequest insertSalidaDonacionPrincipal(DonacionRequest donacionRequest, UsuarioDto usuarioDto) {
+		log.info(" INICIO - insertSalidaDonacionPrincipal");
+		InsertMultiNivelRequest convertirQuery = new InsertMultiNivelRequest();
+		List<String> unoAuno = new ArrayList<>();
+		List<String> unoAn = new ArrayList<>();
+		
+		unoAuno.add(insertSalidaDonacion(donacionRequest, usuarioDto));
+		
+		unoAn.addAll(insertSalidaDonacionAtaudes(donacionRequest, usuarioDto));
+		if(!donacionRequest.getAgregarFinados().isEmpty()) {
+			unoAn.addAll(insertSalidaDonacionFinados(donacionRequest, usuarioDto));
+		}
+		
+		convertirQuery.setUnoAuno(unoAuno);
+		 
+		 convertirQuery.setUnoAn(unoAn);
+		 
+		 convertirQuery.setId(ConsultaConstantes.ID_TABLA);
+		 
+		 log.info(" insertSalidaDonacionPrincipal: " + convertirQuery.toString() );
+		 
+		 log.info(" TERMINO - insertSalidaDonacionPrincipal");
+		 
+		return convertirQuery;
+		
 	}
 	
 	public String insertDomicilio(DonacionRequest donacionRequest, UsuarioDto usuarioDto) {
@@ -158,7 +186,7 @@ public class SalidaDonacion {
 	public String insertSalidaDonacion(DonacionRequest donacionRequest, UsuarioDto usuarioDto) {
 		log.info(" INICIO - insertSalidaDonacion");
 		final QueryHelper q = new QueryHelper("INSERT INTO SVC_SALIDA_DONACION");
-		q.agregarParametroValues("ID_CONTRATANTE", ConsultaConstantes.ID_TABLA);
+		q.agregarParametroValues("ID_CONTRATANTE", (donacionRequest.getIdContratante() != null) ? String.valueOf(donacionRequest.getIdContratante()):ConsultaConstantes.ID_TABLA);
 		q.agregarParametroValues("DES_INSTITUCION", "'" + donacionRequest.getNomInstitucion() + "'");
 		q.agregarParametroValues("NUM_TOTAL_ATAUDES", String.valueOf(donacionRequest.getNumTotalAtaudes()));
 		q.agregarParametroValues("IND_ESTUDIO_SOCIECONOMICO",String.valueOf(donacionRequest.getEstudioSocieconomico()));
@@ -195,8 +223,8 @@ public class SalidaDonacion {
 			final QueryHelper q = new QueryHelper("INSERT INTO SVC_SALIDA_DONACION_FINADOS");
 			q.agregarParametroValues("ID_SALIDA_DONACION", ConsultaConstantes.ID_TABLA);
 			q.agregarParametroValues("NOM_FINADO", "'" + agregarArticuloRequest.getNomFinado() + "'");
-			q.agregarParametroValues("NOM_PRIMER_APELLIDO", "'" + agregarArticuloRequest.getNomFinadoPaterno() + "'");
-			q.agregarParametroValues("NOM_SEGUNDO_APELLIDO", "'" + agregarArticuloRequest.getNomFinadoMaterno() + "'");
+			q.agregarParametroValues(ConsultaConstantes.NOM_PRIMER_APELLIDO, "'" + agregarArticuloRequest.getNomFinadoPaterno() + "'");
+			q.agregarParametroValues(ConsultaConstantes.NOM_SEGUNDO_APELLIDO, "'" + agregarArticuloRequest.getNomFinadoMaterno() + "'");
 			q.agregarParametroValues(ConsultaConstantes.ID_USUARIO_ALTA, String.valueOf(usuarioDto.getIdUsuario()));
 			q.agregarParametroValues(ConsultaConstantes.FEC_ALTA, ConsultaConstantes.CURRENT_TIMESTAMP);
 			unoAn.add(DatatypeConverter.printBase64Binary(q.obtenerQueryInsertar().getBytes(StandardCharsets.UTF_8)));
@@ -205,10 +233,54 @@ public class SalidaDonacion {
 		return unoAn;
 	}
 	
-	public ActualizarMultiRequest actualizarStockArticulo(DonacionRequest donacionRequest, UsuarioDto usuarioDto) {
-		log.info(" INICIO - actualizarStockArticulo");
+	public ActualizarMultiRequest actualizarSalidaDonacionPrincipal(DonacionRequest donacionRequest, UsuarioDto usuarioDto) {
+		log.info(" INICIO - actualizarSalidaDonacionPrincipal");
 		ActualizarMultiRequest actualizarMultiRequest = new ActualizarMultiRequest();
 		List<String> updates = new ArrayList<>();
+		if (donacionRequest.getIdContratante() != null) {
+			final QueryHelper q = new QueryHelper("UPDATE SVC_PERSONA ");
+			q.agregarParametroValues("CVE_RFC", "'" + donacionRequest.getRfc() + "'");
+			q.agregarParametroValues("CVE_CURP", "'" + donacionRequest.getCurp() + "'");
+			q.agregarParametroValues("CVE_NSS", "'" + donacionRequest.getNss() + "'");
+			q.agregarParametroValues("NOM_PERSONA", "'" + donacionRequest.getNomPersona() + "'");
+			q.agregarParametroValues(ConsultaConstantes.NOM_PRIMER_APELLIDO, "'" + donacionRequest.getNomPersonaPaterno() + "'");
+			q.agregarParametroValues(ConsultaConstantes.NOM_SEGUNDO_APELLIDO, "'" + donacionRequest.getNomPersonaMaterno() + "'");
+			q.agregarParametroValues("NUM_SEXO", String.valueOf(donacionRequest.getNumSexo()));
+			q.agregarParametroValues("DES_OTRO_SEXO", "'" + donacionRequest.getDesOtroSexo() + "'");
+			q.agregarParametroValues("FEC_NAC",  "'" + donacionRequest.getFecNacimiento() + "'");
+			q.agregarParametroValues("ID_PAIS", String.valueOf(donacionRequest.getIdPais()));
+			q.agregarParametroValues("ID_ESTADO", String.valueOf(donacionRequest.getIdEstado()));
+			q.agregarParametroValues("DES_TELEFONO", "'" + donacionRequest.getDesTelefono() + "'");
+			q.agregarParametroValues("DES_CORREO", "'" + donacionRequest.getDesCorreo() + "'");
+			q.agregarParametroValues("TIPO_PERSONA", "'" + donacionRequest.getTipoPersona() + "'");
+			q.agregarParametroValues(ConsultaConstantes.ID_USUARIO_MODIFICA, String.valueOf(usuarioDto.getIdUsuario()));
+			q.agregarParametroValues(ConsultaConstantes.FEC_ACTUALIZACION, ConsultaConstantes.CURRENT_TIMESTAMP);
+			q.addWhere("ID_PERSONA = " + donacionRequest.getIdPersona());
+			
+			String query = q.obtenerQueryActualizar();
+			log.info(" actualizarPersona: " + query);
+			updates.add(DatatypeConverter.printBase64Binary(q.obtenerQueryActualizar().getBytes(StandardCharsets.UTF_8)));
+			actualizarMultiRequest.setUpdates(updates);
+			
+			final QueryHelper q1 = new QueryHelper("UPDATE SVT_DOMICILIO ");
+			q1.agregarParametroValues("DES_CALLE", "'" + donacionRequest.getDesCalle() + "'");
+			q1.agregarParametroValues("NUM_EXTERIOR", "'" + donacionRequest.getNumExterior() + "'");
+			q1.agregarParametroValues("NUM_INTERIOR", "'" + donacionRequest.getNumInterior() + "'");
+			q1.agregarParametroValues("DES_CP", String.valueOf(donacionRequest.getDesCodigoPostal()));
+			q1.agregarParametroValues("DES_COLONIA", "'" + donacionRequest.getDesColonia() + "'");
+			q1.agregarParametroValues("DES_MUNICIPIO", "'" + donacionRequest.getDesMunicipio()+ "'");
+			q1.agregarParametroValues("DES_ESTADO", "'" + donacionRequest.getDesEstado() + "'");
+			q1.agregarParametroValues(ConsultaConstantes.ID_USUARIO_MODIFICA, String.valueOf(usuarioDto.getIdUsuario()));
+			q1.agregarParametroValues(ConsultaConstantes.FEC_ACTUALIZACION, ConsultaConstantes.CURRENT_TIMESTAMP);
+			q1.addWhere("ID_DOMICILIO = " + donacionRequest.getIdDomicilio());
+			
+			String query1 = q1.obtenerQueryActualizar();
+			log.info(" actualizarDomicilio: " + query1);
+			updates.add(DatatypeConverter.printBase64Binary(q1.obtenerQueryActualizar().getBytes(StandardCharsets.UTF_8)));
+			actualizarMultiRequest.setUpdates(updates);
+			
+		}
+		
         donacionRequest.getAtaudesDonados().forEach(agregarArticuloRequest -> {
         	final QueryHelper q = new QueryHelper("UPDATE SVT_INVENTARIO_ARTICULO " );
         	q.agregarParametroValues("ID_TIPO_ASIGNACION_ART",  String.valueOf(4));
@@ -219,9 +291,9 @@ public class SalidaDonacion {
         });
         actualizarMultiRequest.setUpdates(updates);
         
-        log.info(" insertPersona: " + actualizarMultiRequest.toString() );
+        log.info(" actualizarSalidaDonacionPrincipal: " + actualizarMultiRequest.toString() );
 
-        log.info(" TERMINO - actualizarStockArticulo");
+        log.info(" TERMINO - actualizarSalidaDonacionPrincipal");
         
 		return actualizarMultiRequest;
     }

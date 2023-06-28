@@ -65,16 +65,31 @@ public class ConsultaDonadoController {
 	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
 	@TimeLimiter(name = "msflujo")
 	public CompletableFuture<Object>  generarDocumento(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
-	
 		Response<Object> response =  consultaDonadosService.generarDocumento(request,authentication);
 		return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
-      
 	}
 	
+
+	@PostMapping("/generarDocumentoEntrada")
+	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@TimeLimiter(name = "msflujo")
+	public CompletableFuture<Object>  generarDocumentoEntrada(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
 	
+		Response<Object> response =  consultaDonadosService.generarDocumentoEntrada(request,authentication);
+		return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
+    }
+
+	@PostMapping("/generarDocumentoSalida")
+	@CircuitBreaker(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@Retry(name = "msflujo", fallbackMethod = "fallbackGenerico")
+	@TimeLimiter(name = "msflujo")
+	public CompletableFuture<Object>  generarDocumentoSalida(@RequestBody DatosRequest request,Authentication authentication) throws IOException {
 	
-	
-	
+		Response<Object> response =  consultaDonadosService.generarDocumentoSalida(request,authentication);
+		return CompletableFuture.supplyAsync(() -> new ResponseEntity<>(response, HttpStatus.valueOf(response.getCodigo())));
+    }
+
 	
 	
 	
