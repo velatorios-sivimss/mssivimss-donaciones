@@ -109,6 +109,7 @@ public class Donacion {
 		q.agregarParametroValues("NUM_TOTAL_ATAUDES", String.valueOf(donacionRequest.getNumTotalAtaudes()));
 		q.agregarParametroValues("DES_RESPONSABLE_ALMACEN", "'" +   SelectQueryUtil.eliminarEspacios(donacionRequest.getResponsableAlmacen()) + "'");
 		q.agregarParametroValues("DES_MATRICULA_ALMACEN", "'" + donacionRequest.getMatricularesponsable() + "'");
+		q.agregarParametroValues("IND_ACTIVO", String.valueOf(1));
 		q.agregarParametroValues(ConsultaConstantes.ID_USUARIO_ALTA, String.valueOf(usuarioDto.getIdUsuario()));
 		q.agregarParametroValues(ConsultaConstantes.FEC_ALTA, ConsultaConstantes.CURRENT_TIMESTAMP);
 
