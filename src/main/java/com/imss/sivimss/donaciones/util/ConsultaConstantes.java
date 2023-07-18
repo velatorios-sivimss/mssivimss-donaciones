@@ -43,4 +43,11 @@ public class ConsultaConstantes {
 		}
 		return idVelatorio;
 	}
+	
+	public static String validar(String valor) {
+		if (valor != null) {
+			return valor;
+		}
+		return "";
+	}
 }
