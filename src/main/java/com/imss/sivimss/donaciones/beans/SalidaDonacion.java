@@ -48,8 +48,8 @@ public class SalidaDonacion {
 	public DatosRequest detalleSalidaAtaudDonado(DatosRequest request, UsuarioDto usuarioDto) {
 		log.info(" INICIO - detalleSalidaAtaudDonado");
 		SelectQueryUtil queryUtil = new SelectQueryUtil();
-		queryUtil.select("S.FOLIO_ARTICULO AS folioArticulo","S.ID_INVE_ARTICULO AS idInventarioArticulo","TM.DES_TIPO_MATERIAL AS desTipoMaterial",
-				"CONCAT_WS('-',S.FOLIO_ARTICULO,A.DES_MODELO_ARTICULO ) AS  desModeloArticulo")
+		queryUtil.select("S.CVE_FOLIO_ARTICULO AS folioArticulo","S.ID_INVE_ARTICULO AS idInventarioArticulo","TM.DES_TIPO_MATERIAL AS desTipoMaterial",
+				"CONCAT_WS('-',S.CVE_FOLIO_ARTICULO,A.DES_MODELO_ARTICULO ) AS  desModeloArticulo")
 		.from("SVT_ORDEN_ENTRADA OE")
 		.innerJoin("SVT_CONTRATO C", "OE.ID_CONTRATO = C.ID_CONTRATO")
 		.innerJoin("SVT_INVENTARIO_ARTICULO S","OE.ID_ODE = S.ID_ODE")
@@ -102,7 +102,7 @@ public class SalidaDonacion {
 		q.agregarParametroValues("ID_ESTADO", String.valueOf(donacionRequest.getIdEstado()));
 		q.agregarParametroValues("DES_TELEFONO",  SelectQueryUtil.setValor(donacionRequest.getDesTelefono()));
 		q.agregarParametroValues("DES_CORREO", SelectQueryUtil.setValor( donacionRequest.getDesCorreo()));
-		q.agregarParametroValues("TIPO_PERSONA", SelectQueryUtil.setValor( donacionRequest.getTipoPersona()));
+		q.agregarParametroValues("REF_TIPO_PERSONA", SelectQueryUtil.setValor( donacionRequest.getTipoPersona()));
 		q.agregarParametroValues(ConsultaConstantes.ID_USUARIO_ALTA, String.valueOf(usuarioDto.getIdUsuario()));
 		q.agregarParametroValues(ConsultaConstantes.FEC_ALTA, ConsultaConstantes.CURRENT_TIMESTAMP);
 		
@@ -252,7 +252,7 @@ public class SalidaDonacion {
 			q.agregarParametroValues("ID_ESTADO", String.valueOf(donacionRequest.getIdEstado()));
 			q.agregarParametroValues("DES_TELEFONO", SelectQueryUtil.setValor(donacionRequest.getDesTelefono() ));
 			q.agregarParametroValues("DES_CORREO", SelectQueryUtil.setValor(donacionRequest.getDesCorreo()));
-			q.agregarParametroValues("TIPO_PERSONA", SelectQueryUtil.setValor( donacionRequest.getTipoPersona()));
+			q.agregarParametroValues("REF_TIPO_PERSONA", SelectQueryUtil.setValor( donacionRequest.getTipoPersona()));
 			q.agregarParametroValues(ConsultaConstantes.ID_USUARIO_MODIFICA, String.valueOf(usuarioDto.getIdUsuario()));
 			q.agregarParametroValues(ConsultaConstantes.FEC_ACTUALIZACION, ConsultaConstantes.CURRENT_TIMESTAMP);
 			q.addWhere("ID_PERSONA = " + donacionRequest.getIdPersona());

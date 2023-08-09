@@ -80,8 +80,8 @@ public class Donacion {
 	public DatosRequest detalleAtaudDonado(DatosRequest request, DonacionRequest donacionRequest, UsuarioDto usuarioDto) {
 		log.info(" INICIO - detalleAtaudDonado");
 		SelectQueryUtil queryUtil = new SelectQueryUtil();
-		queryUtil.select("S.FOLIO_ARTICULO AS folioArticulo","S.ID_INVE_ARTICULO AS idInventarioArticulo", "TM.DES_TIPO_MATERIAL AS desTipoMaterial",
-				"CONCAT_WS('-',S.FOLIO_ARTICULO,A.DES_MODELO_ARTICULO ) AS  desModeloArticulo")
+		queryUtil.select("S.CVE_FOLIO_ARTICULO AS folioArticulo","S.ID_INVE_ARTICULO AS idInventarioArticulo", "TM.DES_TIPO_MATERIAL AS desTipoMaterial",
+				"CONCAT_WS('-',S.CVE_FOLIO_ARTICULO,A.DES_MODELO_ARTICULO ) AS  desModeloArticulo")
 		.from(ConsultaConstantes.SVC_ORDEN_SERVICIO_OS)
 		.innerJoin("SVC_CARACTERISTICAS_PRESUPUESTO CP", "OS.ID_ORDEN_SERVICIO  = CP.ID_ORDEN_SERVICIO").and("CP.IND_ACTIVO = 1")
 		.innerJoin("SVC_DETALLE_CARACTERISTICAS_PRESUPUESTO DCP", "CP.ID_CARACTERISTICAS_PRESUPUESTO = DCP.ID_CARACTERISTICAS_PRESUPUESTO").and("DCP.IND_ACTIVO = 1")
