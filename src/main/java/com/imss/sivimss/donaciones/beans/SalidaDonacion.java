@@ -102,7 +102,7 @@ public class SalidaDonacion {
 		q.agregarParametroValues("ID_ESTADO", String.valueOf(donacionRequest.getIdEstado()));
 		q.agregarParametroValues("DES_TELEFONO",  SelectQueryUtil.setValor(donacionRequest.getDesTelefono()));
 		q.agregarParametroValues("DES_CORREO", SelectQueryUtil.setValor( donacionRequest.getDesCorreo()));
-		q.agregarParametroValues("REF_TIPO_PERSONA", SelectQueryUtil.setValor( donacionRequest.getTipoPersona()));
+		q.agregarParametroValues("TIP_PERSONA", SelectQueryUtil.setValor( donacionRequest.getTipoPersona()));
 		q.agregarParametroValues(ConsultaConstantes.ID_USUARIO_ALTA, String.valueOf(usuarioDto.getIdUsuario()));
 		q.agregarParametroValues(ConsultaConstantes.FEC_ALTA, ConsultaConstantes.CURRENT_TIMESTAMP);
 		
@@ -177,6 +177,7 @@ public class SalidaDonacion {
 		q.agregarParametroValues("ID_PERSONA", "idTabla1");
 		q.agregarParametroValues("CVE_MATRICULA", SelectQueryUtil.setValor(donacionRequest.getClaveMatricula()));
 		q.agregarParametroValues("ID_DOMICILIO", "idTabla2");
+		q.agregarParametroValues("IND_ACTIVO", String.valueOf(1));
 		q.agregarParametroValues(ConsultaConstantes.ID_USUARIO_ALTA, String.valueOf(usuarioDto.getIdUsuario()));
 		q.agregarParametroValues(ConsultaConstantes.FEC_ALTA, ConsultaConstantes.CURRENT_TIMESTAMP);
 		log.info(" TERMINO - insertContratante");
@@ -252,7 +253,7 @@ public class SalidaDonacion {
 			q.agregarParametroValues("ID_ESTADO", String.valueOf(donacionRequest.getIdEstado()));
 			q.agregarParametroValues("DES_TELEFONO", SelectQueryUtil.setValor(donacionRequest.getDesTelefono() ));
 			q.agregarParametroValues("DES_CORREO", SelectQueryUtil.setValor(donacionRequest.getDesCorreo()));
-			q.agregarParametroValues("REF_TIPO_PERSONA", SelectQueryUtil.setValor( donacionRequest.getTipoPersona()));
+			q.agregarParametroValues("TIP_PERSONA", SelectQueryUtil.setValor( donacionRequest.getTipoPersona()));
 			q.agregarParametroValues(ConsultaConstantes.ID_USUARIO_MODIFICA, String.valueOf(usuarioDto.getIdUsuario()));
 			q.agregarParametroValues(ConsultaConstantes.FEC_ACTUALIZACION, ConsultaConstantes.CURRENT_TIMESTAMP);
 			q.addWhere("ID_PERSONA = " + donacionRequest.getIdPersona());
