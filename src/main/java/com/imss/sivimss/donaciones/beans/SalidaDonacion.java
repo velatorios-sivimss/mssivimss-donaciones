@@ -104,7 +104,7 @@ public class SalidaDonacion {
 		q.agregarParametroValues("DES_CORREO", SelectQueryUtil.setValor( donacionRequest.getDesCorreo()));
 		q.agregarParametroValues("TIP_PERSONA", SelectQueryUtil.setValor( donacionRequest.getTipoPersona()));
 		q.agregarParametroValues(ConsultaConstantes.ID_USUARIO_ALTA, String.valueOf(usuarioDto.getIdUsuario()));
-		q.agregarParametroValues(ConsultaConstantes.FEC_ALTA, ConsultaConstantes.CURRENT_TIMESTAMP);
+		q.agregarParametroValues(ConsultaConstantes.FEC_ALTA, ConsultaConstantes.CURRENT_DATE);
 		
 		unoAuno.add(DatatypeConverter.printBase64Binary(q.obtenerQueryInsertar().getBytes(StandardCharsets.UTF_8)));
 		unoAuno.add(insertDomicilio(donacionRequest, usuarioDto));
@@ -166,7 +166,7 @@ public class SalidaDonacion {
 		q.agregarParametroValues("DES_MUNICIPIO", SelectQueryUtil.setValor(donacionRequest.getDesMunicipio()));
 		q.agregarParametroValues("DES_ESTADO", SelectQueryUtil.setValor(donacionRequest.getDesEstado()));
 		q.agregarParametroValues(ConsultaConstantes.ID_USUARIO_ALTA, String.valueOf(usuarioDto.getIdUsuario()));
-		q.agregarParametroValues(ConsultaConstantes.FEC_ALTA, ConsultaConstantes.CURRENT_TIMESTAMP);
+		q.agregarParametroValues(ConsultaConstantes.FEC_ALTA, ConsultaConstantes.CURRENT_DATE);
 		log.info(" TERMINO - insertDomicilio");
         return DatatypeConverter.printBase64Binary(q.obtenerQueryInsertar().getBytes(StandardCharsets.UTF_8));
 	}
@@ -179,7 +179,7 @@ public class SalidaDonacion {
 		q.agregarParametroValues("ID_DOMICILIO", "idTabla2");
 		q.agregarParametroValues("IND_ACTIVO", String.valueOf(1));
 		q.agregarParametroValues(ConsultaConstantes.ID_USUARIO_ALTA, String.valueOf(usuarioDto.getIdUsuario()));
-		q.agregarParametroValues(ConsultaConstantes.FEC_ALTA, ConsultaConstantes.CURRENT_TIMESTAMP);
+		q.agregarParametroValues(ConsultaConstantes.FEC_ALTA, ConsultaConstantes.CURRENT_DATE);
 		log.info(" TERMINO - insertContratante");
         return DatatypeConverter.printBase64Binary(q.obtenerQueryInsertar().getBytes(StandardCharsets.UTF_8));
 	}
@@ -197,7 +197,7 @@ public class SalidaDonacion {
 		q.agregarParametroValues("CVE_MATRICULA_RESPONSABLE", SelectQueryUtil.setValor(donacionRequest.getMatricularesponsable()));
 		q.agregarParametroValues("IND_ACTIVO", String.valueOf(1));
 		q.agregarParametroValues(ConsultaConstantes.ID_USUARIO_ALTA, String.valueOf(usuarioDto.getIdUsuario()));
-		q.agregarParametroValues(ConsultaConstantes.FEC_ALTA, ConsultaConstantes.CURRENT_TIMESTAMP);
+		q.agregarParametroValues(ConsultaConstantes.FEC_ALTA, ConsultaConstantes.CURRENT_DATE);
 		log.info(" TERMINO - insertSalidaDonacion");
 		return DatatypeConverter.printBase64Binary(q.obtenerQueryInsertar().getBytes(StandardCharsets.UTF_8));
 	}
@@ -210,7 +210,7 @@ public class SalidaDonacion {
 			q.agregarParametroValues("ID_SALIDA_DONACION", ConsultaConstantes.ID_TABLA);
 			q.agregarParametroValues("ID_INVE_ARTICULO", String.valueOf(agregarArticuloRequest.getIdInventarioArticulo()));
 			q.agregarParametroValues(ConsultaConstantes.ID_USUARIO_ALTA, String.valueOf(usuarioDto.getIdUsuario()));
-			q.agregarParametroValues(ConsultaConstantes.FEC_ALTA, ConsultaConstantes.CURRENT_TIMESTAMP);
+			q.agregarParametroValues(ConsultaConstantes.FEC_ALTA, ConsultaConstantes.CURRENT_DATE);
 			unoAn.add(DatatypeConverter.printBase64Binary(q.obtenerQueryInsertar().getBytes(StandardCharsets.UTF_8)));
 		});
 		log.info(" TERMINO - insertSalidaDonacionAtaudes");
@@ -227,7 +227,7 @@ public class SalidaDonacion {
 			q.agregarParametroValues(ConsultaConstantes.NOM_PRIMER_APELLIDO, SelectQueryUtil.setValor( agregarArticuloRequest.getNomFinadoPaterno()));
 			q.agregarParametroValues(ConsultaConstantes.NOM_SEGUNDO_APELLIDO, SelectQueryUtil.setValor(agregarArticuloRequest.getNomFinadoMaterno()));
 			q.agregarParametroValues(ConsultaConstantes.ID_USUARIO_ALTA, String.valueOf(usuarioDto.getIdUsuario()));
-			q.agregarParametroValues(ConsultaConstantes.FEC_ALTA, ConsultaConstantes.CURRENT_TIMESTAMP);
+			q.agregarParametroValues(ConsultaConstantes.FEC_ALTA, ConsultaConstantes.CURRENT_DATE);
 			unoAn.add(DatatypeConverter.printBase64Binary(q.obtenerQueryInsertar().getBytes(StandardCharsets.UTF_8)));
 		});
 		log.info(" TERMINO - insertSalidaDonacionFinados");
@@ -255,7 +255,7 @@ public class SalidaDonacion {
 			q.agregarParametroValues("DES_CORREO", SelectQueryUtil.setValor(donacionRequest.getDesCorreo()));
 			q.agregarParametroValues("TIP_PERSONA", SelectQueryUtil.setValor( donacionRequest.getTipoPersona()));
 			q.agregarParametroValues(ConsultaConstantes.ID_USUARIO_MODIFICA, String.valueOf(usuarioDto.getIdUsuario()));
-			q.agregarParametroValues(ConsultaConstantes.FEC_ACTUALIZACION, ConsultaConstantes.CURRENT_TIMESTAMP);
+			q.agregarParametroValues(ConsultaConstantes.FEC_ACTUALIZACION, ConsultaConstantes.CURRENT_DATE);
 			q.addWhere("ID_PERSONA = " + donacionRequest.getIdPersona());
 			
 			String query = q.obtenerQueryActualizar();
@@ -272,7 +272,7 @@ public class SalidaDonacion {
 			q1.agregarParametroValues("DES_MUNICIPIO", SelectQueryUtil.setValor(donacionRequest.getDesMunicipio()));
 			q1.agregarParametroValues("DES_ESTADO", SelectQueryUtil.setValor(donacionRequest.getDesEstado()));
 			q1.agregarParametroValues(ConsultaConstantes.ID_USUARIO_MODIFICA, String.valueOf(usuarioDto.getIdUsuario()));
-			q1.agregarParametroValues(ConsultaConstantes.FEC_ACTUALIZACION, ConsultaConstantes.CURRENT_TIMESTAMP);
+			q1.agregarParametroValues(ConsultaConstantes.FEC_ACTUALIZACION, ConsultaConstantes.CURRENT_DATE);
 			q1.addWhere("ID_DOMICILIO = " + donacionRequest.getIdDomicilio());
 			
 			String query1 = q1.obtenerQueryActualizar();
@@ -286,7 +286,7 @@ public class SalidaDonacion {
         	final QueryHelper q = new QueryHelper("UPDATE SVT_INVENTARIO_ARTICULO " );
         	q.agregarParametroValues("ID_TIPO_ASIGNACION_ART",  String.valueOf(4));
         	q.agregarParametroValues(ConsultaConstantes.ID_USUARIO_MODIFICA, String.valueOf(usuarioDto.getIdUsuario()));
-    		q.agregarParametroValues(ConsultaConstantes.FEC_ACTUALIZACION, ConsultaConstantes.CURRENT_TIMESTAMP);
+    		q.agregarParametroValues(ConsultaConstantes.FEC_ACTUALIZACION, ConsultaConstantes.CURRENT_DATE);
     		q.addWhere(" ID_INVE_ARTICULO = " + agregarArticuloRequest.getIdInventarioArticulo());
         	updates.add(DatatypeConverter.printBase64Binary(q.obtenerQueryActualizar().getBytes(StandardCharsets.UTF_8)));
         });

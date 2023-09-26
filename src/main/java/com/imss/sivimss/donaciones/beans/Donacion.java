@@ -111,7 +111,7 @@ public class Donacion {
 		q.agregarParametroValues("DES_MATRICULA_ALMACEN",  SelectQueryUtil.setValor( donacionRequest.getMatricularesponsable()));
 		q.agregarParametroValues("IND_ACTIVO", String.valueOf(1));
 		q.agregarParametroValues(ConsultaConstantes.ID_USUARIO_ALTA, String.valueOf(usuarioDto.getIdUsuario()));
-		q.agregarParametroValues(ConsultaConstantes.FEC_ALTA, ConsultaConstantes.CURRENT_TIMESTAMP);
+		q.agregarParametroValues(ConsultaConstantes.FEC_ALTA, ConsultaConstantes.CURRENT_DATE);
 
 		String query = q.obtenerQueryInsertar() + insertAtaudDonado(donacionRequest, usuarioDto);
 		log.info(" insertarDonacion: " + query );
@@ -133,7 +133,7 @@ public class Donacion {
 			q.agregarParametroValues("ID_DONACION",ConsultaConstantes. ID_TABLA);
 			q.agregarParametroValues("ID_INVE_ARTICULO", String.valueOf(agregarArticuloRequest.getIdInventarioArticulo()));
 			q.agregarParametroValues(ConsultaConstantes.ID_USUARIO_ALTA, String.valueOf(usuarioDto.getIdUsuario()));
-			q.agregarParametroValues(ConsultaConstantes.FEC_ALTA, ConsultaConstantes.CURRENT_TIMESTAMP);
+			q.agregarParametroValues(ConsultaConstantes.FEC_ALTA, ConsultaConstantes.CURRENT_DATE);
 			query.append("$$").append(q.obtenerQueryInsertar());
 		});
 		log.info(" TERMINO - insertAtaudDonado");
@@ -148,7 +148,7 @@ public class Donacion {
         	final QueryHelper q = new QueryHelper("UPDATE SVT_INVENTARIO_ARTICULO " );
         	q.agregarParametroValues("ID_TIPO_ASIGNACION_ART",  String.valueOf(3));
         	q.agregarParametroValues(ConsultaConstantes.ID_USUARIO_MODIFICA, String.valueOf(usuarioDto.getIdUsuario()));
-    		q.agregarParametroValues(ConsultaConstantes.FEC_ACTUALIZACION, ConsultaConstantes.CURRENT_TIMESTAMP);
+    		q.agregarParametroValues(ConsultaConstantes.FEC_ACTUALIZACION, ConsultaConstantes.CURRENT_DATE);
     		q.addWhere(" ID_INVE_ARTICULO = " + agregarArticuloRequest.getIdInventarioArticulo());
         	updates.add(DatatypeConverter.printBase64Binary(q.obtenerQueryActualizar().getBytes(StandardCharsets.UTF_8)));
         });
