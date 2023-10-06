@@ -12,7 +12,7 @@ public class PlantillaAceptacionControlRequest {
 	@JsonProperty
 	private String ooadNom;
 	@JsonProperty
-	private Integer velatorioId;
+	private String velatorioId;
 	@JsonProperty
 	private String numContrato;
 	@JsonProperty

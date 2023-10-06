@@ -1,11 +1,14 @@
 package com.imss.sivimss.donaciones.service.impl;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
 import javax.xml.bind.DatatypeConverter;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -18,6 +21,7 @@ import com.imss.sivimss.donaciones.exception.BadRequestException;
 import com.imss.sivimss.donaciones.model.request.DonacionRequest;
 import com.imss.sivimss.donaciones.model.request.PlantillaAceptacionControlRequest;
 import com.imss.sivimss.donaciones.model.request.UsuarioDto;
+import com.imss.sivimss.donaciones.model.response.ArticuloResponse;
 import com.imss.sivimss.donaciones.service.AceptacionDonacionService;
 import com.imss.sivimss.donaciones.util.AppConstantes;
 import com.imss.sivimss.donaciones.util.DatosRequest;
@@ -59,6 +63,11 @@ public class AceptacionDonacionServiceImpl implements AceptacionDonacionService 
 	
 	@Autowired
 	private LogUtil logUtil;
+	
+	private Response<Object> response;
+	
+	@Autowired 
+	private ModelMapper modelMapper;
 	
 	@Override
 	public Response<Object> detalleNombreContratante(DatosRequest request, Authentication authentication)
@@ -160,7 +169,7 @@ public class AceptacionDonacionServiceImpl implements AceptacionDonacionService 
 		UsuarioDto usuarioDto = new Gson().fromJson((String) authentication.getPrincipal(), UsuarioDto.class);
 		try {
 				logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString()," insert ataud donado ", ALTA,authentication);
-				Response<Object> response = providerRestTemplate.consumirServicio(new Donacion().insertarDonacion(donacionRequest, usuarioDto).getDatos(),urlModCatalogos.concat("/crearMultiple"),authentication);
+				response = providerRestTemplate.consumirServicio(new Donacion().insertarDonacion(donacionRequest, usuarioDto).getDatos(),urlModCatalogos.concat("/crearMultiple"),authentication);
 				if(200 == response.getCodigo()) {
 					response = providerRestTemplate.consumirServicio(new Donacion().actualizarStockArticulo(donacionRequest, usuarioDto),urlModCatalogos.concat("/actualizar/multiples"),authentication);
 				}
@@ -178,14 +187,21 @@ public class AceptacionDonacionServiceImpl implements AceptacionDonacionService 
 	public Response<Object> generarDocumentoAceptacionControl(DatosRequest request, Authentication authentication) throws IOException {
 		try {
 		logUtil.crearArchivoLog(Level.INFO.toString(),this.getClass().getSimpleName(),this.getClass().getPackage().toString()," generar documento aceptacion control ", CONSULTA,authentication);
-		Map<String, Object> envioDatos = new Donacion().generarPlantillaAceptacionControlPDF(new Gson().fromJson(String.valueOf(request.getDatos().get(AppConstantes.DATOS)), PlantillaAceptacionControlRequest.class),nombrePdfAceptacionControl);
-		return MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicioReportes(envioDatos, urlReportes, authentication)
-				, ERROR_AL_DESCARGAR_DOCUMENTO);
+		PlantillaAceptacionControlRequest plantillaAceptacionControlRequest = new Gson().fromJson(String.valueOf(request.getDatos().get(AppConstantes.DATOS)), PlantillaAceptacionControlRequest.class);
+		String[] numInventarios = plantillaAceptacionControlRequest.getNumInventarios().split(",");
+		response = providerRestTemplate.consumirServicio(new Donacion().obtenerFolioDonacion(request, numInventarios[0]).getDatos(),urlModCatalogos.concat(CONSULTA_GENERICA), authentication);
+		if (response.getCodigo() == 200 && !response.getDatos().toString().contains("[]")) {
+			List<ArticuloResponse> articuloResponse = Arrays.asList(modelMapper.map(response.getDatos(), ArticuloResponse[].class));
+			Map<String, Object> envioDatos = new Donacion().generarPlantillaAceptacionControlPDF(plantillaAceptacionControlRequest, nombrePdfAceptacionControl, articuloResponse.get(0).getFolioDonacion());
+			return MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicioReportes(envioDatos, urlReportes, authentication), ERROR_AL_DESCARGAR_DOCUMENTO);
+		}
         } catch (Exception e) {
+        	e.printStackTrace();
         	log.error("Error.. {}", e.getMessage());
             logUtil.crearArchivoLog(Level.SEVERE.toString(), this.getClass().getSimpleName(), this.getClass().getPackage().toString(), "Fallo al ejecutar la plantilla : " + e.getMessage(), CONSULTA, authentication);
             throw new IOException("64", e.getCause());
         }
+		return response;
 	}
 
 }

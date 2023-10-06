@@ -187,7 +187,7 @@ public class ConsultaDonadoServiceImpl implements ConsultaDonadosService {
 			datosJson = responseToJson(response.getDatos().toString());
 				PlantillaAceptacionControlRequest plantillaAceptacionControlRequest = gson.fromJson(datosJson, PlantillaAceptacionControlRequest.class);
 				plantillaAceptacionControlRequest.setVersion(VERSION);
-				envioDatos = new Donacion().generarPlantillaAceptacionControlPDF(plantillaAceptacionControlRequest,	nombrePdfAceptacionControl);
+				envioDatos = new Donacion().generarPlantillaAceptacionControlPDF(plantillaAceptacionControlRequest,	nombrePdfAceptacionControl, 0);
 			envioDatos.put("tipoReporte", reporteDto.getTipoReporte());
 			return MensajeResponseUtil.mensajeConsultaResponse(providerRestTemplate.consumirServicioReportes(envioDatos, urlReportes, authentication)
 					, ERROR_AL_DESCARGAR_DOCUMENTO);
