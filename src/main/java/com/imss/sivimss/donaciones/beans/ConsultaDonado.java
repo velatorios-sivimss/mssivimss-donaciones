@@ -49,8 +49,8 @@ public class ConsultaDonado {
 	private static final String CAMPO_SIA_FOLIO_ARTICULO_AS_NUM_INVENTARIO = "sia.CVE_FOLIO_ARTICULO AS numInventario";
 	private static final String CAMPO_SSD_FEC_ALTA = "ssd.FEC_ALTA,'";
 	private static final String CAMPO_SD_FEC_ALTA = "sd.FEC_ALTA,'";
-	private static final String CAMPO_AS_NOMDONADOPOR_SALIDA = "IFNULL((CONCAT(sp.NOM_PERSONA , ' ', sp.NOM_PRIMER_APELLIDO , ' ', sp.NOM_SEGUNDO_APELLIDO)), ssd.DES_INSTITUCION) AS nomDonador";
-	private static final String CAMPO_AS_NOMDONADOPOR_ENTRADA = "sp2.NOM_PROVEEDOR as nomDonador";
+	private static final String CAMPO_AS_NOMDONADOPOR_SALIDA =  "IFNULL((CONCAT(sp.NOM_PERSONA , ' ', sp.NOM_PRIMER_APELLIDO , ' ', sp.NOM_SEGUNDO_APELLIDO)), ssd.DES_INSTITUCION) AS nomDonador";
+	private static final String CAMPO_AS_NOMDONADOPOR_ENTRADA = "IFNULL((CONCAT(sp3.NOM_PERSONA, ' ', sp3.NOM_PRIMER_APELLIDO, ' ', sp3.NOM_SEGUNDO_APELLIDO)), sp2.NOM_PROVEEDOR  ) AS nomDonador";
 
 	private static final String CAMPO_ALIAS_AS_FECDONACION = "AS fecDonacion";
 	private static final String CAMPO_ALIAS_AS_INSTITUTO_DONADO_POR = "'Instituto' AS donadoPor";
@@ -237,20 +237,34 @@ public class ConsultaDonado {
 		.join("SVC_PERSONA SCP","SC.ID_PERSONA = SCP.ID_PERSONA")
 		.join("SVC_FINADO SF","SOE.ID_ORDEN_SERVICIO = SF.ID_ORDEN_SERVICIO")
 		.join("SVC_PERSONA SFP","SF.ID_PERSONA = SFP.ID_PERSONA")
-		.join("SVT_USUARIOS SU","SV.ID_USUARIO_ADMIN = SU.ID_USUARIO")
-		.where("SD.ID_DONACION = :idDonacion")
-		.setParameter("idDonacion",idDonacion)
-		.and("SAD.ID_ATAUD_DONACION = :idAtaudDona")
-		.setParameter("idAtaudDona", idAtaudDona);
-
+		.join("SVT_USUARIOS SU","SV.ID_USUARIO_ADMIN = SU.ID_USUARIO");
+		if(idDonacion != null) {
+			queryUtil.where("SD.ID_DONACION = :idDonacion")
+			.setParameter("idDonacion",idDonacion);
+			if(idAtaudDona != null) {
+				queryUtil.and("SAD.ID_ATAUD_DONACION = :idAtaudDona")
+				.setParameter("idAtaudDona", idAtaudDona);
+			}
+		}else if(idAtaudDona != null){
+				queryUtil.where("SAD.ID_ATAUD_DONACION = :idAtaudDona")
+				.setParameter("idAtaudDona", idAtaudDona);
+			}
+		
 		return queryUtil;
 	}
 
 	
 	private SelectQueryUtil construirQueryEntrada(String formatoFecha) {
 		SelectQueryUtil queryUtil = new SelectQueryUtil();
-	queryUtil.select("distinct(sd.ID_DONACION ) AS idDonacion","sad.ID_ATAUD_DONACION AS idAtaudDonacion"," sia.ID_INVE_ARTICULO AS idInventario",CAMPO_SV_NOM_VELATORIO_AS_VELATORIO,CAMPO_STM_DES_TIPO_MATERIAL_AS_TIPOMATERIAL,CAMPO_SA_DES_MODELO_ARTICULO_AS_MODELOARTICULO,CAMPO_SIA_FOLIO_ARTICULO_AS_NUM_INVENTARIO
-			,VALIDACION_DATE_FORMAT + CAMPO_SD_FEC_ALTA + formatoFecha + "')" + CAMPO_ALIAS_AS_FECDONACION + "," + CAMPO_ALIAS_AS_ODS_DONADO_POR
+	queryUtil.select("DISTINCT(sd.ID_DONACION ) AS idDonacion"
+			,"sad.ID_ATAUD_DONACION AS idAtaudDonacion"
+			," sia.ID_INVE_ARTICULO AS idInventario"
+			,CAMPO_SV_NOM_VELATORIO_AS_VELATORIO
+			,CAMPO_STM_DES_TIPO_MATERIAL_AS_TIPOMATERIAL
+			,CAMPO_SA_DES_MODELO_ARTICULO_AS_MODELOARTICULO
+			,CAMPO_SIA_FOLIO_ARTICULO_AS_NUM_INVENTARIO
+			,VALIDACION_DATE_FORMAT + CAMPO_SD_FEC_ALTA + formatoFecha + "')" + CAMPO_ALIAS_AS_FECDONACION 
+			+ "," + CAMPO_ALIAS_AS_ODS_DONADO_POR
 			,CAMPO_AS_NOMDONADOPOR_ENTRADA)
 		.from(TABLA_SVC_DONACION_SD)
 		.join(TABLA_SVC_ATAUDES_DONADOS_SAD,"sad.ID_DONACION = sd.ID_DONACION")
@@ -261,8 +275,10 @@ public class ConsultaDonado {
 		.join(TABLA_SVT_CONTRATO_SC2,"sc2.ID_CONTRATO = soe.ID_CONTRATO")
 		.join(TABLA_SVC_VELATORIO_SV,"sv.ID_VELATORIO = sc2.ID_VELATORIO")
 		.join(TABLA_SVC_DELEGACION_SD2,"sd2.ID_DELEGACION = sv.ID_DELEGACION")
-		.join(TABLA_SVT_PROVEEDOR_SP2,"sp2.ID_PROVEEDOR = soe.ID_CONTRATO");
-
+		.join("SVC_ORDEN_SERVICIO sos", "sos.ID_ORDEN_SERVICIO = sd.ID_ORDEN_SERVICIO") 
+		.leftJoin("SVC_CONTRATANTE sc3", "sc3.ID_CONTRATANTE = sos.ID_CONTRATANTE") 
+		.join("SVC_PERSONA sp3"," sp3.ID_PERSONA = sc3.ID_PERSONA")
+		.join("SVT_PROVEEDOR sp2", "sp2.ID_PROVEEDOR = soe.ID_CONTRATO");
 		genWhere(queryUtil);
 		return queryUtil;
 	}
@@ -371,9 +387,11 @@ public class ConsultaDonado {
 			.leftJoin("SVC_SALIDA_DONACION_FINADOS SSDF","SSD.ID_SALIDA_DONACION = SSDF.ID_SALIDA_DONACION")
 			.join("SVC_CONTRATANTE SC","SSD.ID_CONTRATANTE = SC.ID_CONTRATANTE")
 			.join("SVC_PERSONA SCP","SC.ID_PERSONA = SCP.ID_PERSONA")
-			.join("SVT_USUARIOS SU","SV.ID_USUARIO_ADMIN = SU.ID_USUARIO")
-			.where("SSD.ID_SALIDA_DONACION = :idSalidaDona")
-			.setParameter("idSalidaDona", idSalidaDona);
+			.join("SVT_USUARIOS SU","SV.ID_USUARIO_ADMIN = SU.ID_USUARIO");
+			if(idSalidaDona != null) {
+				queryUtil.where("SSD.ID_SALIDA_DONACION = :idSalidaDona")
+				.setParameter("idSalidaDona", idSalidaDona);
+			}
 
 		return queryUtil;
 	}
