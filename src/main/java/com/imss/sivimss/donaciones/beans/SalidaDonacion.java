@@ -49,7 +49,7 @@ public class SalidaDonacion {
 		log.info(" INICIO - detalleSalidaAtaudDonado");
 		SelectQueryUtil queryUtil = new SelectQueryUtil();
 		queryUtil.select("S.CVE_FOLIO_ARTICULO AS folioArticulo","S.ID_INVE_ARTICULO AS idInventarioArticulo","TM.DES_TIPO_MATERIAL AS desTipoMaterial",
-				"CONCAT_WS('-',S.CVE_FOLIO_ARTICULO,A.DES_MODELO_ARTICULO ) AS  desModeloArticulo")
+				"CONCAT_WS('-',S.CVE_FOLIO_ARTICULO,A.REF_MODELO_ARTICULO ) AS  desModeloArticulo")
 		.from("SVT_ORDEN_ENTRADA OE")
 		.innerJoin("SVT_CONTRATO C", "OE.ID_CONTRATO = C.ID_CONTRATO")
 		.innerJoin("SVT_INVENTARIO_ARTICULO S","OE.ID_ODE = S.ID_ODE")
@@ -73,7 +73,7 @@ public class SalidaDonacion {
 		.from("SVT_ORDEN_ENTRADA OE")
 		.innerJoin("SVT_INVENTARIO_ARTICULO S", "OE.ID_ODE = S.ID_ODE")
 		.innerJoin("SVT_ARTICULO A", "S.ID_ARTICULO = A.ID_ARTICULO").and("S.ID_TIPO_ASIGNACION_ART = 3").and("S.IND_DEVOLUCION IS NULL").and("A.IND_ACTIVO = 1")
-		.where("A.DES_MODELO_ARTICULO = :modeloArticlo").setParameter("modeloArticlo", agregarArticuloRequest.getModeloArticulo());
+		.where("A.REF_MODELO_ARTICULO = :modeloArticlo").setParameter("modeloArticlo", agregarArticuloRequest.getModeloArticulo());
 		final String query = queryUtil.build();
 		log.info(" countSalidaAtaudDonado: " + query );
 		String encoded = DatatypeConverter.printBase64Binary(query.getBytes(StandardCharsets.UTF_8));

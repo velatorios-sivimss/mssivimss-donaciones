@@ -87,7 +87,7 @@ public class Donacion {
 				
 		SelectQueryUtil queryUtil = new SelectQueryUtil();
 		queryUtil.select("S.CVE_FOLIO_ARTICULO AS folioArticulo","S.ID_INVE_ARTICULO AS idInventarioArticulo", "TM.DES_TIPO_MATERIAL AS desTipoMaterial",
-				"CONCAT_WS('-',S.CVE_FOLIO_ARTICULO,A.DES_MODELO_ARTICULO ) AS  desModeloArticulo")
+				"CONCAT_WS('-',S.CVE_FOLIO_ARTICULO,A.REF_MODELO_ARTICULO ) AS  desModeloArticulo")
 		.from(ConsultaConstantes.SVC_ORDEN_SERVICIO_OS)
 		.innerJoin("SVC_CARAC_PRESUPUESTO CP", "OS.ID_ORDEN_SERVICIO  = CP.ID_ORDEN_SERVICIO").and("CP.IND_ACTIVO = 1")
 		.innerJoin("SVC_DETALLE_CARAC_PRESUP DCP", "CP.ID_CARAC_PRESUPUESTO = DCP.ID_CARAC_PRESUPUESTO").and("DCP.IND_ACTIVO = 1")
