@@ -188,12 +188,12 @@ public class SalidaDonacion {
 		log.info(" INICIO - insertSalidaDonacion");
 		final QueryHelper q = new QueryHelper("INSERT INTO SVC_SALIDA_DONACION");
 		q.agregarParametroValues("ID_CONTRATANTE", (donacionRequest.getIdContratante() != null) ? String.valueOf(donacionRequest.getIdContratante()):ConsultaConstantes.ID_TABLA);
-		q.agregarParametroValues("DES_INSTITUCION", SelectQueryUtil.setValor(donacionRequest.getNomInstitucion()));
+		q.agregarParametroValues("REF_INSTITUCION", SelectQueryUtil.setValor(donacionRequest.getNomInstitucion()));
 		q.agregarParametroValues("NUM_TOTAL_ATAUDES", String.valueOf(donacionRequest.getNumTotalAtaudes()));
 		q.agregarParametroValues("IND_ESTUDIO_SOCIECONOMICO",String.valueOf(donacionRequest.getEstudioSocieconomico()));
 		q.agregarParametroValues("IND_ESTUDIO_LIBRE", String.valueOf(donacionRequest.getEstudioLibre()));
 		q.agregarParametroValues("FEC_SOLICITUD", SelectQueryUtil.setValor( donacionRequest.getFecSolicitad()));
-		q.agregarParametroValues("DES_RESPONSABLE_ALMACEN", SelectQueryUtil.setValor(SelectQueryUtil.eliminarEspacios(donacionRequest.getResponsableAlmacen())));
+		q.agregarParametroValues("NOM_RESPONSABLE_ALMACEN", SelectQueryUtil.setValor(SelectQueryUtil.eliminarEspacios(donacionRequest.getResponsableAlmacen())));
 		q.agregarParametroValues("CVE_MATRICULA_RESPONSABLE", SelectQueryUtil.setValor(donacionRequest.getMatricularesponsable()));
 		q.agregarParametroValues("IND_ACTIVO", String.valueOf(1));
 		q.agregarParametroValues(ConsultaConstantes.ID_USUARIO_ALTA, String.valueOf(usuarioDto.getIdUsuario()));

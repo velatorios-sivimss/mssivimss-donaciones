@@ -115,8 +115,8 @@ public class Donacion {
 		final QueryHelper q = new QueryHelper("INSERT INTO SVC_DONACION");
 		q.agregarParametroValues("ID_ORDEN_SERVICIO", String.valueOf(donacionRequest.getIdOrdenServicio()));
 		q.agregarParametroValues("NUM_TOTAL_ATAUDES", String.valueOf(donacionRequest.getNumTotalAtaudes()));
-		q.agregarParametroValues("DES_RESPONSABLE_ALMACEN", SelectQueryUtil.setValor(SelectQueryUtil.eliminarEspacios(donacionRequest.getResponsableAlmacen())));
-		q.agregarParametroValues("DES_MATRICULA_ALMACEN",  SelectQueryUtil.setValor( donacionRequest.getMatricularesponsable()));
+		q.agregarParametroValues("NOM_RESPONSABLE_ALMACEN", SelectQueryUtil.setValor(SelectQueryUtil.eliminarEspacios(donacionRequest.getResponsableAlmacen())));
+		q.agregarParametroValues("REF_MATRICULA_ALMACEN",  SelectQueryUtil.setValor( donacionRequest.getMatricularesponsable()));
 		q.agregarParametroValues("IND_ACTIVO", String.valueOf(1));
 		q.agregarParametroValues(ConsultaConstantes.ID_USUARIO_ALTA, String.valueOf(usuarioDto.getIdUsuario()));
 		q.agregarParametroValues(ConsultaConstantes.FEC_ALTA, ConsultaConstantes.CURRENT_DATE);
