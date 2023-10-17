@@ -45,12 +45,12 @@ public class ConsultaDonado {
 	private static final String CAMPO_FECHA_DONACION_SALIDA = "date_format(ssd.FEC_ALTA" ;
 	private static final String CAMPO_SV_NOM_VELATORIO_AS_VELATORIO = "sv.DES_VELATORIO  AS velatorio";
 	private static final String CAMPO_STM_DES_TIPO_MATERIAL_AS_TIPOMATERIAL = "stm.DES_TIPO_MATERIAL AS tipoMaterial";
-	private static final String CAMPO_SA_DES_MODELO_ARTICULO_AS_MODELOARTICULO = "sa.DES_MODELO_ARTICULO AS modeloAtaud";
+	private static final String CAMPO_SA_DES_MODELO_ARTICULO_AS_MODELOARTICULO = "sa.REF_MODELO_ARTICULO AS modeloAtaud";
 	private static final String CAMPO_SIA_FOLIO_ARTICULO_AS_NUM_INVENTARIO = "sia.CVE_FOLIO_ARTICULO AS numInventario";
 	private static final String CAMPO_SSD_FEC_ALTA = "ssd.FEC_ALTA,'";
 	private static final String CAMPO_SD_FEC_ALTA = "sd.FEC_ALTA,'";
-	private static final String CAMPO_AS_NOMDONADOPOR_SALIDA = "IFNULL((CONCAT(sp.NOM_PERSONA , ' ', sp.NOM_PRIMER_APELLIDO , ' ', sp.NOM_SEGUNDO_APELLIDO)), ssd.DES_INSTITUCION) AS nomDonador";
-	private static final String CAMPO_AS_NOMDONADOPOR_ENTRADA = "sp2.NOM_PROVEEDOR as nomDonador";
+	private static final String CAMPO_AS_NOMDONADOPOR_SALIDA = "IFNULL((CONCAT(sp.NOM_PERSONA , ' ', sp.NOM_PRIMER_APELLIDO , ' ', sp.NOM_SEGUNDO_APELLIDO)), ssd.REF_INSTITUCION) AS nomDonador";
+	private static final String CAMPO_AS_NOMDONADOPOR_ENTRADA = "sp2.REF_PROVEEDOR as nomDonador";
 
 	private static final String CAMPO_ALIAS_AS_FECDONACION = "AS fecDonacion";
 	private static final String CAMPO_ALIAS_AS_INSTITUTO_DONADO_POR = "'Instituto' AS donadoPor";
@@ -175,7 +175,7 @@ public class ConsultaDonado {
 	}
 
 	public DatosRequest generarQueryReporteEntrada(DatosRequest request,ReporteDto reporteDto) {
-		String query = construirQueryEntradaReporte(reporteDto.getIdDonacion(), reporteDto.getIdAtaudDonacion()).build();
+		String query = construirQueryEntradaReporte(reporteDto.getIdDonacion(), reporteDto.getIdAtaudDonacion());
 		String encoded = DatatypeConverter.printBase64Binary(query.getBytes());
 		request.getDatos().put(AppConstantes.QUERY, encoded);
 
@@ -213,14 +213,14 @@ public class ConsultaDonado {
 				query.where(CAMPO_FECHA_DONACION_ENTRADA + "," + formatoFechaAMD + PARAM_FECFIN).setParameter(PARAM_FECHA_FIN, this.fechaFin);
 
 	}
-	private SelectQueryUtil construirQueryEntradaReporte(Integer idDonacion, Integer idAtaudDona) {
+	private String construirQueryEntradaReporte(Integer idDonacion, Integer idAtaudDona) {
 		SelectQueryUtil queryUtil = new SelectQueryUtil();
 		setCamposEntrada();
 	queryUtil.select("SDN.DES_DELEGACION AS " + nombreCampos.get(1),"SV.ID_VELATORIO AS  " + nombreCampos.get(2),"SOE.CVE_FOLIO AS "  + nombreCampos.get(3)
-			,"SIA.CVE_FOLIO_ARTICULO AS "  + nombreCampos.get(4), "STM.DES_TIPO_MATERIAL AS "  + nombreCampos.get(5), "CONCAT_WS('-',SIA.CVE_FOLIO_ARTICULO,SA.DES_MODELO_ARTICULO ) AS "  + nombreCampos.get(6)
+			,"SIA.CVE_FOLIO_ARTICULO AS "  + nombreCampos.get(4), "STM.DES_TIPO_MATERIAL AS "  + nombreCampos.get(5), "CONCAT_WS('-',SIA.CVE_FOLIO_ARTICULO,SA.REF_MODELO_ARTICULO ) AS "  + nombreCampos.get(6)
 			, "CONCAT_WS(' ',SCP.NOM_PERSONA,SCP.NOM_PRIMER_APELLIDO,SCP.NOM_SEGUNDO_APELLIDO ) AS "  + nombreCampos.get(7)
 			, "CONCAT_WS(' ',SFP.NOM_PERSONA,SFP.NOM_PRIMER_APELLIDO,SFP.NOM_SEGUNDO_APELLIDO ) AS "  + nombreCampos.get(8)
-			, "SD.DES_RESPONSABLE_ALMACEN AS " + nombreCampos.get(9), "SD.DES_MATRICULA_ALMACEN AS " + nombreCampos.get(10)
+			, "SD.NOM_RESPONSABLE_ALMACEN AS " + nombreCampos.get(9), "SD.REF_MATRICULA_ALMACEN AS " + nombreCampos.get(10)
 			, "CONCAT_WS(' ',SU.NOM_USUARIO,SU.NOM_APELLIDO_PATERNO,SU.NOM_APELLIDO_MATERNO) AS " + nombreCampos.get(11)
 			, "SU.CVE_MATRICULA AS " + nombreCampos.get(12), "CONCAT_WS(',',SV.DES_VELATORIO,SDN.DES_DELEGACION) AS " + nombreCampos.get(13)
 			, "DAY(SAD.FEC_ALTA) AS " + nombreCampos.get(14), "MONTHNAME(SAD.FEC_ALTA) AS " + nombreCampos.get(15), "ELT(MONTH(SAD.FEC_ALTA), \"Enero\", \"Febrero\", \"Marzo\", \"Abril\", \"Mayo\", \"Junio\", \"Julio\", \"Agosto\", \"Septiembre\", \"Octubre\", \"Noviembre\", \"Diciembre\") AS " + nombreCampos.get(16)
@@ -243,7 +243,7 @@ public class ConsultaDonado {
 		.and("SAD.ID_ATAUD_DONACION = :idAtaudDona")
 		.setParameter("idAtaudDona", idAtaudDona);
 
-		return queryUtil;
+		return queryUtil.build();
 	}
 
 	
@@ -347,7 +347,7 @@ public class ConsultaDonado {
 	queryUtil.select("SDN.ID_DELEGACION  AS " + nombreCamposSalida.get(1)
 			,"SV.ID_VELATORIO AS " + nombreCamposSalida.get(2),"SV.DES_VELATORIO  AS " + nombreCamposSalida.get(3)
 			,"SIA.CVE_FOLIO_ARTICULO AS " + nombreCamposSalida.get(4),"STM.DES_TIPO_MATERIAL AS " + nombreCamposSalida.get(5)
-			,"CONCAT_WS('-',SIA.CVE_FOLIO_ARTICULO,SA.DES_MODELO_ARTICULO ) AS " + nombreCamposSalida.get(6)
+			,"CONCAT_WS('-',SIA.CVE_FOLIO_ARTICULO,SA.REF_MODELO_ARTICULO ) AS " + nombreCamposSalida.get(6)
 			,"SSD.NUM_TOTAL_ATAUDES AS " + nombreCamposSalida.get(7)
 			,"CONCAT_WS(' ',SSDF.NOM_FINADO,SSDF.NOM_PRIMER_APELLIDO,SSDF.NOM_SEGUNDO_APELLIDO ) AS "  + nombreCamposSalida.get(8)
 			,"CONCAT_WS(' ',SCP.NOM_PERSONA,SCP.NOM_PRIMER_APELLIDO,SCP.NOM_SEGUNDO_APELLIDO ) AS "  + nombreCamposSalida.get(9)
