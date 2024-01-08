@@ -63,9 +63,10 @@ public class Donacion {
 	public DatosRequest detalleAceptacionDonacion(DatosRequest request, DonacionRequest donacionRequest) {
 		log.info(" INICIO - detalleAceptacionDonacion");
 		SelectQueryUtil queryUtil = new SelectQueryUtil();
-		queryUtil.select("CONCAT_WS(' ',U.NOM_USUARIO,U.NOM_APELLIDO_PATERNO,U.NOM_APELLIDO_MATERNO) AS nombreAdministrador",
+		queryUtil.select("IFNULL(CONCAT_WS(' ', V.NOM_RESPO_SANITARIO),'') AS nombreAdministrador",
 				"U.CVE_MATRICULA AS matriculaAdministrador","CONCAT_WS(',',V.DES_VELATORIO,D.DES_DELEGACION) AS lugardonacion",
 				"IFNULL(V.DES_VELATORIO,'') AS velatorio").from("SVT_USUARIOS U")
+		.innerJoin("SVC_PERSONA P", "U.ID_PERSONA = P.ID_PERSONA")
 		.innerJoin("SVC_VELATORIO V", "U.ID_USUARIO = V.ID_USUARIO_ADMIN")
 		.innerJoin("SVC_DELEGACION D", "V.ID_DELEGACION = D.ID_DELEGACION ")
 		.where("V.ID_VELATORIO = :idVel").setParameter("idVel", donacionRequest.getIdVelatorio());
